@@ -133,30 +133,12 @@ const Footer = ({
 		<>
 			<footer className={styles.footer}>
 				<div>
-					<ul>
-						<li className={styles.aboutIconEl}>
-							<Tooltip title={i18n.aboutThisScript} arrow>
-								<span onClick={(): void => setAboutDialogVisibility(true)}>
-									<Github />
-								</span>
-							</Tooltip>
-						</li>
-						<li className={styles.showTourLink}>
-							<Button className={styles.tourBtn} onClick={showTourDialog}>
-								<Person />
-								<span>{i18n.takeTour}</span>
-							</Button>
-						</li>
-						{customFooterLinks}
-					</ul>
-
 					<div className={styles.activePacketsList}>
 						<ActivePacketsList />
 					</div>
 
 					<div className={footerControlsClasses}>
 						{panelControls}
-						{getSaveButton()}
 						<Button
 							onClick={onGenerate}
 							className={`${styles.generateButton} tour-generateButton`}

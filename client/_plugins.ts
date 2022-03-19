@@ -7,6 +7,7 @@ import Alphanumeric from './src/plugins/dataTypes/Alphanumeric/config';
 import AutoIncrement from './src/plugins/dataTypes/AutoIncrement/config';
 import BitcoinAddress from './src/plugins/dataTypes/BitcoinAddress/config';
 import Boolean from './src/plugins/dataTypes/Boolean/config';
+import CVV from './src/plugins/dataTypes/CVV/config';
 import City from './src/plugins/dataTypes/City/config';
 import Colour from './src/plugins/dataTypes/Colour/config';
 import Company from './src/plugins/dataTypes/Company/config';
@@ -14,7 +15,6 @@ import Computed from './src/plugins/dataTypes/Computed/config';
 import Constant from './src/plugins/dataTypes/Constant/config';
 import Country from './src/plugins/dataTypes/Country/config';
 import Currency from './src/plugins/dataTypes/Currency/config';
-import CVV from './src/plugins/dataTypes/CVV/config';
 import Date from './src/plugins/dataTypes/Date/config';
 import Email from './src/plugins/dataTypes/Email/config';
 import GUID from './src/plugins/dataTypes/GUID/config';
@@ -26,9 +26,9 @@ import NormalDistribution from './src/plugins/dataTypes/NormalDistribution/confi
 import NumberRange from './src/plugins/dataTypes/NumberRange/config';
 import OrganizationNumber from './src/plugins/dataTypes/OrganizationNumber/config';
 import PAN from './src/plugins/dataTypes/PAN/config';
+import PIN from './src/plugins/dataTypes/PIN/config';
 import PersonalNumber from './src/plugins/dataTypes/PersonalNumber/config';
 import Phone from './src/plugins/dataTypes/Phone/config';
-import PIN from './src/plugins/dataTypes/PIN/config';
 import PostalZip from './src/plugins/dataTypes/PostalZip/config';
 import Region from './src/plugins/dataTypes/Region/config';
 import Rut from './src/plugins/dataTypes/Rut/config';
@@ -46,6 +46,7 @@ export const dataTypes = {
 	AutoIncrement,
 	BitcoinAddress,
 	Boolean,
+	CVV,
 	City,
 	Colour,
 	Company,
@@ -53,7 +54,6 @@ export const dataTypes = {
 	Constant,
 	Country,
 	Currency,
-	CVV,
 	Date,
 	Email,
 	GUID,
@@ -65,9 +65,9 @@ export const dataTypes = {
 	NumberRange,
 	OrganizationNumber,
 	PAN,
+	PIN,
 	PersonalNumber,
 	Phone,
-	PIN,
 	PostalZip,
 	Region,
 	Rut,
@@ -85,33 +85,15 @@ export type DataTypeFolder = keyof typeof dataTypes;
 
 export const blacklistedDataTypeFolders = ['BitcoinAddress','OrganizationNumber','PersonalNumber','SIRET'];
 
-import CSharp from './src/plugins/exportTypes/CSharp/config';
 import CSV from './src/plugins/exportTypes/CSV/config';
-import HTML from './src/plugins/exportTypes/HTML/config';
-import Javascript from './src/plugins/exportTypes/Javascript/config';
 import JSON from './src/plugins/exportTypes/JSON/config';
-import LDIF from './src/plugins/exportTypes/LDIF/config';
-import Perl from './src/plugins/exportTypes/Perl/config';
-import PHP from './src/plugins/exportTypes/PHP/config';
-import Python from './src/plugins/exportTypes/Python/config';
-import Ruby from './src/plugins/exportTypes/Ruby/config';
 import SQL from './src/plugins/exportTypes/SQL/config';
-import Typescript from './src/plugins/exportTypes/Typescript/config';
 import XML from './src/plugins/exportTypes/XML/config';
 
 export const exportTypes = {
-	CSharp,
 	CSV,
-	HTML,
-	Javascript,
 	JSON,
-	LDIF,
-	Perl,
-	PHP,
-	Python,
-	Ruby,
 	SQL,
-	Typescript,
 	XML
 };
 
@@ -149,12 +131,12 @@ import CountrySpain from './src/plugins/countries/Spain/bundle';
 import CountrySweden from './src/plugins/countries/Sweden/bundle';
 import CountryTurkey from './src/plugins/countries/Turkey/bundle';
 import CountryUK from './src/plugins/countries/UK/bundle';
-import CountryUkraine from './src/plugins/countries/Ukraine/bundle';
 import CountryUS from './src/plugins/countries/US/bundle';
+import CountryUkraine from './src/plugins/countries/Ukraine/bundle';
 import CountryVietnam from './src/plugins/countries/Vietnam/bundle';
 
-export const countryList = ['Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Chile', 'China', 'Colombia', 'CostaRica', 'France', 'Germany', 'India', 'Indonesia', 'Ireland', 'Italy', 'Mexico', 'Netherlands', 'NewZealand', 'Nigeria', 'Norway', 'Pakistan', 'Peru', 'Philippines', 'Poland', 'Russia', 'Singapore', 'SouthAfrica', 'SouthKorea', 'Spain', 'Sweden', 'Turkey', 'UK', 'Ukraine', 'US', 'Vietnam'];
-export const countries = ['Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Chile', 'China', 'Colombia', 'CostaRica', 'France', 'Germany', 'India', 'Indonesia', 'Ireland', 'Italy', 'Mexico', 'Netherlands', 'NewZealand', 'Nigeria', 'Norway', 'Pakistan', 'Peru', 'Philippines', 'Poland', 'Russia', 'Singapore', 'SouthAfrica', 'SouthKorea', 'Spain', 'Sweden', 'Turkey', 'UK', 'Ukraine', 'US', 'Vietnam'] as const;
+export const countryList = ['Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Chile', 'China', 'Colombia', 'CostaRica', 'France', 'Germany', 'India', 'Indonesia', 'Ireland', 'Italy', 'Mexico', 'Netherlands', 'NewZealand', 'Nigeria', 'Norway', 'Pakistan', 'Peru', 'Philippines', 'Poland', 'Russia', 'Singapore', 'SouthAfrica', 'SouthKorea', 'Spain', 'Sweden', 'Turkey', 'UK', 'US', 'Ukraine', 'Vietnam'];
+export const countries = ['Australia', 'Austria', 'Belgium', 'Brazil', 'Canada', 'Chile', 'China', 'Colombia', 'CostaRica', 'France', 'Germany', 'India', 'Indonesia', 'Ireland', 'Italy', 'Mexico', 'Netherlands', 'NewZealand', 'Nigeria', 'Norway', 'Pakistan', 'Peru', 'Philippines', 'Poland', 'Russia', 'Singapore', 'SouthAfrica', 'SouthKorea', 'Spain', 'Sweden', 'Turkey', 'UK', 'US', 'Ukraine', 'Vietnam'] as const;
 export const countryMethods = {
 	Australia: CountryAustralia,
 	Austria: CountryAustria,
@@ -188,7 +170,7 @@ export const countryMethods = {
 	Sweden: CountrySweden,
 	Turkey: CountryTurkey,
 	UK: CountryUK,
-	Ukraine: CountryUkraine,
 	US: CountryUS,
+	Ukraine: CountryUkraine,
 	Vietnam: CountryVietnam
 };

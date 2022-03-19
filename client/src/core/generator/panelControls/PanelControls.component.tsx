@@ -10,30 +10,44 @@ import { toSentenceCase } from '~utils/stringUtils';
 import { Tooltip } from '~components/tooltips';
 import { GeneratorLayout } from '../Generator.component';
 import * as styles from './PanelControls.scss';
+import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer.component";
 
 export type PanelControlsProps = {
 	className: string;
 	toggleGrid: () => void;
+	toggleDependencyGrid: () => void;
 	togglePreview: () => void;
 	toggleLayout: () => void;
+	toggleGridContainerLayout: () => void;
 	showClearPageDialog: () => void;
 	isGridVisible: boolean;
+	isDependencyGridVisible: boolean;
 	isPreviewVisible: boolean;
 	generatorLayout: GeneratorLayout;
+	gridContainerLayout: GridContainerLayout;
 	i18n: any;
 };
 
 export const PanelControls = ({
-	className, toggleGrid, togglePreview, toggleLayout, showClearPageDialog, isGridVisible, isPreviewVisible, generatorLayout, i18n
+	className, toggleGrid, toggleDependencyGrid, togglePreview, toggleLayout, toggleGridContainerLayout,
+								  showClearPageDialog, isGridVisible, isPreviewVisible, isDependencyGridVisible, generatorLayout, gridContainerLayout,i18n
 }: PanelControlsProps): JSX.Element => {
-	const toggleLayoutEnabled = isGridVisible && isPreviewVisible;
+	const toggleLayoutEnabled = (isGridVisible || isDependencyGridVisible) && isPreviewVisible;
+	const toggleGridContainerLayoutEnabled = isGridVisible && isDependencyGridVisible;
 	const GridIcon = isGridVisible ? CheckBox : CheckBoxOutlineBlank;
+	const DependencyGridIcon = isDependencyGridVisible ? CheckBox : CheckBoxOutlineBlank;
 	const PreviewIcon = isPreviewVisible ? CheckBox : CheckBoxOutlineBlank;
 	const ToggleDirectionIcon = generatorLayout === 'horizontal' ? SwapHoriz : SwapVert;
+	const ToggleGridContainerDirectionIcon = gridContainerLayout === 'horizontal' ? SwapHoriz : SwapVert;
 
 	let gridBtnClasses = '';
 	if (isGridVisible) {
 		gridBtnClasses += ` ${styles.btnSelected}`;
+	}
+
+	let gridDepBtnClasses = '';
+	if (isDependencyGridVisible) {
+		gridDepBtnClasses += ` ${styles.btnSelected}`;
 	}
 
 	let previewBtnClasses = '';
@@ -65,11 +79,37 @@ export const PanelControls = ({
 		);
 	};
 
+	const getGridContainerToggleLayoutBtn = (): JSX.Element => {
+		if (toggleGridContainerLayoutEnabled) {
+			return (
+				<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.toggleGridContainerPanelLayout }}/>}
+					arrow
+					disableHoverListener={!toggleGridContainerLayoutEnabled}
+					disableFocusListener={!toggleGridContainerLayoutEnabled}>
+					<Button onClick={toggleGridContainerLayout} disabled={!toggleGridContainerLayoutEnabled} className={styles.toggleLayoutBtn}>
+						<ToggleGridContainerDirectionIcon />
+					</Button>
+				</Tooltip>
+			);
+		}
+
+		return (
+			<Button onClick={toggleGridContainerLayout} disabled={!toggleGridContainerLayoutEnabled} className={`${styles.toggleLayoutBtn} ${styles.toggleLayoutBtnDisabled}`}>
+				<ToggleGridContainerDirectionIcon />
+			</Button>
+		);
+	};
+
 	return (
 		<ButtonGroup aria-label="" size="small" className={`${className} ${styles.builderControls}`}>
 			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.hideShowGrid }} />} arrow>
 				<Button className={gridBtnClasses} onClick={toggleGrid} startIcon={<GridIcon fontSize="small"/>}>
 					{i18n.grid}
+				</Button>
+			</Tooltip>
+			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.hideShowDepGrid }} />} arrow>
+				<Button className={gridDepBtnClasses} onClick={toggleDependencyGrid} startIcon={<DependencyGridIcon fontSize="small"/>}>
+					{i18n.depGrid}
 				</Button>
 			</Tooltip>
 			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.hideShowPreviewPanel }} />} arrow>
@@ -78,6 +118,7 @@ export const PanelControls = ({
 				</Button>
 			</Tooltip>
 			{getToggleLayoutBtn()}
+			{getGridContainerToggleLayoutBtn()}
 			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: toSentenceCase(i18n.clearPage) }} />} arrow>
 				<Button onClick={showClearPageDialog}>
 					<Delete/>
