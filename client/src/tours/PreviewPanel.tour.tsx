@@ -175,7 +175,7 @@ const steps = [
 
 				store.dispatch(actions.refreshPreview(ids));
 
-				store.dispatch(actions.onSelectExportType('Typescript'));
+				store.dispatch(actions.onSelectExportType('SQL'));
 			}, 10);
 		}
 	},

@@ -12,6 +12,7 @@ import env from '../../../../_env';
 import C from '../../constants';
 import { GeneratorPanel } from '~types/general';
 import { DTOptionsMetadata } from '~types/dataTypes';
+import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer.component";
 
 export type DataRow = {
 	id: string;
@@ -46,9 +47,11 @@ export type StashedGeneratorState = {
 	rows: DataRows;
 	sortedRows: string[];
 	showGrid: boolean;
+	showDependencyGrid: boolean;
 	showPreview: boolean;
 	smallScreenVisiblePanel: GeneratorPanel;
 	generatorLayout: GeneratorLayout;
+	gridContainerLayout: GeneratorLayout;
 	showExportSettings: boolean;
 	exportTypeSettings: Partial<ExportTypeSettings>;
 	showGenerationSettingsPanel: boolean;
@@ -77,8 +80,8 @@ export type StashedGeneratorState = {
 };
 
 const stashProps = [
-	'exportType', 'rows', 'sortedRows', 'showGrid', 'showPreview', 'smallScreenVisiblePanel',
-	'generatorLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
+	'exportType', 'rows', 'sortedRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
+	'generatorLayout', 'gridContainerLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
 	'helpDialogSection', 'showLineNumbers', 'enableLineWrapping', 'theme', 'previewTextSize', 'dataTypePreviewData',
 	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace',
 	'currentDataSetId', 'currentDataSetName'
@@ -96,6 +99,7 @@ export type SelectedDataSetHistoryItem = {
 };
 
 export type GeneratorState = {
+
 	loadedDataTypes: {
 		[str in DataTypeFolder]: boolean;
 	};
@@ -111,9 +115,11 @@ export type GeneratorState = {
 	rows: DataRows;
 	sortedRows: string[];
 	showGrid: boolean;
+	showDependencyGrid: boolean;
 	showPreview: boolean;
 	smallScreenVisiblePanel: GeneratorPanel;
 	generatorLayout: GeneratorLayout;
+	gridContainerLayout: GridContainerLayout;
 	showExportSettings: boolean;
 	exportTypeSettings: Partial<ExportTypeSettings>;
 	showGenerationSettingsPanel: boolean;
@@ -132,6 +138,8 @@ export type GeneratorState = {
 	stripWhitespace: boolean;
 	lastLayoutWidth: number | null;
 	lastLayoutHeight: number | null;
+	lastGridContainerLayoutWidth: number | null;
+	lastGridContainerLayoutHeight: number | null;
 	numRowsToGenerate: number;
 	currentDataSet: CurrentDataSet;
 	selectedDataSetHistory: SelectedDataSetHistoryItem;
@@ -149,9 +157,11 @@ export const getInitialState = (): GeneratorState => ({
 	rows: {},
 	sortedRows: [],
 	showGrid: true,
+	showDependencyGrid: true,
 	showPreview: true,
 	smallScreenVisiblePanel: GeneratorPanel.grid,
 	generatorLayout: GeneratorLayout.horizontal,
+	gridContainerLayout: GridContainerLayout.vertical,
 	showExportSettings: false,
 	exportTypeSettings: {},
 	numPreviewRows: 5,
@@ -171,6 +181,8 @@ export const getInitialState = (): GeneratorState => ({
 	stripWhitespace: false,
 	lastLayoutWidth: null,
 	lastLayoutHeight: null,
+	lastGridContainerLayoutWidth: null,
+	lastGridContainerLayoutHeight: null,
 	currentDataSet: {
 		dataSetId: null,
 		dataSetName: '',
@@ -233,7 +245,7 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 			const initialState = getInitialState();
 			const settingsToReset = [
-				'exportType', 'showGrid', 'showPreview', 'showExportSettings', 'numPreviewRows', 'showLineNumbers',
+				'exportType', 'showGrid', 'showPreview' ,'showDependencyGrid', 'showExportSettings', 'numPreviewRows', 'showLineNumbers',
 				'enableLineWrapping', 'theme', 'previewTextSize', 'exportSettingsTab', 'numRowsToGenerate',
 				'stripWhitespace', 'currentDataSetId', 'currentDataSetName'
 			];
@@ -340,20 +352,31 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 		case actions.TOGGLE_GRID:
 			draft.showGrid = !draft.showGrid;
-			if (!draft.showPreview) {
+			if (!draft.showPreview && !draft.showDependencyGrid) {
+				draft.showPreview = true;
+			}
+			break;
+
+		case actions.TOGGLE_DEPENDENCY_GRID:
+			draft.showDependencyGrid = !draft.showDependencyGrid;
+			if (!draft.showPreview && !draft.showGrid) {
 				draft.showPreview = true;
 			}
 			break;
 
 		case actions.TOGGLE_PREVIEW:
 			draft.showPreview = !draft.showPreview;
-			if (!draft.showGrid) {
+			if (!draft.showGrid && !draft.showDependencyGrid) {
 				draft.showGrid = true;
 			}
 			break;
 
 		case actions.TOGGLE_LAYOUT:
 			draft.generatorLayout = draft.generatorLayout === GeneratorLayout.horizontal ? GeneratorLayout.vertical : GeneratorLayout.horizontal;
+			break;
+
+		case actions.TOGGLE_GRID_CONTAINER_LAYOUT:
+			draft.gridContainerLayout = draft.gridContainerLayout === GridContainerLayout.horizontal ? GridContainerLayout.vertical : GridContainerLayout.horizontal;
 			break;
 
 		case actions.TOGGLE_LINE_WRAPPING:
@@ -406,6 +429,11 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 		case actions.SET_PANEL_SIZE:
 			const setting = draft.generatorLayout === 'horizontal' ? 'lastLayoutHeight' : 'lastLayoutWidth';
 			draft[setting] = action.payload.size;
+			break;
+
+		case actions.SET_GRID_PANEL_SIZE:
+			const setting2 = draft.gridContainerLayout === 'horizontal' ? 'lastGridContainerLayoutHeight' : 'lastGridContainerLayoutWidth';
+			draft[setting2] = action.payload.size;
 			break;
 
 		case actions.CHANGE_SMALL_SCREEN_VISIBLE_PANEL:

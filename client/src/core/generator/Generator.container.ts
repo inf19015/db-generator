@@ -8,6 +8,7 @@ import { GDAction } from '~types/general';
 const mapStateToProps = (state: any): Partial<GeneratorProps> => ({
 	i18n: selectors.getCoreI18n(state),
 	isGridVisible: selectors.isGridVisible(state),
+	isDependencyGridVisible: selectors.isDependencyGridVisible(state),
 	isPreviewVisible: selectors.isPreviewVisible(state),
 	generatorLayout: selectors.getGeneratorLayout(state),
 	lastLayoutWidth: selectors.getLastLayoutWidth(state),

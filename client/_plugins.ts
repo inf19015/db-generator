@@ -86,32 +86,14 @@ export type DataTypeFolder = keyof typeof dataTypes;
 export const blacklistedDataTypeFolders = ['BitcoinAddress','OrganizationNumber','PersonalNumber','SIRET'];
 
 import CSV from './src/plugins/exportTypes/CSV/config';
-import CSharp from './src/plugins/exportTypes/CSharp/config';
-import HTML from './src/plugins/exportTypes/HTML/config';
 import JSON from './src/plugins/exportTypes/JSON/config';
-import Javascript from './src/plugins/exportTypes/Javascript/config';
-import LDIF from './src/plugins/exportTypes/LDIF/config';
-import PHP from './src/plugins/exportTypes/PHP/config';
-import Perl from './src/plugins/exportTypes/Perl/config';
-import Python from './src/plugins/exportTypes/Python/config';
-import Ruby from './src/plugins/exportTypes/Ruby/config';
 import SQL from './src/plugins/exportTypes/SQL/config';
-import Typescript from './src/plugins/exportTypes/Typescript/config';
 import XML from './src/plugins/exportTypes/XML/config';
 
 export const exportTypes = {
 	CSV,
-	CSharp,
-	HTML,
 	JSON,
-	Javascript,
-	LDIF,
-	PHP,
-	Perl,
-	Python,
-	Ruby,
 	SQL,
-	Typescript,
 	XML
 };
 

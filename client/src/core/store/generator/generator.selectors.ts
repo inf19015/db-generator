@@ -12,6 +12,9 @@ import {
 	getExportTypeTitleValidationFunction as exportTypeGetExportTypeTitleValidation
 } from '~utils/exportTypeUtils';
 import { ColumnData, GDLocale, GenerationTemplate, Store } from '~types/general';
+import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer.component";
+
+
 
 export const getLoadedDataTypes = (state: Store): any => state.generator.loadedDataTypes;
 export const getLoadedExportTypes = (state: Store): any => state.generator.loadedExportTypes;
@@ -19,9 +22,11 @@ export const getExportType = (state: Store): ExportTypeFolder => state.generator
 export const getRows = (state: Store): DataRows => state.generator.rows;
 export const getSortedRows = (state: Store): string[] => state.generator.sortedRows;
 export const isGridVisible = (state: Store): boolean => state.generator.showGrid;
+export const isDependencyGridVisible = (state: Store): boolean => state.generator.showDependencyGrid;
 export const isPreviewVisible = (state: Store): boolean => state.generator.showPreview;
 export const getSmallScreenVisiblePanel = (state: Store): GeneratorPanel => state.generator.smallScreenVisiblePanel;
 export const getGeneratorLayout = (state: Store): GeneratorLayout => state.generator.generatorLayout;
+export const getGridContainerLayout = (state: Store): GridContainerLayout => state.generator.gridContainerLayout;
 export const getNumPreviewRows = (state: Store): number => state.generator.numPreviewRows;
 export const shouldShowLineNumbers = (state: Store): boolean => state.generator.showLineNumbers;
 export const shouldEnableLineWrapping = (state: Store): boolean => state.generator.enableLineWrapping;
@@ -40,6 +45,8 @@ export const getHelpDialogSection = (state: Store): DataTypeFolder | null => sta
 export const getNumRowsToGenerate = (state: Store): number => state.generator.numRowsToGenerate;
 export const getLastLayoutWidth = (state: Store): number | null => state.generator.lastLayoutWidth;
 export const getLastLayoutHeight = (state: Store): number | null => state.generator.lastLayoutHeight;
+export const getLastGridContainerLayoutWidth = (state: Store): number | null => state.generator.lastGridContainerLayoutWidth;
+export const getLastGridContainerLayoutHeight = (state: Store): number | null => state.generator.lastGridContainerLayoutHeight;
 export const isInitialDependenciesLoaded = (state: Store): boolean => state.generator.initialDependenciesLoaded;
 export const shouldStripWhitespace = (state: Store): boolean => state.generator.stripWhitespace;
 export const getCurrentDataSetId = (state: Store): number | null => state.generator.currentDataSet.dataSetId;

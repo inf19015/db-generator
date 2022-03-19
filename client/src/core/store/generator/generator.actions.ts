@@ -159,6 +159,9 @@ export const repositionRow = (id: string, newIndex: number): GDAction => ({
 export const TOGGLE_GRID = 'TOGGLE_GRID';
 export const toggleGrid = (): GDAction => ({ type: TOGGLE_GRID });
 
+export const TOGGLE_DEPENDENCY_GRID = 'TOGGLE_DEPENDENCY_GRID';
+export const toggleDependencyGrid = (): GDAction => ({ type: TOGGLE_DEPENDENCY_GRID });
+
 export const TOGGLE_PREVIEW = 'TOGGLE_PREVIEW';
 export const togglePreview = (): GDAction => ({ type: TOGGLE_PREVIEW });
 
@@ -233,6 +236,9 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 
 export const TOGGLE_LAYOUT = 'TOGGLE_LAYOUT';
 export const toggleLayout = (): GDAction => ({ type: TOGGLE_LAYOUT });
+
+export const TOGGLE_GRID_CONTAINER_LAYOUT = 'TOGGLE_GRID_CONTAINER_LAYOUT';
+export const toggleGridContainerLayout = (): GDAction => ({ type: TOGGLE_GRID_CONTAINER_LAYOUT });
 
 export const UPDATE_NUM_PREVIEW_ROWS = 'UPDATE_NUM_PREVIEW_ROWS';
 export const updateNumPreviewRows = (numRows: number): GDAction => ({ type: UPDATE_NUM_PREVIEW_ROWS, payload: { numRows } });
@@ -356,6 +362,14 @@ export const clearPage = (addDefaultRows = true): any => (dispatch: Dispatch, ge
 export const SET_PANEL_SIZE = 'SET_PANEL_SIZE';
 export const setPanelSize = (size: number): GDAction => ({
 	type: SET_PANEL_SIZE,
+	payload: {
+		size
+	}
+});
+
+export const SET_GRID_PANEL_SIZE = 'SET_GRID_PANEL_SIZE';
+export const setGridPanelSize = (size: number): GDAction => ({
+	type: SET_GRID_PANEL_SIZE,
 	payload: {
 		size
 	}

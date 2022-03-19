@@ -12,7 +12,6 @@ export type PageProps = {
 const Page = ({ localeFileLoaded, children }: PageProps): JSX.Element => {
 	const content = localeFileLoaded ? (
 		<>
-			<Header />
 			<div className={styles.content}>
 				{children}
 			</div>

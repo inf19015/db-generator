@@ -44,17 +44,8 @@ export default {
 	},
 	"exportTypes": {
 		"CSV": "ET-CSV.generator-f087a7889f4df9de0ebb22a238c8fb8b.js",
-		"CSharp": "ET-CSharp.generator-4b6df1f0f071efc777e1cdf2c02027bd.js",
-		"HTML": "ET-HTML.generator-1f2109aec7e9cd759773fc7f28fd0966.js",
 		"JSON": "ET-JSON.generator-ae538f823c70436397059a1d05560b46.js",
-		"Javascript": "ET-Javascript.generator-83c5458f47c507470be2af21ca5ca1bd.js",
-		"LDIF": "ET-LDIF.generator-9849abbd090ddb81504c8aa23a2f0bc5.js",
-		"PHP": "ET-PHP.generator-0a19f3050652f96b21555e1752a0c4c6.js",
-		"Perl": "ET-Perl.generator-df47046d1c609b2d741f89e42cccc64b.js",
-		"Python": "ET-Python.generator-102049145ee18294f99a348a88c3ddd5.js",
-		"Ruby": "ET-Ruby.generator-ac8488a5383529eec4c26079079b6508.js",
 		"SQL": "ET-SQL.generator-e76dd3f8e9725b9504fdac02685408b5.js",
-		"Typescript": "ET-Typescript.generator-fef1536c370c937fd2ab9c3da2440814.js",
 		"XML": "ET-XML.generator-2bb617f90572cee10202bbc4ecfb56c9.js"
 	}
 };
