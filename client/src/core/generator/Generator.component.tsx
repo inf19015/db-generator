@@ -56,7 +56,7 @@ const Builder = ({
 		if (lastLayoutWidth) {
 			defaultSize = lastLayoutWidth < maxSize ? lastLayoutWidth : maxSize;
 		}else {
-			defaultSize = windowSize.width;
+			defaultSize = windowSize.width / 2;
 		}
 		gridSize.width = defaultSize;
 	} else {
@@ -65,7 +65,7 @@ const Builder = ({
 		if (lastLayoutHeight) {
 			defaultSize = lastLayoutHeight < maxSize ? lastLayoutHeight : maxSize;
 		}else {
-			defaultSize = windowSize.height;
+			defaultSize = windowSize.height / 2;
 		}
 		gridSize.height = defaultSize;
 	}
@@ -80,9 +80,9 @@ const Builder = ({
 		}
 
 		// data set history only available on desktop
-		if (showDataSetHistory) {
-			return <Preview />;
-		}
+		// if (showDataSetHistory) {
+		// 	return <Preview />;
+		// }
 
 		if (isGridSectionVisible && isPreviewVisible) {
 			return (
@@ -100,7 +100,7 @@ const Builder = ({
 			);
 		}
 		if (isGridSectionVisible) {
-			return <GridContainer />;
+			return <GridContainer parentSize = {gridSize}/>;
 		}
 		return <Preview />;
 	};
