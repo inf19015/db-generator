@@ -13,6 +13,10 @@ export const enum GridContainerLayout {
 
 export type GridContainerProps = {
 	i18n: any;
+	parentSize: {
+		height: number;
+		width: number;
+	};
 	isGridVisible: boolean;
 	isDependencyGridVisible: boolean;
 	gridContainerLayout: GridContainerLayout;
@@ -22,24 +26,22 @@ export type GridContainerProps = {
 }
 
 const Builder = ({
-	isGridVisible, isDependencyGridVisible, onResizePanels, i18n, lastLayoutHeight, lastLayoutWidth, gridContainerLayout
+	isGridVisible, isDependencyGridVisible, onResizePanels, parentSize, i18n, lastLayoutHeight, lastLayoutWidth, gridContainerLayout
 }: GridContainerProps): JSX.Element => {
 
-	const windowSize = useWindowSize();
 	const onResize = (size: number): void => onResizePanels(size);
-
 	let minSize: number;
 	let maxSize: number;
 	let defaultSize: number | string = '50%';
 	if (gridContainerLayout === GridContainerLayout.vertical) {
 		minSize = 350;
-		maxSize = windowSize.width - 350;
+		maxSize = parentSize.width - 350;
 		if (lastLayoutWidth) {
 			defaultSize = lastLayoutWidth < maxSize ? lastLayoutWidth : maxSize;
 		}
 	} else {
 		minSize = 100;
-		maxSize = (windowSize.height - (C.FOOTER_HEIGHT)) - 100;
+		maxSize = parentSize.height - 100;
 		if (lastLayoutHeight) {
 			defaultSize = lastLayoutHeight < maxSize ? lastLayoutHeight : maxSize;
 		}
@@ -71,7 +73,7 @@ const Builder = ({
 
 	return (
 		<>
-			<div style={{ height: '100%' }}>
+			<div style={{ height: '100%', width: '100%' }}>
 				<div style={{ height: '100%', position: 'relative' }}>
 					{getContent()}
 				</div>

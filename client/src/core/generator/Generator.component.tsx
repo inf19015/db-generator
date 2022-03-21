@@ -45,19 +45,29 @@ const Builder = ({
 	const isGridSectionVisible = isDependencyGridVisible || isGridVisible;
 	let minSize: number;
 	let maxSize: number;
-	let defaultSize: number | string = '50%';
+	const gridSize = {
+		height: windowSize.height,
+		width: windowSize.width
+	};
+	let defaultSize: number;
 	if (generatorLayout === GeneratorLayout.vertical) {
 		minSize = 350;
 		maxSize = windowSize.width - 350;
 		if (lastLayoutWidth) {
 			defaultSize = lastLayoutWidth < maxSize ? lastLayoutWidth : maxSize;
+		}else {
+			defaultSize = windowSize.width;
 		}
+		gridSize.width = defaultSize;
 	} else {
 		minSize = 100;
 		maxSize = (windowSize.height - (C.FOOTER_HEIGHT)) - 100;
 		if (lastLayoutHeight) {
 			defaultSize = lastLayoutHeight < maxSize ? lastLayoutHeight : maxSize;
+		}else {
+			defaultSize = windowSize.height;
 		}
+		gridSize.height = defaultSize;
 	}
 
 	const getContent = (): JSX.Element => {
@@ -84,7 +94,7 @@ const Builder = ({
 					defaultSize={defaultSize}
 					size={defaultSize}
 					onChange={onResize}>
-					<GridContainer />
+					<GridContainer parentSize = {gridSize}/>
 					<Preview />
 				</SplitPane>
 			);
