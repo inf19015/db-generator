@@ -31,6 +31,17 @@ export type DataRows = {
 	[id: string]: DataRow;
 };
 
+export type DependencyRow = {
+	id: string;
+	leftSide: string[];
+	rightSide: string[];
+	isMvd: boolean;
+};
+
+export type DependencyRows = {
+	[id: string]: DependencyRow;
+};
+
 export type PreviewData = {
 	[id: string]: any;
 };
@@ -45,7 +56,9 @@ export type ExportTypeSettings = {
 export type StashedGeneratorState = {
 	exportType: ExportTypeFolder;
 	rows: DataRows;
+	dependencyRows: DependencyRows;
 	sortedRows: string[];
+	sortedDependencyRows: string[];
 	showGrid: boolean;
 	showDependencyGrid: boolean;
 	showPreview: boolean;
@@ -80,7 +93,7 @@ export type StashedGeneratorState = {
 };
 
 const stashProps = [
-	'exportType', 'rows', 'sortedRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
+	'exportType', 'rows', 'dependencyRows', 'sortedRows', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
 	'generatorLayout', 'gridContainerLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
 	'helpDialogSection', 'showLineNumbers', 'enableLineWrapping', 'theme', 'previewTextSize', 'dataTypePreviewData',
 	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace',
@@ -100,6 +113,7 @@ export type SelectedDataSetHistoryItem = {
 
 export type GeneratorState = {
 
+
 	loadedDataTypes: {
 		[str in DataTypeFolder]: boolean;
 	};
@@ -113,7 +127,9 @@ export type GeneratorState = {
 	initialDependenciesLoaded: boolean;
 	exportType: ExportTypeFolder;
 	rows: DataRows;
+	dependencyRows: DependencyRows;
 	sortedRows: string[];
+	sortedDependencyRows: string[];
 	showGrid: boolean;
 	showDependencyGrid: boolean;
 	showPreview: boolean;
@@ -155,7 +171,9 @@ export const getInitialState = (): GeneratorState => ({
 	initialDependenciesLoaded: false,
 	exportType: env.defaultExportType,
 	rows: {},
+	dependencyRows: {},
 	sortedRows: [],
+	sortedDependencyRows: [],
 	showGrid: true,
 	showDependencyGrid: true,
 	showPreview: true,
@@ -293,6 +311,23 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			];
 			break;
 		}
+		case actions.ADD_DEP_ROWS: {
+			const newDepRowIDs: string[] = [];
+			for (let i = 0; i < action.payload.numRows; i++) {
+				const rowId = nanoid();
+				draft.dependencyRows[rowId] = {
+					id: rowId,
+					leftSide: [],
+					rightSide: [],
+					isMvd: false
+				};
+				newDepRowIDs.push(rowId);}
+			draft.sortedDependencyRows = [
+				...draft.sortedDependencyRows,
+				...newDepRowIDs
+			];
+			break;
+		}
 
 		case actions.REMOVE_ROW: {
 			const trimmedRowIds = draft.sortedRows.filter((i) => i !== action.payload.id);
@@ -302,6 +337,34 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			});
 			draft.rows = updatedRows;
 			draft.sortedRows = trimmedRowIds;
+
+			break;
+		}
+
+		case actions.REMOVE_DEP_ROW: {
+			const trimmedDepRowIds = draft.sortedDependencyRows.filter((i) => i !== action.payload.id);
+			const updatedRows: DependencyRows = {};
+			trimmedDepRowIds.forEach((id) => {
+				updatedRows[id] = draft.dependencyRows[id];
+			});
+			draft.dependencyRows = updatedRows;
+			draft.sortedDependencyRows = trimmedDepRowIds;
+			break;
+		}
+
+
+		case actions.SELECT_DEP_LEFT_SIDE: {
+			console.log(action.payload);
+			draft.dependencyRows[action.payload.id].leftSide = action.payload.selected ?? [];
+			break;
+		}
+		case actions.SELECT_DEP_RIGHT_SIDE: {
+			draft.dependencyRows[action.payload.id].rightSide = action.payload.selected ?? [];
+			break;
+		}
+
+		case actions.TOGGLE_DEP_MVD: {
+			draft.dependencyRows[action.payload.id].isMvd = !draft.dependencyRows[action.payload.id].isMvd;
 			break;
 		}
 
@@ -348,6 +411,12 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			const newArray = draft.sortedRows.filter((i) => i !== action.payload.id);
 			newArray.splice(action.payload.newIndex, 0, action.payload.id);
 			draft.sortedRows = newArray;
+			break;
+
+		case actions.REPOSITION_DEP_ROW:
+			const newDepArray = draft.sortedDependencyRows.filter((i) => i !== action.payload.id);
+			newDepArray.splice(action.payload.newIndex, 0, action.payload.id);
+			draft.sortedDependencyRows = newDepArray;
 			break;
 
 		case actions.TOGGLE_GRID:

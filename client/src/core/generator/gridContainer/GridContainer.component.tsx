@@ -3,7 +3,7 @@ import { useWindowSize } from 'react-hooks-window-size';
 import SplitPane from 'react-split-pane';
 import Grid from '../grid/Grid.container';
 import './GridContainer.scss';
-import DependencyGrid from "~core/generator/dependency/DependencyGrid.container";
+import DependencyGrid from "~core/generator/dependencyGrid/DependencyGrid.container";
 import C from "~core/constants";
 
 export const enum GridContainerLayout {

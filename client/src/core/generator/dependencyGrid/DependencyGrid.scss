@@ -83,14 +83,13 @@ div.orderCol {
 	}
 }
 
-.titleCol {
+.rightDepSideCol {
 	flex: 2;
-	input {
-		width: 100%;
-	}
+	display: flex;
+	align-items: center;
 }
 
-.dataTypeCol {
+.leftDepSideCol {
 	flex: 2;
 	display: flex;
 	align-items: center;
@@ -111,12 +110,12 @@ div.orderCol {
 	}
 }
 
-.examplesCol {
-	flex: 2;
+.depMvdCol {
+	flex: 1;
 }
 
-.optionsCol {
-	flex: 3;
+div.depMvdCol {
+	flex: 0 0 30px;
 }
 
 div.deleteCol, div.settingsIconCol {
@@ -217,4 +216,20 @@ div.settingsIconCol {
 	flex: 1;
 	height: 100%;
 	background-color: #f2f2f2;
+}
+
+
+.btnSelected {
+	svg {
+		fill: #aaaaaa;
+	}
+}
+
+.toggleMvdBtn {
+
+	button {
+		height: 32px;
+		width: 40px;
+		min-width: inherit;
+	}
 }

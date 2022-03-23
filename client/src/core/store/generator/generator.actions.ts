@@ -20,6 +20,8 @@ import { getUnique } from '~utils/arrayUtils';
 import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 
+
+
 export const ADD_ROWS = 'ADD_ROWS';
 export const addRows = (numRows: number): GDAction => ({
 	type: ADD_ROWS,
@@ -27,9 +29,36 @@ export const addRows = (numRows: number): GDAction => ({
 		numRows
 	}
 });
+export const ADD_DEP_ROWS = 'ADD_DEP_ROWS';
+export const addDepRows = (numRows: number): GDAction => ({
+	type: ADD_DEP_ROWS,
+	payload: {
+		numRows
+	}
+});
 
 export const REMOVE_ROW = 'REMOVE_ROW';
-export const removeRow = (id: string): GDAction => ({ type: REMOVE_ROW, payload: { id } });
+export const removeRow = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencyRows = selectors.getDependencyRows(state);
+	dispatch({ type: REMOVE_ROW, payload: { id } });
+	for(const depRowId in dependencyRows) {
+		const row = dependencyRows[depRowId];
+		let selected = row.leftSide.filter((rowId) => rowId !== id);
+		if(selected !== row.leftSide){
+			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: depRowId, selected: selected } });
+		}
+		selected = row.rightSide.filter((rowId) => rowId !== id);
+		if(selected !== row.rightSide){
+			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: depRowId, selected: selected } });
+		}
+
+	}
+};
+
+export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
+export const removeDepRow = (id: string): GDAction => ({ type: REMOVE_DEP_ROW, payload: { id } });
+
 
 export const CHANGE_TITLE = 'CHANGE_TITLE';
 export const onChangeTitle = (id: string, value: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -55,6 +84,16 @@ export const SELECT_DATA_TYPE = 'SELECT_DATA_TYPE';
 export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string): any => (
 	(dispatch: any, getState: any): any => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId })
 );
+
+export const SELECT_DEP_LEFT_SIDE = 'SELECT_DEP_LEFT_SIDE';
+export const onSelectDepLeftSide = (selected: string[], dependencyId: string): GDAction => ({ type: SELECT_DEP_LEFT_SIDE, payload: { id: dependencyId, selected: selected } });
+
+
+export const SELECT_DEP_RIGHT_SIDE = 'SELECT_DEP_RIGHT_SIDE';
+export const onSelectDepRightsSide = (selected: string[], dependencyId: string): GDAction => ({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: dependencyId, selected: selected } });
+
+export const TOGGLE_DEP_MVD = 'TOGGLE_DEP_MVD';
+export const toggleDepMvd = (dependencyId: string): GDAction => ({ type: TOGGLE_DEP_MVD, payload: { id: dependencyId } } );
 
 export type LoadDataTypeBundleOptions = {
 	gridRowId?: string;
@@ -151,6 +190,14 @@ export const configureExportType = (data: any): GDAction => ({
 export const REPOSITION_ROW = 'REPOSITION_ROW';
 export const repositionRow = (id: string, newIndex: number): GDAction => ({
 	type: REPOSITION_ROW,
+	payload: {
+		id, newIndex
+	}
+});
+
+export const REPOSITION_DEP_ROW = 'REPOSITION_DEP_ROW';
+export const repositionDepRow = (id: string, newIndex: number): GDAction => ({
+	type: REPOSITION_DEP_ROW,
 	payload: {
 		id, newIndex
 	}

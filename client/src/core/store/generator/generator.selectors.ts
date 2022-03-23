@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { GeneratorLayout } from '../../generator/Generator.component';
-import { CurrentDataSet, DataRow, DataRows } from './generator.reducer';
+import { CurrentDataSet, DataRow, DataRows, DependencyRows } from './generator.reducer';
 import { GeneratorPanel } from '~types/general';
 import { DataTypeFolder, ExportTypeFolder } from '../../../../_plugins';
 import * as mainSelectors from '../main/main.selectors';
@@ -20,7 +20,9 @@ export const getLoadedDataTypes = (state: Store): any => state.generator.loadedD
 export const getLoadedExportTypes = (state: Store): any => state.generator.loadedExportTypes;
 export const getExportType = (state: Store): ExportTypeFolder => state.generator.exportType;
 export const getRows = (state: Store): DataRows => state.generator.rows;
+export const getDependencyRows = (state: Store): DependencyRows => state.generator.dependencyRows;
 export const getSortedRows = (state: Store): string[] => state.generator.sortedRows;
+export const getSorteDependencyRows = (state: Store): string[] => state.generator.sortedDependencyRows;
 export const isGridVisible = (state: Store): boolean => state.generator.showGrid;
 export const isDependencyGridVisible = (state: Store): boolean => state.generator.showDependencyGrid;
 export const isPreviewVisible = (state: Store): boolean => state.generator.showPreview;
@@ -55,6 +57,8 @@ export const hasBulkActionPending = (state: Store): boolean => state.generator.b
 export const isCountryNamesLoading = (state: Store): boolean => state.generator.isCountryNamesLoading;
 export const isCountryNamesLoaded = (state: Store): boolean => state.generator.isCountryNamesLoaded;
 
+
+
 export const getNumRows = createSelector(
 	getSortedRows,
 	(rows) => rows.length
@@ -64,6 +68,11 @@ export const getSortedRowsArray = createSelector(
 	getRows,
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
+);
+
+export const getRowsAsOptions = createSelector(
+	getSortedRowsArray,
+	(rows) => rows.map((row, i) => ({ value: row.id, label: `(${i+1}) ${row.title}` }))
 );
 
 export const getSortedRowsArrayWithIds = createSelector(
@@ -138,6 +147,12 @@ export const getPreviewRows = createSelector(
 		}
 		return formattedData;
 	}
+);
+
+export const getSortedDependencyRowsArray = createSelector(
+	getDependencyRows,
+	getSorteDependencyRows,
+	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
 
 type ProcessOrders = {
