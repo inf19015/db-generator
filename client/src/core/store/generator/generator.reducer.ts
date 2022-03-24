@@ -17,7 +17,6 @@ import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer
 export type DataRow = {
 	id: string;
 	title: string;
-
 	// a title field can only contain a single error at a time. If it's empty, the UI will automatically show the error.
 	// otherwise it's up to the current Export Type to provide a validateTitleField() method that returns the appropriate
 	// (single) error
@@ -25,6 +24,16 @@ export type DataRow = {
 	dataType: DataTypeFolder | null;
 	data: any;
 	metadata?: DTOptionsMetadata;
+};
+
+export type Table = {
+	id: string;
+	title: string;
+	sortedRows: string[];
+};
+
+export type Tables = {
+	[id: string]: Table;
 };
 
 export type DataRows = {
@@ -57,7 +66,9 @@ export type StashedGeneratorState = {
 	exportType: ExportTypeFolder;
 	rows: DataRows;
 	dependencyRows: DependencyRows;
-	sortedRows: string[];
+	tables: Tables;
+	selectedTableTab: number;
+	sortedTables: string[];
 	sortedDependencyRows: string[];
 	showGrid: boolean;
 	showDependencyGrid: boolean;
@@ -93,7 +104,7 @@ export type StashedGeneratorState = {
 };
 
 const stashProps = [
-	'exportType', 'rows', 'dependencyRows', 'sortedRows', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
+	'exportType', 'rows', 'dependencyRows', 'sortedRows', 'tables', 'sortedTables', 'selectedTableTab', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
 	'generatorLayout', 'gridContainerLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
 	'helpDialogSection', 'showLineNumbers', 'enableLineWrapping', 'theme', 'previewTextSize', 'dataTypePreviewData',
 	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace',
@@ -128,7 +139,9 @@ export type GeneratorState = {
 	exportType: ExportTypeFolder;
 	rows: DataRows;
 	dependencyRows: DependencyRows;
-	sortedRows: string[];
+	tables: Tables;
+	selectedTableTab: number;
+	sortedTables: string[];
 	sortedDependencyRows: string[];
 	showGrid: boolean;
 	showDependencyGrid: boolean;
@@ -172,7 +185,9 @@ export const getInitialState = (): GeneratorState => ({
 	exportType: env.defaultExportType,
 	rows: {},
 	dependencyRows: {},
-	sortedRows: [],
+	tables: {},
+	sortedTables: [],
+	selectedTableTab: 0,
 	sortedDependencyRows: [],
 	showGrid: true,
 	showDependencyGrid: true,
@@ -246,7 +261,6 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 		case actions.CLEAR_GRID:
 			draft.rows = {};
-			draft.sortedRows = [];
 			draft.dataTypePreviewData = {};
 			draft.showClearPageDialog = false;
 			draft.currentDataSet = {
@@ -258,12 +272,16 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 		case actions.RESET_GENERATOR: {
 			draft.rows = {};
-			draft.sortedRows = [];
+			draft.dependencyRows = {};
+			draft.sortedDependencyRows = [];
+			draft.sortedTables = [];
+			draft.tables = {};
 			draft.showClearPageDialog = false;
 
 			const initialState = getInitialState();
 			const settingsToReset = [
-				'exportType', 'showGrid', 'showPreview' ,'showDependencyGrid', 'showExportSettings', 'numPreviewRows', 'showLineNumbers',
+				'exportType', 'showGrid', 'showPreview' ,'showDependencyGrid', 'showExportSettings', 'numPreviewRows', 'showLineNumbers', 'rows',
+				'sortedRows', 'dependencyRows', 'sortedDependencyRows', 'sortedTables', 'tables', 'selectedTableTab',
 				'enableLineWrapping', 'theme', 'previewTextSize', 'exportSettingsTab', 'numRowsToGenerate',
 				'stripWhitespace', 'currentDataSetId', 'currentDataSetName'
 			];
@@ -292,8 +310,28 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			}
 			break;
 
+		case actions.SELECT_TABLE_TAB: {
+			draft.selectedTableTab = action.payload.value;
+			break;
+		}
+
+		case actions.ADD_TABLE: {
+			const tableId = nanoid();
+			draft.tables[tableId] = {
+				id: tableId,
+				title: 'Table',
+				sortedRows: [],
+			};
+			draft.sortedTables = [
+				...draft.sortedTables,
+				tableId
+			];
+			break;
+		}
+
 		case actions.ADD_ROWS: {
 			const newRowIDs: string[] = [];
+			const tableId = action.payload.tableId;
 			for (let i = 0; i < action.payload.numRows; i++) {
 				const rowId = nanoid();
 				draft.rows[rowId] = {
@@ -305,12 +343,13 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 				};
 				newRowIDs.push(rowId);
 			}
-			draft.sortedRows = [
-				...draft.sortedRows,
+			draft.tables[tableId].sortedRows = [
+				...draft.tables[tableId].sortedRows,
 				...newRowIDs
 			];
 			break;
 		}
+
 		case actions.ADD_DEP_ROWS: {
 			const newDepRowIDs: string[] = [];
 			for (let i = 0; i < action.payload.numRows; i++) {
@@ -329,15 +368,29 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			break;
 		}
 
+		case actions.REMOVE_TABLE: {
+			const trimmedTableIds = draft.sortedTables.filter((i) => i !== action.payload.id);
+			const updatedTables: Tables = {};
+			trimmedTableIds.forEach((id) => {
+				updatedTables[id] = draft.tables[id];
+			});
+			draft.tables = updatedTables;
+			draft.sortedTables = trimmedTableIds;
+			break;
+		}
+
 		case actions.REMOVE_ROW: {
-			const trimmedRowIds = draft.sortedRows.filter((i) => i !== action.payload.id);
+			const tables = draft.sortedTables.map((id)=>draft.tables[id]);
+			const table = tables.find((t) => t.sortedRows.some((rowId) => rowId === action.payload.id));
+			// @ts-ignore
+			const trimmedRowIds = table.sortedRows.filter((id) => id !== action.payload.rowId);
 			const updatedRows: DataRows = {};
 			trimmedRowIds.forEach((id) => {
 				updatedRows[id] = draft.rows[id];
 			});
 			draft.rows = updatedRows;
-			draft.sortedRows = trimmedRowIds;
-
+			// @ts-ignore
+			table.sortedRows = trimmedRowIds;
 			break;
 		}
 
@@ -352,9 +405,12 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			break;
 		}
 
+		case actions.CHANGE_TABLE_TITLE: {
+			draft.tables[action.payload.id].title = action.payload.value;
+			break;
+		}
 
 		case actions.SELECT_DEP_LEFT_SIDE: {
-			console.log(action.payload);
 			draft.dependencyRows[action.payload.id].leftSide = action.payload.selected ?? [];
 			break;
 		}
@@ -408,9 +464,12 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			break;
 
 		case actions.REPOSITION_ROW:
-			const newArray = draft.sortedRows.filter((i) => i !== action.payload.id);
-			newArray.splice(action.payload.newIndex, 0, action.payload.id);
-			draft.sortedRows = newArray;
+			const tables = draft.sortedTables.map((id)=>draft.tables[id]);
+			const oldTable = tables.find((t) => t.sortedRows.some((rowId) => rowId === action.payload.id));
+			const newTable = draft.tables[action.payload.tableId];
+			// @ts-ignore
+			oldTable.sortedRows = oldTable.sortedRows.filter((i) => i !== action.payload.id);
+			newTable.sortedRows.splice(action.payload.newIndex, 0, action.payload.id);
 			break;
 
 		case actions.REPOSITION_DEP_ROW:
@@ -542,7 +601,6 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			draft.exportType = exportType;
 			draft.exportTypeSettings[exportType as ExportTypeFolder] = exportTypeSettings;
 			draft.rows = rows;
-			draft.sortedRows = sortedRows;
 			draft.currentDataSet = {
 				dataSetId,
 				dataSetName,

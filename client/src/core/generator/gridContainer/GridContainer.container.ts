@@ -7,7 +7,7 @@ import { GDAction } from '~types/general';
 
 const mapStateToProps = (state: any, ownProps: any): Partial<GridContainerProps> => ({
 	i18n: selectors.getCoreI18n(state),
-	isGridVisible: selectors.isGridVisible(state),
+	isTablesVisible: selectors.isGridVisible(state),
 	gridContainerLayout: selectors.getGridContainerLayout(state),
 	lastLayoutWidth: selectors.getLastGridContainerLayoutWidth(state),
 	lastLayoutHeight: selectors.getLastGridContainerLayoutHeight(state),

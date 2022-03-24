@@ -4,6 +4,7 @@ import * as selectors from '../generator.selectors';
 import generatorReducer from '../generator.reducer';
 import mainReducer from '../../main/main.reducer';
 import { GeneratorLayout } from '~core/generator/Generator.component';
+import { nanoid } from "nanoid";
 
 describe('generator section', () => {
 	let store: any;
@@ -97,12 +98,12 @@ describe('grid rows', () => {
 
 	it('adds rows, well, adds rows', () => {
 		expect(selectors.getNumRows(store.getState())).toEqual(0);
-		store.dispatch(actions.addRows(10));
+		store.dispatch(actions.addRows(10, nanoid()));
 		expect(selectors.getNumRows(store.getState())).toEqual(10);
 	});
 
 	it('added rows get listed as sortable', () => {
-		store.dispatch(actions.addRows(5));
+		store.dispatch(actions.addRows(5, nanoid()));
 		const rows = selectors.getRows(store.getState());
 		const rowKeys = Object.keys(rows);
 		expect(rowKeys.length).toEqual(5);
@@ -110,8 +111,8 @@ describe('grid rows', () => {
 	});
 
 	it('added second batch of rows appends to end', () => {
-		store.dispatch(actions.addRows(5));
-		store.dispatch(actions.addRows(5));
+		store.dispatch(actions.addRows(5, nanoid()));
+		store.dispatch(actions.addRows(5, nanoid()));
 
 		const rows = selectors.getRows(store.getState());
 		const rowKeys = Object.keys(rows);
@@ -120,7 +121,7 @@ describe('grid rows', () => {
 	});
 
 	it('removing a row removes it from both rows and sorted rows', () => {
-		store.dispatch(actions.addRows(5));
+		store.dispatch(actions.addRows(5, nanoid()));
 		const rows = selectors.getRows(store.getState());
 		const rowKeys = Object.keys(rows);
 		store.dispatch(actions.removeRow(rowKeys[0]));
@@ -203,7 +204,7 @@ describe('preview panel settings', () => {
 
 	it('adds rows, well, adds rows', () => {
 		expect(selectors.getNumRows(store.getState())).toEqual(0);
-		store.dispatch(actions.addRows(10));
+		store.dispatch(actions.addRows(10, nanoid()));
 		expect(selectors.getNumRows(store.getState())).toEqual(10);
 	});
 });

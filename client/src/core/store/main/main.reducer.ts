@@ -24,8 +24,6 @@ export type MainState = {
 
 	// not 100% sure why this is stored in state - but possibly just to allow components to re-render when it changes
 	currentPage: string;
-	tourIntroDialogVisible: boolean;
-	tourBundleLoaded: boolean;
 	accountsCurrentPage: number;
 	accountsSortCol: string;
 	accountsSortDir: ColSortDir;
@@ -49,8 +47,6 @@ export const initialState: MainState = {
 	isRefreshingToken: false,
 	dialogProcessing: false,
 	currentPage: '',
-	tourIntroDialogVisible: false,
-	tourBundleLoaded: false,
 	accountsCurrentPage: 1,
 	accountsSortCol: 'lastName',
 	accountsSortDir: ColSortDir.asc,
@@ -139,18 +135,6 @@ export const reducer = produce((draft: MainState, action: AnyAction) => {
 
 		case actions.PAGE_CHANGE:
 			draft.currentPage = action.payload.page;
-			break;
-
-		case actions.SHOW_TOUR_INTRO_DIALOG:
-			draft.tourIntroDialogVisible = true;
-			break;
-
-		case actions.HIDE_TOUR_INTRO_DIALOG:
-			draft.tourIntroDialogVisible = false;
-			break;
-
-		case actions.TOUR_BUNDLE_LOADED:
-			draft.tourBundleLoaded = true;
 			break;
 
 		case actions.CLEAR_DEFAULT_EMAIL:

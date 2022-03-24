@@ -38,7 +38,7 @@ export type GridRowProps = {
 	onChangeTitle: (id: string, value: string) => void;
 	onConfigureDataType: (id: string, data: any, metadata?: DTOptionsMetadata) => void;
 	onSelectDataType: (dataType: DataTypeFolder, id: string) => void;
-	onRemove: (id: string) => void;
+	onRemove: (rowId: string) => void;
 	dtCustomProps: { [propName: string]: any };
 	dtDropdownOptions: any;
 	gridPanelDimensions: {

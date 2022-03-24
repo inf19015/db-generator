@@ -13,8 +13,9 @@ import GridRow from './GridRow.container';
 import C from '../../constants';
 
 export type GridProps = {
-	rows: DataRow[];
-	onAddRows: (numRows: number) => void;
+	getRows: (id: string) => DataRow[];
+	tableId: string;
+	onAddRows: (numRows: number, tableId: string) => void;
 	onSort: (id: string, newIndex: number) => void;
 	toggleGrid: () => void;
 	i18n: any;
@@ -25,12 +26,12 @@ export type GridProps = {
 
 
 const Grid = ({
-	rows, onAddRows, onSort, i18n, columnTitle, toggleGrid, changeSmallScreenVisiblePanel,
+	getRows, onAddRows, onSort, i18n, columnTitle, toggleGrid, changeSmallScreenVisiblePanel, tableId,
 	showHelpDialog
 }: GridProps): JSX.Element => {
 	const [numRows, setNumRows] = React.useState(1);
 	const [dimensions, setDimensions] = React.useState<any>({ height: 0, width: 0 });
-
+	const rows = getRows(tableId);
 	const windowSize = useWindowSize();
 
 	let gridSizeClass = '';
@@ -97,28 +98,27 @@ const Grid = ({
 						</div>
 						<div className={`${styles.scrollableGridRows} tour-scrollableGridRows`}>
 							<div className={`${styles.gridRowsWrapper} tour-gridRows`}>
-								<DragDropContext onDragEnd={({ draggableId, destination }: any): any => onSort(draggableId, destination.index)}>
-									<Droppable droppableId="droppable">
-										{(provided: any): any => (
-											<div
-												className={styles.grid}
-												{...provided.droppableProps}
-												ref={provided.innerRef}
-											>
-												{rows.map((row, index) => (
-													<GridRow
-														row={row}
-														key={row.id}
-														index={index}
-														gridPanelDimensions={memoizedDimensions}
-														showHelpDialog={showHelpDialog}
-													/>
-												))}
-												{provided.placeholder}
-											</div>
-										)}
-									</Droppable>
-								</DragDropContext>
+								
+								<Droppable droppableId={"droppable-table-"+tableId}>
+									{(provided: any): any => (
+										<div
+											className={styles.grid}
+											{...provided.droppableProps}
+											ref={provided.innerRef}
+										>
+											{rows.map((row, index) => (
+												<GridRow
+													row={row}
+													key={row.id}
+													index={index}
+													gridPanelDimensions={memoizedDimensions}
+													showHelpDialog={showHelpDialog}
+												/>
+											))}
+											{provided.placeholder}
+										</div>
+									)}
+								</Droppable>
 
 								<form onSubmit={(e): any => e.preventDefault()} className={`${styles.addRows} tour-addRows`}>
 									<span>{i18n.add}</span>
@@ -129,7 +129,7 @@ const Grid = ({
 										   max={1000}
 										   step={1}
 									/>
-									<PrimaryButton size="small" onClick={(): void => onAddRows(numRows)}>
+									<PrimaryButton size="small" onClick={(): void => onAddRows(numRows, tableId)}>
 										{addRowsBtnLabel}
 									</PrimaryButton>
 								</form>

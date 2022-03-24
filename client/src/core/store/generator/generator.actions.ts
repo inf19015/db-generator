@@ -19,14 +19,16 @@ import { DataSetListItem } from '~types/dataSets';
 import { getUnique } from '~utils/arrayUtils';
 import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
+import { nanoid } from 'nanoid';
 
 
 
 export const ADD_ROWS = 'ADD_ROWS';
-export const addRows = (numRows: number): GDAction => ({
+export const addRows = (numRows: number, tableId?: string): GDAction => ({
 	type: ADD_ROWS,
 	payload: {
-		numRows
+		numRows,
+		tableId
 	}
 });
 export const ADD_DEP_ROWS = 'ADD_DEP_ROWS';
@@ -37,18 +39,38 @@ export const addDepRows = (numRows: number): GDAction => ({
 	}
 });
 
+export const ADD_TABLE = 'ADD_TABLE';
+export const addTable = (): GDAction => ({ type: ADD_TABLE });
+
+export const REMOVE_TABLE = 'REMOVE_TABLE';
+export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const rows = selectors.getRowsOfTableArray(state, id);
+	rows.forEach((row) => {
+		dispatch(removeRow(row.id));
+	});
+	const tableIds = selectors.getSortedTables(state);
+	const tabIndex = tableIds.length -1;
+	const lastTable = tableIds[tabIndex];
+
+	dispatch({ type: REMOVE_TABLE, payload: { id } });
+	if(lastTable === id){
+		dispatch({ type: SELECT_TABLE_TAB, payload: { value: tabIndex-1 } });
+	}
+};
+
 export const REMOVE_ROW = 'REMOVE_ROW';
-export const removeRow = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const dependencyRows = selectors.getDependencyRows(state);
-	dispatch({ type: REMOVE_ROW, payload: { id } });
+	dispatch({ type: REMOVE_ROW, payload: { rowId } });
 	for(const depRowId in dependencyRows) {
 		const row = dependencyRows[depRowId];
-		let selected = row.leftSide.filter((rowId) => rowId !== id);
+		let selected = row.leftSide.filter((id) => rowId !== id);
 		if(selected !== row.leftSide){
 			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: depRowId, selected: selected } });
 		}
-		selected = row.rightSide.filter((rowId) => rowId !== id);
+		selected = row.rightSide.filter((id) => rowId !== id);
 		if(selected !== row.rightSide){
 			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: depRowId, selected: selected } });
 		}
@@ -59,6 +81,11 @@ export const removeRow = (id: string): any => async (dispatch: Dispatch, getStat
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
 export const removeDepRow = (id: string): GDAction => ({ type: REMOVE_DEP_ROW, payload: { id } });
 
+export const CHANGE_TABLE_TITLE = 'CHANGE_TABLE_TITLE';
+export const onChangeTableTitle = (id: string, value: string): GDAction => ({ type: CHANGE_TABLE_TITLE, payload: { id, value } });
+
+export const SELECT_TABLE_TAB = 'SELECT_TABLE_TAB';
+export const onSelectTableTab = (value: number): GDAction => ({ type: SELECT_TABLE_TAB, payload: { value } });
 
 export const CHANGE_TITLE = 'CHANGE_TITLE';
 export const onChangeTitle = (id: string, value: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -188,10 +215,10 @@ export const configureExportType = (data: any): GDAction => ({
 });
 
 export const REPOSITION_ROW = 'REPOSITION_ROW';
-export const repositionRow = (id: string, newIndex: number): GDAction => ({
+export const repositionRow = (id: string, newIndex: number, tableId: string): GDAction => ({
 	type: REPOSITION_ROW,
 	payload: {
-		id, newIndex
+		id, newIndex, tableId
 	}
 });
 
@@ -401,8 +428,10 @@ export const clearPage = (addDefaultRows = true): any => (dispatch: Dispatch, ge
 		}
 	});
 
+	const initTableId = nanoid();
+	dispatch({ type: ADD_TABLE, payload: { id: initTableId, title: 'Table' } });
 	if (addDefaultRows) {
-		dispatch(addRows(5));
+		dispatch(addRows(5, initTableId));
 	}
 };
 
@@ -429,8 +458,8 @@ export const SET_INITIAL_DEPENDENCIES_LOADED = 'SET_INITIAL_DEPENDENCIES_LOADED'
 export const setInitialDependenciesLoaded = (): GDAction => ({ type: SET_INITIAL_DEPENDENCIES_LOADED });
 
 export const SET_BULK_ACTION = 'SET_BULK_ACTION';
-export const LOAD_DATA_SET = 'LOAD_DATA_SET';
 
+export const LOAD_DATA_SET = 'LOAD_DATA_SET';
 export const loadDataSet = (dataSet: DataSetListItem, showToast = true): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const i18n = getStrings();
 	const { exportType, exportTypeSettings, rows, sortedRows } = JSON.parse(dataSet.content);

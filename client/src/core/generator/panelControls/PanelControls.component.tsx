@@ -104,7 +104,7 @@ export const PanelControls = ({
 		<ButtonGroup aria-label="" size="small" className={`${className} ${styles.builderControls}`}>
 			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.hideShowGrid }} />} arrow>
 				<Button className={gridBtnClasses} onClick={toggleGrid} startIcon={<GridIcon fontSize="small"/>}>
-					{i18n.grid}
+					{i18n.tables}
 				</Button>
 			</Tooltip>
 			<Tooltip title={<span dangerouslySetInnerHTML={{ __html: i18n.hideShowDepGrid }} />} arrow>

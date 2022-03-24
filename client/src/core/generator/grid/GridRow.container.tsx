@@ -44,7 +44,7 @@ const mapStateToProps = (state: Store, ownProps: OwnProps): Partial<GridRowProps
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<GridRowProps> => ({
-	onRemove: (id: string): any => dispatch(actions.removeRow(id)),
+	onRemove: (rowId: string): any => dispatch(actions.removeRow(rowId)),
 	onChangeTitle: (id: string, value: string): any => dispatch(actions.onChangeTitle(id, value)),
 	onConfigureDataType: (id: string, data: any, metadata?: DTOptionsMetadata): any => dispatch(actions.onConfigureDataType(id, data, metadata)),
 	onSelectDataType: (dataType: DataTypeFolder, id: string): any => dispatch(actions.onSelectDataType(dataType, id)),

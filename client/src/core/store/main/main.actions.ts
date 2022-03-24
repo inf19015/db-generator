@@ -13,7 +13,7 @@ import { onChangeTab, showSaveDataSetDialog } from '~store/account/account.actio
 import { addToast, setTourComponents } from '~utils/generalUtils';
 import { getGeneratorRoute, updateBodyClass } from '~utils/routeUtils';
 import * as actions from '~store/generator/generator.actions';
-import { CLEAR_GRID } from '~store/generator/generator.actions';
+import { ADD_TABLE, CLEAR_GRID } from '~store/generator/generator.actions';
 import C from '~core/constants';
 import { SaveDataDialogType } from '~store/account/account.reducer';
 import { localeFileMap } from '../../../../_localeFileMap';
@@ -247,6 +247,7 @@ export const logout = (): any => async (dispatch: Dispatch, getState: any): Prom
 
 	dispatch({ type: LOGOUT });
 	dispatch({ type: CLEAR_GRID });
+	dispatch({ type: ADD_TABLE });
 	dispatch(actions.addRows(C.NUM_DEFAULT_ROWS));
 
 	addToast({
@@ -315,47 +316,6 @@ export const updateRefreshToken = () => async (dispatch: Dispatch): Promise<any>
 
 export const ONLOAD_AUTH_DETERMINED = 'ONLOAD_AUTH_DETERMINED';
 export const setOnloadAuthDetermined = (): GDAction => ({ type: ONLOAD_AUTH_DETERMINED });
-
-export const SHOW_TOUR_INTRO_DIALOG = 'SHOW_TOUR_INTRO_DIALOG';
-export const showTourIntroDialog = (history?: any) => (dispatch: Dispatch, getState: any): any => {
-	const state = getState();
-	const locale = getLocale(state);
-	const generatorRoute = getGeneratorRoute(locale);
-
-	// the tour is specific to the generator page, so always redirect there when showing/hiding it
-	if (history && getCurrentPage(state) !== generatorRoute) {
-		history.push(generatorRoute);
-	}
-
-	dispatch({ type: SHOW_TOUR_INTRO_DIALOG });
-};
-
-export const HIDE_TOUR_INTRO_DIALOG = 'HIDE_TOUR_INTRO_DIALOG';
-export const hideTourIntroDialog = (): GDAction => ({ type: HIDE_TOUR_INTRO_DIALOG });
-
-export const TOUR_BUNDLE_LOADED = 'TOUR_BUNDLE_LOADED';
-export const loadTourBundle = (): any => (dispatch: Dispatch): void => {
-	const i18n = getStrings();
-
-	// TODO check hashing of bundle here
-	import(
-		/* webpackChunkName: "tour" */
-		/* webpackMode: "lazy" */
-		`../../../tours`
-	)
-		.then((resp) => {
-			setTourComponents(resp.default);
-			dispatch({ type: TOUR_BUNDLE_LOADED });
-		})
-		.catch(() => {
-			dispatch(hideTourIntroDialog());
-
-			addToast({
-				type: 'success',
-				message: i18n.core.problemLoadingTour
-			});
-		});
-};
 
 
 export const sendPasswordResetEmail = (email: string, onLoginError: any): any => async (dispatch: Dispatch): Promise<any> => {

@@ -6,7 +6,6 @@ import { GeneratorPanel } from '~types/general';
 import ExportSettings from './exportSettings/ExportSettings.container';
 import ActivityPanel from '../generationPanel/ActivityPanel.container';
 import GenerationSettings from '../generationPanel/GenerationSettings.container';
-import TourDialog from '~core/dialogs/tourIntro/TourIntro.container';
 import DataSetHistory from './dataSetHistory/DataSetHistory.container';
 import HelpDialog from '../dialogs/help/HelpDialog.container';
 import ClearPageDialog from '../dialogs/clearPage/ClearPage.container';
@@ -115,7 +114,6 @@ const Builder = ({
 				<DataSetHistory />
 				<GenerationSettings />
 				<ActivityPanel />
-				<TourDialog />
 				<ClearPageDialog />
 				<HelpDialog />
 			</div>

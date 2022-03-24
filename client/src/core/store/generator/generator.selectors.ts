@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { GeneratorLayout } from '../../generator/Generator.component';
-import { CurrentDataSet, DataRow, DataRows, DependencyRows } from './generator.reducer';
+import { CurrentDataSet, DataRow, DataRows, DependencyRows, Table, Tables } from './generator.reducer';
 import { GeneratorPanel } from '~types/general';
 import { DataTypeFolder, ExportTypeFolder } from '../../../../_plugins';
 import * as mainSelectors from '../main/main.selectors';
@@ -21,8 +21,10 @@ export const getLoadedExportTypes = (state: Store): any => state.generator.loade
 export const getExportType = (state: Store): ExportTypeFolder => state.generator.exportType;
 export const getRows = (state: Store): DataRows => state.generator.rows;
 export const getDependencyRows = (state: Store): DependencyRows => state.generator.dependencyRows;
-export const getSortedRows = (state: Store): string[] => state.generator.sortedRows;
-export const getSorteDependencyRows = (state: Store): string[] => state.generator.sortedDependencyRows;
+export const getSortedDependencyRows = (state: Store): string[] => state.generator.sortedDependencyRows;
+export const getTables = (state: Store): Tables => state.generator.tables;
+export const getSortedTables = (state: Store): string[] => state.generator.sortedTables;
+export const getSelectedTableTab = (state: Store): number => state.generator.selectedTableTab;
 export const isGridVisible = (state: Store): boolean => state.generator.showGrid;
 export const isDependencyGridVisible = (state: Store): boolean => state.generator.showDependencyGrid;
 export const isPreviewVisible = (state: Store): boolean => state.generator.showPreview;
@@ -59,6 +61,17 @@ export const isCountryNamesLoaded = (state: Store): boolean => state.generator.i
 
 
 
+
+export const getSortedTablesArray = createSelector(
+	getSortedTables,
+	getTables,
+	(sortedTables, tables) => sortedTables.map((id: string) => tables[id])
+);
+
+export const getSortedRows = createSelector(
+	getSortedTablesArray,
+	(tables) => tables.flatMap((t) => t.sortedRows)
+);
 export const getNumRows = createSelector(
 	getSortedRows,
 	(rows) => rows.length
@@ -69,6 +82,10 @@ export const getSortedRowsArray = createSelector(
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
+
+export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
+	state.generator.tables[tableId].sortedRows.map((id) => state.generator.rows[id]);
+
 
 export const getRowsAsOptions = createSelector(
 	getSortedRowsArray,
@@ -151,7 +168,7 @@ export const getPreviewRows = createSelector(
 
 export const getSortedDependencyRowsArray = createSelector(
 	getDependencyRows,
-	getSorteDependencyRows,
+	getSortedDependencyRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
 
