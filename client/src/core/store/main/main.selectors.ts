@@ -13,8 +13,6 @@ export const isOnloadAuthDetermined = (state: Store): boolean => state.main.isOn
 export const isDialogProcessing = (state: Store): boolean => state.main.dialogProcessing;
 export const getAuthToken = (state: Store): string => state.main.authToken;
 export const getCurrentPage = (state: Store): string => state.main.currentPage;
-export const tourIntroDialogVisible = (state: Store): boolean => state.main.tourIntroDialogVisible;
-export const isTourBundleLoaded = (state: Store): boolean => state.main.tourBundleLoaded;
 export const getLoginDefaultEmail = (state: Store): string => state.main.loginDialogDefaultEmail;
 export const getPasswordResetDialogDefaultEmail = (state: Store): string => state.main.passwordResetDialogDefaultEmail;
 export const getAccountsCurrentPage = (state: Store): number => state.main.accountsCurrentPage;

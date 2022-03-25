@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 import { GeneratorLayout } from '../../generator/Generator.component';
-import { CurrentDataSet, DataRow, DataRows } from './generator.reducer';
+import { CurrentDataSet, DataRow, DataRows, DependencyRows, Table, Tables } from './generator.reducer';
 import { GeneratorPanel } from '~types/general';
 import { DataTypeFolder, ExportTypeFolder } from '../../../../_plugins';
 import * as mainSelectors from '../main/main.selectors';
@@ -16,11 +16,16 @@ import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer
 
 
 
+
 export const getLoadedDataTypes = (state: Store): any => state.generator.loadedDataTypes;
 export const getLoadedExportTypes = (state: Store): any => state.generator.loadedExportTypes;
 export const getExportType = (state: Store): ExportTypeFolder => state.generator.exportType;
 export const getRows = (state: Store): DataRows => state.generator.rows;
-export const getSortedRows = (state: Store): string[] => state.generator.sortedRows;
+export const getDependencyRows = (state: Store): DependencyRows => state.generator.dependencyRows;
+export const getSortedDependencyRows = (state: Store): string[] => state.generator.sortedDependencyRows;
+export const getTables = (state: Store): Tables => state.generator.tables;
+export const getSortedTables = (state: Store): string[] => state.generator.sortedTables;
+export const getSelectedTableTab = (state: Store): number => state.generator.selectedTableTab;
 export const isGridVisible = (state: Store): boolean => state.generator.showGrid;
 export const isDependencyGridVisible = (state: Store): boolean => state.generator.showDependencyGrid;
 export const isPreviewVisible = (state: Store): boolean => state.generator.showPreview;
@@ -54,7 +59,20 @@ export const getCurrentDataSet = (state: Store): CurrentDataSet => state.generat
 export const hasBulkActionPending = (state: Store): boolean => state.generator.bulkActionPending;
 export const isCountryNamesLoading = (state: Store): boolean => state.generator.isCountryNamesLoading;
 export const isCountryNamesLoaded = (state: Store): boolean => state.generator.isCountryNamesLoaded;
+export const shouldShowChangeTableTitleDialog = (state: Store): boolean => state.generator.showChangeTableTitleDialog;
 
+
+
+export const getSortedTablesArray = createSelector(
+	getSortedTables,
+	getTables,
+	(sortedTables, tables) => sortedTables.map((id: string) => tables[id])
+);
+
+export const getSortedRows = createSelector(
+	getSortedTablesArray,
+	(tables) => tables.flatMap((t) => t.sortedRows)
+);
 export const getNumRows = createSelector(
 	getSortedRows,
 	(rows) => rows.length
@@ -64,6 +82,20 @@ export const getSortedRowsArray = createSelector(
 	getRows,
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
+);
+
+export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
+	state.generator.tables[tableId].sortedRows.map((id) => state.generator.rows[id]);
+
+export const getSelectedTable = createSelector(
+	getSelectedTableTab,
+	getSortedTablesArray,
+	(tabIndex, tables) => tables[tabIndex]
+);
+
+export const getRowsAsOptions = createSelector(
+	getSortedRowsArray,
+	(rows) => rows.map((row, i) => ({ value: row.id, label: `(${i+1}) ${row.title}` }))
 );
 
 export const getSortedRowsArrayWithIds = createSelector(
@@ -138,6 +170,12 @@ export const getPreviewRows = createSelector(
 		}
 		return formattedData;
 	}
+);
+
+export const getSortedDependencyRowsArray = createSelector(
+	getDependencyRows,
+	getSortedDependencyRows,
+	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
 
 type ProcessOrders = {

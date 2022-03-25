@@ -27,7 +27,7 @@ export const init = (): void => {
 
 	const isLoggedIn = mainSelectors.isLoggedIn(state);
 	const exportType = selectors.getExportType(state);
-	const numRows = selectors.getNumRows(state);
+	const numTables = selectors.getSortedTablesArray(state).length;
 
 	store.dispatch(mainActions.selectLocale(pageLocale));
 	store.dispatch(actions.onSelectExportType(exportType, false));
@@ -46,9 +46,15 @@ export const init = (): void => {
 		store.dispatch(mainActions.setOnloadAuthDetermined());
 	}
 
-	// if there are no rows, load some!
-	if (numRows === 0) {
-		store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS));
+	console.log(selectors.getSortedTablesArray(state));
+	if(numTables === 0){
+		console.log("adding first table, because there is none");
+		store.dispatch(actions.addTable());
+		const numRows = selectors.getNumRows(state);
+		if (numRows === 0) {
+			const tableId = selectors.getSortedTables(state)[0];
+			store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
+		}
 	}
 
 	const preloadDataTypes = selectors.getRowDataTypes(state);

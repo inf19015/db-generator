@@ -6,7 +6,6 @@ import { GeneratorPanel } from '~types/general';
 import ExportSettings from './exportSettings/ExportSettings.container';
 import ActivityPanel from '../generationPanel/ActivityPanel.container';
 import GenerationSettings from '../generationPanel/GenerationSettings.container';
-import TourDialog from '~core/dialogs/tourIntro/TourIntro.container';
 import DataSetHistory from './dataSetHistory/DataSetHistory.container';
 import HelpDialog from '../dialogs/help/HelpDialog.container';
 import ClearPageDialog from '../dialogs/clearPage/ClearPage.container';
@@ -15,6 +14,7 @@ import * as generalUtils from '../../utils/generalUtils';
 import C from '../constants';
 import './Generator.scss';
 import GridContainer from './gridContainer/GridContainer.container';
+import RenameTableDialog from "~core/dialogs/renameTable/RenameTable.container";
 
 export const enum GeneratorLayout {
 	horizontal = 'horizontal',
@@ -45,19 +45,29 @@ const Builder = ({
 	const isGridSectionVisible = isDependencyGridVisible || isGridVisible;
 	let minSize: number;
 	let maxSize: number;
-	let defaultSize: number | string = '50%';
+	const gridSize = {
+		height: windowSize.height,
+		width: windowSize.width
+	};
+	let defaultSize: number;
 	if (generatorLayout === GeneratorLayout.vertical) {
 		minSize = 350;
 		maxSize = windowSize.width - 350;
 		if (lastLayoutWidth) {
 			defaultSize = lastLayoutWidth < maxSize ? lastLayoutWidth : maxSize;
+		}else {
+			defaultSize = windowSize.width / 2;
 		}
+		gridSize.width = defaultSize;
 	} else {
 		minSize = 100;
 		maxSize = (windowSize.height - (C.FOOTER_HEIGHT)) - 100;
 		if (lastLayoutHeight) {
 			defaultSize = lastLayoutHeight < maxSize ? lastLayoutHeight : maxSize;
+		}else {
+			defaultSize = windowSize.height / 2;
 		}
+		gridSize.height = defaultSize;
 	}
 
 	const getContent = (): JSX.Element => {
@@ -70,9 +80,9 @@ const Builder = ({
 		}
 
 		// data set history only available on desktop
-		if (showDataSetHistory) {
-			return <Preview />;
-		}
+		// if (showDataSetHistory) {
+		// 	return <Preview />;
+		// }
 
 		if (isGridSectionVisible && isPreviewVisible) {
 			return (
@@ -84,13 +94,13 @@ const Builder = ({
 					defaultSize={defaultSize}
 					size={defaultSize}
 					onChange={onResize}>
-					<GridContainer />
+					<GridContainer parentSize = {gridSize}/>
 					<Preview />
 				</SplitPane>
 			);
 		}
 		if (isGridSectionVisible) {
-			return <GridContainer />;
+			return <GridContainer parentSize = {gridSize}/>;
 		}
 		return <Preview />;
 	};
@@ -105,9 +115,9 @@ const Builder = ({
 				<DataSetHistory />
 				<GenerationSettings />
 				<ActivityPanel />
-				<TourDialog />
 				<ClearPageDialog />
 				<HelpDialog />
+				<RenameTableDialog />
 			</div>
 		</>
 	);

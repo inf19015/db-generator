@@ -2,21 +2,20 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import * as actions from '~store/generator/generator.actions';
 import * as selectors from '~store/generator/generator.selectors';
-import DependencyGrid, { GridProps } from './DependencyGrid.component';
+import DependencyGrid, { DependencyGridProps } from './DependencyGrid.component';
 import { DataTypeFolder } from '../../../../_plugins';
 
-const mapStateToProps = (state: any): Partial<GridProps> => ({
+const mapStateToProps = (state: any): Partial<DependencyGridProps> => ({
 	i18n: selectors.getCoreI18n(state),
 	columnTitle: selectors.getExportTypeColumnTitle(state),
-	rows: selectors.getSortedRowsArray(state)
+	rows: selectors.getSortedDependencyRowsArray(state)
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): Partial<GridProps> => ({
-	onAddRows: (numRows: number): any => dispatch(actions.addRows(numRows)),
-	onSort: (id: string, newIndex: number): any => dispatch(actions.repositionRow(id, newIndex)),
-	toggleGrid: (): any => dispatch(actions.toggleGrid()),
+const mapDispatchToProps = (dispatch: Dispatch): Partial<DependencyGridProps> => ({
+	onAddRows: (numRows: number): any => dispatch(actions.addDepRows(numRows)),
+	onSort: (id: string, newIndex: number): any => dispatch(actions.repositionDepRow(id, newIndex)),
+	toggleGrid: (): any => dispatch(actions.toggleDependencyGrid()),
 	changeSmallScreenVisiblePanel: (): any => dispatch(actions.changeSmallScreenVisiblePanel()),
-	showHelpDialog: (dataType: DataTypeFolder): any => dispatch(actions.showHelpDialog(dataType))
 });
 
 const container: any = connect(

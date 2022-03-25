@@ -7,13 +7,13 @@ import IconButton from '@material-ui/core/IconButton';
 import * as styles from './DependencyGrid.scss';
 import { Tooltip } from '~components/tooltips';
 import { PrimaryButton } from '~components/Buttons.component';
-import { DataRow } from '~store/generator/generator.reducer';
+import { DependencyRow } from '~store/generator/generator.reducer';
 import { DataTypeFolder } from '../../../../_plugins';
-import GridRow from './DependencyGridRow.container';
+import DependencyGridRow from './DependencyGridRow.container';
 import C from '../../constants';
 
-export type GridProps = {
-	rows: DataRow[];
+export type DependencyGridProps = {
+	rows: DependencyRow[];
 	onAddRows: (numRows: number) => void;
 	onSort: (id: string, newIndex: number) => void;
 	toggleGrid: () => void;
@@ -27,7 +27,7 @@ export type GridProps = {
 const DependencyGrid = ({
 	rows, onAddRows, onSort, i18n, columnTitle, toggleGrid, changeSmallScreenVisiblePanel,
 	showHelpDialog
-}: GridProps): JSX.Element => {
+}: DependencyGridProps): JSX.Element => {
 	const [numRows, setNumRows] = React.useState(1);
 	const [dimensions, setDimensions] = React.useState<any>({ height: 0, width: 0 });
 
@@ -40,7 +40,7 @@ const DependencyGrid = ({
 		gridSizeClass = styles.gridMedium;
 	}
 
-	const addRowsBtnLabel = numRows === 1 ? i18n.row : i18n.rows;
+	const addRowsBtnLabel = numRows === 1 ? i18n.dependency : i18n.dependencies;
 
 	const onClose = (): void => {
 		if (windowSize.width <= C.SMALL_SCREEN_WIDTH) {
@@ -84,13 +84,11 @@ const DependencyGrid = ({
 							<div className={styles.gridHeaderWrapper}>
 								<div className={`${styles.gridRow} ${styles.gridHeader} tour-gridHeader`} style={{ flex: `0 0 auto` }}>
 									<div className={styles.orderCol}>{rows.length}</div>
-									<div className={styles.dataTypeCol}>
-										{i18n.dataType}
+									<div className={styles.leftDepSideCol}>
+										{i18n.attributes}
 									</div>
-									<div className={styles.titleCol}>{columnTitle}</div>
-									<div className={styles.examplesCol}>{i18n.examples}</div>
-									<div className={styles.optionsCol}>{i18n.options}</div>
-									<div className={styles.settingsIconCol} />
+									<div className={styles.rightDepSideCol}>{i18n.dependenciesColumn}</div>
+									<div className={styles.depMvdCol}>{i18n.multivaluedDependency}</div>
 									<div className={styles.deleteCol} />
 								</div>
 							</div>
@@ -106,7 +104,7 @@ const DependencyGrid = ({
 												ref={provided.innerRef}
 											>
 												{rows.map((row, index) => (
-													<GridRow
+													<DependencyGridRow
 														row={row}
 														key={row.id}
 														index={index}

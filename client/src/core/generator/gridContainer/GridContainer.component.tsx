@@ -1,10 +1,9 @@
 import React from 'react';
-import { useWindowSize } from 'react-hooks-window-size';
 import SplitPane from 'react-split-pane';
 import Grid from '../grid/Grid.container';
 import './GridContainer.scss';
-import DependencyGrid from "~core/generator/dependency/DependencyGrid.container";
-import C from "~core/constants";
+import DependencyGrid from "~core/generator/dependencyGrid/DependencyGrid.container";
+import Tables from "~core/generator/table/Tables.container";
 
 export const enum GridContainerLayout {
 	horizontal = 'horizontal',
@@ -13,7 +12,11 @@ export const enum GridContainerLayout {
 
 export type GridContainerProps = {
 	i18n: any;
-	isGridVisible: boolean;
+	parentSize: {
+		height: number;
+		width: number;
+	};
+	isTablesVisible: boolean;
 	isDependencyGridVisible: boolean;
 	gridContainerLayout: GridContainerLayout;
 	lastLayoutWidth: number | null;
@@ -22,24 +25,22 @@ export type GridContainerProps = {
 }
 
 const Builder = ({
-	isGridVisible, isDependencyGridVisible, onResizePanels, i18n, lastLayoutHeight, lastLayoutWidth, gridContainerLayout
+	isTablesVisible, isDependencyGridVisible, onResizePanels, parentSize, i18n, lastLayoutHeight, lastLayoutWidth, gridContainerLayout
 }: GridContainerProps): JSX.Element => {
 
-	const windowSize = useWindowSize();
 	const onResize = (size: number): void => onResizePanels(size);
-
 	let minSize: number;
 	let maxSize: number;
 	let defaultSize: number | string = '50%';
 	if (gridContainerLayout === GridContainerLayout.vertical) {
 		minSize = 350;
-		maxSize = windowSize.width - 350;
+		maxSize = parentSize.width - 350;
 		if (lastLayoutWidth) {
 			defaultSize = lastLayoutWidth < maxSize ? lastLayoutWidth : maxSize;
 		}
 	} else {
 		minSize = 100;
-		maxSize = (windowSize.height - (C.FOOTER_HEIGHT)) - 100;
+		maxSize = parentSize.height - 100;
 		if (lastLayoutHeight) {
 			defaultSize = lastLayoutHeight < maxSize ? lastLayoutHeight : maxSize;
 		}
@@ -48,7 +49,7 @@ const Builder = ({
 
 	const getContent = (): JSX.Element => {
 
-		if (isGridVisible && isDependencyGridVisible) {
+		if (isTablesVisible && isDependencyGridVisible) {
 			return (
 				<SplitPane
 					className="gdGridPanel"
@@ -58,20 +59,20 @@ const Builder = ({
 					defaultSize={defaultSize}
 					size={defaultSize}
 					onChange={onResize}>
-					<Grid />
+					<Tables />
 					<DependencyGrid />
 				</SplitPane>
 			);
 		}
-		if (isGridVisible) {
-			return <Grid />;
+		if (isTablesVisible) {
+			return <Tables />;
 		}
 		return <DependencyGrid />;
 	};
 
 	return (
 		<>
-			<div style={{ height: '100%' }}>
+			<div style={{ height: '100%', width: '100%' }}>
 				<div style={{ height: '100%', position: 'relative' }}>
 					{getContent()}
 				</div>

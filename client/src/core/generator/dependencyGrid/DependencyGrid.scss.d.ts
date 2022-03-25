@@ -1,10 +1,11 @@
 declare namespace DependencyGridScssNamespace {
   export interface IDependencyGridScss {
     addRows: string;
-    dataTypeCol: string;
+    btnSelected: string;
     dataTypeColDropdown: string;
     dataTypeHelp: string;
     deleteCol: string;
+    depMvdCol: string;
     disabledBtn: string;
     examplesCol: string;
     grid: string;
@@ -16,14 +17,16 @@ declare namespace DependencyGridScssNamespace {
     gridRowsWrapper: string;
     gridSmall: string;
     gridWrapper: string;
+    leftDepSideCol: string;
     optionsCol: string;
     orderCol: string;
+    rightDepSideCol: string;
     scrollableGridRows: string;
     settingsIconCol: string;
     smallScreenMode: string;
     smallScreenSettingsTooltip: string;
     smallScreenSpinner: string;
-    titleCol: string;
+    toggleMvdBtn: string;
   }
 }
 
