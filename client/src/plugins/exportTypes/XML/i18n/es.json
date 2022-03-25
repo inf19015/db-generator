@@ -1,9 +1,0 @@
-{
-  "EXPORT_TYPE_NAME": "XML",
-  "COL_TITLE": "Nombre del nodo",
-  "rowLabel": "Nombre del nodo",
-  "rowLabelPlural": "Nombres de nodo",
-  "invalidNodeName": "Los nombres de nodo XML solo pueden contener los siguientes caracteres: a-Z, 0-9, -, _,.",
-  "rootNodeName": "Nombre del nodo raíz",
-  "recordNodeName": "Registrar nombre de nodo"
-}

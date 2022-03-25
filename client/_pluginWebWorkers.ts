@@ -43,9 +43,7 @@ export default {
 		"URLs": "DT-URLs.generator-b20bf78f3c4fec66a953652a53e6628f.js"
 	},
 	"exportTypes": {
-		"CSV": "ET-CSV.generator-f087a7889f4df9de0ebb22a238c8fb8b.js",
 		"JSON": "ET-JSON.generator-ae538f823c70436397059a1d05560b46.js",
-		"SQL": "ET-SQL.generator-e76dd3f8e9725b9504fdac02685408b5.js",
-		"XML": "ET-XML.generator-2bb617f90572cee10202bbc4ecfb56c9.js"
+		"SQL": "ET-SQL.generator-e76dd3f8e9725b9504fdac02685408b5.js"
 	}
 };

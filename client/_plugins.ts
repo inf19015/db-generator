@@ -85,16 +85,12 @@ export type DataTypeFolder = keyof typeof dataTypes;
 
 export const blacklistedDataTypeFolders = ['BitcoinAddress','OrganizationNumber','PersonalNumber','SIRET'];
 
-import CSV from './src/plugins/exportTypes/CSV/config';
 import JSON from './src/plugins/exportTypes/JSON/config';
 import SQL from './src/plugins/exportTypes/SQL/config';
-import XML from './src/plugins/exportTypes/XML/config';
 
 export const exportTypes = {
-	CSV,
 	JSON,
-	SQL,
-	XML
+	SQL
 };
 
 export type ExportTypeFolder = keyof typeof exportTypes;

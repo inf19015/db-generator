@@ -16,6 +16,7 @@ import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer
 
 
 
+
 export const getLoadedDataTypes = (state: Store): any => state.generator.loadedDataTypes;
 export const getLoadedExportTypes = (state: Store): any => state.generator.loadedExportTypes;
 export const getExportType = (state: Store): ExportTypeFolder => state.generator.exportType;
@@ -58,7 +59,7 @@ export const getCurrentDataSet = (state: Store): CurrentDataSet => state.generat
 export const hasBulkActionPending = (state: Store): boolean => state.generator.bulkActionPending;
 export const isCountryNamesLoading = (state: Store): boolean => state.generator.isCountryNamesLoading;
 export const isCountryNamesLoaded = (state: Store): boolean => state.generator.isCountryNamesLoaded;
-
+export const shouldShowChangeTableTitleDialog = (state: Store): boolean => state.generator.showChangeTableTitleDialog;
 
 
 
@@ -86,6 +87,11 @@ export const getSortedRowsArray = createSelector(
 export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
 	state.generator.tables[tableId].sortedRows.map((id) => state.generator.rows[id]);
 
+export const getSelectedTable = createSelector(
+	getSelectedTableTab,
+	getSortedTablesArray,
+	(tabIndex, tables) => tables[tabIndex]
+);
 
 export const getRowsAsOptions = createSelector(
 	getSortedRowsArray,

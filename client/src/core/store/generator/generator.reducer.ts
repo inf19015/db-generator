@@ -84,6 +84,7 @@ export type StashedGeneratorState = {
 	showHelpDialog: boolean;
 	showClearPageDialog: boolean;
 	helpDialogSection: DataTypeFolder | null;
+	showChangeTableTitleDialog: boolean;
 	showLineNumbers: boolean;
 	enableLineWrapping: boolean;
 	theme: string;
@@ -107,7 +108,7 @@ const stashProps = [
 	'exportType', 'rows', 'dependencyRows', 'sortedRows', 'tables', 'sortedTables', 'selectedTableTab', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
 	'generatorLayout', 'gridContainerLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
 	'helpDialogSection', 'showLineNumbers', 'enableLineWrapping', 'theme', 'previewTextSize', 'dataTypePreviewData',
-	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace',
+	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace', 'showChangeTableTitleDialog',
 	'currentDataSetId', 'currentDataSetName'
 ];
 
@@ -156,6 +157,7 @@ export type GeneratorState = {
 	bulkActionPending: boolean;
 	showHelpDialog: boolean;
 	showClearPageDialog: boolean;
+	showChangeTableTitleDialog: boolean;
 	helpDialogSection: DataTypeFolder | null;
 	showLineNumbers: boolean;
 	enableLineWrapping: boolean;
@@ -209,6 +211,7 @@ export const getInitialState = (): GeneratorState => ({
 	bulkActionPending: true, // for brand new page loads we assume there's a bulk action to re-load
 	showHelpDialog: false,
 	showClearPageDialog: false,
+	showChangeTableTitleDialog: false,
 	helpDialogSection: null,
 	numRowsToGenerate: env.defaultNumRows,
 	stripWhitespace: false,
@@ -381,16 +384,18 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 		case actions.REMOVE_ROW: {
 			const tables = draft.sortedTables.map((id)=>draft.tables[id]);
-			const table = tables.find((t) => t.sortedRows.some((rowId) => rowId === action.payload.id));
-			// @ts-ignore
-			const trimmedRowIds = table.sortedRows.filter((id) => id !== action.payload.rowId);
-			const updatedRows: DataRows = {};
-			trimmedRowIds.forEach((id) => {
-				updatedRows[id] = draft.rows[id];
-			});
-			draft.rows = updatedRows;
-			// @ts-ignore
-			table.sortedRows = trimmedRowIds;
+			const table = tables.find((t) => t.sortedRows.some((rowId) => rowId === action.payload.rowId));
+			console.log(table);
+			if(table) {
+				const trimmedRowIds = table.sortedRows.filter((id) => id !== action.payload.rowId);
+				const updatedRows: DataRows = {};
+				trimmedRowIds.forEach((id) => {
+					updatedRows[id] = draft.rows[id];
+				});
+				draft.rows = updatedRows;
+				table.sortedRows = trimmedRowIds;
+			}
+
 			break;
 		}
 
@@ -407,6 +412,16 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 
 		case actions.CHANGE_TABLE_TITLE: {
 			draft.tables[action.payload.id].title = action.payload.value;
+			break;
+		}
+
+		case actions.OPEN_CHANGE_TABLE_TITLE_DIALOG: {
+			draft.showChangeTableTitleDialog = true;
+			break;
+		}
+
+		case actions.CLOSE_CHANGE_TABLE_TITLE_DIALOG: {
+			draft.showChangeTableTitleDialog = false;
 			break;
 		}
 

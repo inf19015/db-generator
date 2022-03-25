@@ -14,6 +14,7 @@ import * as generalUtils from '../../utils/generalUtils';
 import C from '../constants';
 import './Generator.scss';
 import GridContainer from './gridContainer/GridContainer.container';
+import RenameTableDialog from "~core/dialogs/renameTable/RenameTable.container";
 
 export const enum GeneratorLayout {
 	horizontal = 'horizontal',
@@ -116,6 +117,7 @@ const Builder = ({
 				<ActivityPanel />
 				<ClearPageDialog />
 				<HelpDialog />
+				<RenameTableDialog />
 			</div>
 		</>
 	);

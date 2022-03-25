@@ -50,12 +50,11 @@ export const init = (): void => {
 	if(numTables === 0){
 		console.log("adding first table, because there is none");
 		store.dispatch(actions.addTable());
-	}
-	// if there are no rows, load some!
-	const numRows = selectors.getNumRows(state);
-	if (numRows === 0) {
-		const tableId = selectors.getSortedTables(state)[0];
-		store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
+		const numRows = selectors.getNumRows(state);
+		if (numRows === 0) {
+			const tableId = selectors.getSortedTables(state)[0];
+			store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
+		}
 	}
 
 	const preloadDataTypes = selectors.getRowDataTypes(state);

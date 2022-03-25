@@ -8,6 +8,7 @@ const mapStateToProps = (state: any, ownProps: any): Partial<TableProps> => (own
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<TableProps> => ({
 	onDelete: (id: string): void => dispatch(actions.removeTable(id)),
+	onChangeTitle: (): any => dispatch(actions.openChangeTableTitleDialog())
 });
 
 const table: any = connect(

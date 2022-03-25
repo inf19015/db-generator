@@ -81,6 +81,12 @@ export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getS
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
 export const removeDepRow = (id: string): GDAction => ({ type: REMOVE_DEP_ROW, payload: { id } });
 
+export const OPEN_CHANGE_TABLE_TITLE_DIALOG = 'OPEN_CHANGE_TABLE_TITLE_DIALOG';
+export const openChangeTableTitleDialog = (): GDAction => ({ type: OPEN_CHANGE_TABLE_TITLE_DIALOG });
+
+export const CLOSE_CHANGE_TABLE_TITLE_DIALOG = 'CLOSE_CHANGE_TABLE_TITLE_DIALOG';
+export const closeChangeTableTitleDialog = (): GDAction => ({ type: CLOSE_CHANGE_TABLE_TITLE_DIALOG });
+
 export const CHANGE_TABLE_TITLE = 'CHANGE_TABLE_TITLE';
 export const onChangeTableTitle = (id: string, value: string): GDAction => ({ type: CHANGE_TABLE_TITLE, payload: { id, value } });
 

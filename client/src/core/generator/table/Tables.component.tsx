@@ -79,7 +79,6 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 											{...provided.droppableProps}
 											ref={provided.innerRef}
 										>
-
 											<Tab key={"tabof" + table.id} label={table.title} {...a11yProps(i)} />
 											{provided.placeholder}
 										</div>
@@ -98,8 +97,6 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 					)}
 				</DragDropContext>
 			</Box>
-			
-
 		</Box>
 	);
 };

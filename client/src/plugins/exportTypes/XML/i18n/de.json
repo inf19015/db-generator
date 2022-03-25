@@ -1,9 +1,0 @@
-{
-  "EXPORT_TYPE_NAME": "XML",
-  "COL_TITLE": "Knotenname",
-  "rowLabel": "Knotenname",
-  "rowLabelPlural": "Knotennamen",
-  "invalidNodeName": "XML-Knotennamen dürfen nur die folgenden Zeichen enthalten: a-Z, 0-9, -, _ ,.",
-  "rootNodeName": "Stammknotenname",
-  "recordNodeName": "Knotennamen aufzeichnen"
-}

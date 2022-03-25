@@ -171,17 +171,6 @@ export const Settings: React.ReactNode = ({ coreI18n, i18n, onUpdate, id, data }
 			<div>
 				<div className={styles.row}>
 					<div>
-						<label htmlFor={`${id}-tableName`}>{i18n.dbTableName}</label>
-						<div>
-							<TextField
-								error={data.tableName.trim() !== '' ? '' : coreI18n.requiredField}
-								id={`${id}-tableName`}
-								value={data.tableName}
-								onChange={(e: any): void => onChange('tableName', e.target.value)}
-							/>
-						</div>
-					</div>
-					<div>
 						<label htmlFor={`${id}-databaseType`}>{i18n.dbType}</label>
 						<div>
 							<Dropdown
