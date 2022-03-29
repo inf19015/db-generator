@@ -112,14 +112,14 @@ export type DTGenerationData = {
 	existingRowData: DTGenerationExistingRowData[];
 	countryData: {
 		[key in CountryType]?: any;
-	},
+	};
 	workerResources: {
 		workerUtils: string;
-	}
+	};
 }
 
 interface DTOnMessage extends MessageEvent {
-	data: DTGenerationData
+	data: DTGenerationData;
 }
 
 export type DTGenerationExistingRowData = {

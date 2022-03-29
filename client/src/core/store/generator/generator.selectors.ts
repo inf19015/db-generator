@@ -178,6 +178,13 @@ export const getSortedDependencyRowsArray = createSelector(
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
 
+export const getTablesWithRows = (state: Store) => {
+	const tables = getSortedTablesArray(state);
+	return tables.map((table): any => ({ title: table.title, columns: getRowsOfTableArray(state, table.id) }));
+};
+
+
+
 type ProcessOrders = {
 	[num: number]: any;
 };

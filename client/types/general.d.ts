@@ -81,6 +81,11 @@ export type ColumnData = {
 	metadata: DTMetadata;
 };
 
+export type TableData = {
+	title: string;
+	columns: ColumnData[];
+}
+
 export type TourProps = {
 	isOpen: boolean;
 	onClose: () => void;
