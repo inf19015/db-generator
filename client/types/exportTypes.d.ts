@@ -1,5 +1,5 @@
 import { GeneratorLayout } from '~core/generator/Generator.component';
-import { ColumnData } from '~types/general';
+import { ColumnData, TableData } from '~types/general';
 import { CountryMap } from '~types/countries';
 import { DataTypeMap } from '~types/dataTypes';
 import { ExportTypeFolder } from '../_plugins';
@@ -44,6 +44,7 @@ export type ETSettings = {
 
 export type ETMessageData = {
 	action: 'generate' | 'pause' | 'continue' | 'abort';
+	tables: TableData[];
 	columns: ColumnData[];
 	rows: any[];
 	isFirstBatch: boolean;
@@ -60,7 +61,7 @@ export type ETMessageData = {
 };
 
 interface ETOnMessage extends MessageEvent {
-	data: ETMessageData
+	data: ETMessageData;
 }
 
 export type ETDownloadPacket = {

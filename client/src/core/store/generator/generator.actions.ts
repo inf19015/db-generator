@@ -255,9 +255,9 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 	return (dispatch: any, getState: any): any => {
 		const state = getState();
 		const i18n = getStrings();
-
 		const template = selectors.getGenerationTemplate(state);
 		const dataTypePreviewData = { ...selectors.getDataTypePreviewData(state) };
+		const tables = selectors.getTablesWithRows(state);
 		const columns = selectors.getColumns(state);
 		const unchanged = getUnchangedData(idsToRefresh, columns, dataTypePreviewData);
 
@@ -274,6 +274,7 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 			numResults: C.MAX_PREVIEW_ROWS,
 			batchSize: C.MAX_PREVIEW_ROWS,
 			unchanged,
+			tables,
 			columns,
 			i18n,
 			template,
@@ -288,7 +289,6 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 		dataTypeWorker.onmessage = (resp: MessageEvent): void => {
 			const { data } = resp;
 			const { generatedData } = data;
-
 			columns.forEach(({ id }, index: number) => {
 				if (idsToRefresh.length && idsToRefresh.indexOf(id) === -1) {
 					return;

@@ -233,7 +233,7 @@ const processQueue = (dataType: DataTypeFolder) => {
 				.then(() => {
 					resolve(response.data);
 					processNextItem(dataType);
-				})
+				});
 		} else {
 			resolve(response.data);
 			processNextItem(dataType);

@@ -34,6 +34,7 @@ export type DataPacket = {
 		numRowsToGenerate: number;
 		template: any;
 		dataTypes: any;
+		tables: any;
 		columns: any;
 		exportType: ExportTypeFolder;
 		exportTypeSettings: any;
@@ -68,7 +69,7 @@ export const initialState: PacketsState = {
 };
 
 export const getNewPacket = ({
-	dataTypeWorkerId, exportTypeWorkerId, stripWhitespace, numRowsToGenerate, template, dataTypes, columns,
+	dataTypeWorkerId, exportTypeWorkerId, stripWhitespace, numRowsToGenerate, template, tables, dataTypes, columns,
 	exportType, exportTypeSettings
 }: any): DataPacket => {
 	const now = new Date().getTime();
@@ -92,6 +93,7 @@ export const getNewPacket = ({
 			numRowsToGenerate,
 			template,
 			dataTypes,
+			tables,
 			columns,
 			exportType,
 			exportTypeSettings
@@ -118,10 +120,9 @@ export const reducer = produce((draft: PacketsState, action: AnyAction) => {
 
 		case actions.START_GENERATION: {
 			const {
-				dataTypeWorkerId, exportTypeWorkerId, numRowsToGenerate, template, dataTypes, columns,
+				dataTypeWorkerId, exportTypeWorkerId, numRowsToGenerate, template, dataTypes, columns, tables,
 				exportType, exportTypeSettings, stripWhitespace
 			} = action.payload;
-
 			const packetId = nanoid();
 			draft.packetIds.push(packetId);
 			draft.packets[packetId] = getNewPacket({
@@ -130,6 +131,7 @@ export const reducer = produce((draft: PacketsState, action: AnyAction) => {
 				numRowsToGenerate,
 				template,
 				dataTypes,
+				tables,
 				columns,
 				exportType,
 				exportTypeSettings,

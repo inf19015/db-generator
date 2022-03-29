@@ -62,11 +62,12 @@ const CodeMirrorWrapper = (props: CodeMirrorWrapperProps): JSX.Element => {
 export default CodeMirrorWrapper;
 
 export const generatePreviewString = (props: any): Promise<any> => {
-	const { previewRows, columns, exportType, exportTypeSettings, loadedExportTypes } = props;
+	const { previewRows, columns, tables, exportType, exportTypeSettings, loadedExportTypes } = props;
 	const exportTypeWorker = coreUtils.getExportTypeWorker('preview');
 
 	return new Promise((resolve) => {
 		coreUtils.performTask('exportTypeWorker', exportTypeWorker, {
+			tables: tables,
 			rows: previewRows,
 			columns,
 			exportType,

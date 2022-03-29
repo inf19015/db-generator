@@ -55,8 +55,7 @@ const getWrappedValue = (value: any, colIndex: number, numericFieldIndexes: numb
 
 export const generateMySQL = (data: ETMessageData): string => {
 	const sqlSettings: SQLSettings = data.settings;
-	const { isFirstBatch, columns, rows } = data;
-
+	const { isFirstBatch, columns, rows, tables } = data;
 	const backquote = sqlSettings.encloseInBackQuotes ? '`' : '';
 	const colTitles = columns.map(({ title }) => title);
 	let content = '';
@@ -64,34 +63,37 @@ export const generateMySQL = (data: ETMessageData): string => {
 	const numericFieldIndexes = getNumericFieldColumnIndexes(data.columns);
 
 	if (isFirstBatch) {
-		if (sqlSettings.dropTable) {
-			content += `DROP TABLE IF EXISTS ${backquote}${sqlSettings.tableName}${backquote};\n\n`;
-		}
-		if (sqlSettings.createTable) {
-			content += `CREATE TABLE ${backquote}${sqlSettings.tableName}${backquote} (\n`;
-			if (sqlSettings.addPrimaryKey) {
-				content += `  ${backquote}id${backquote} mediumint(8) unsigned NOT NULL auto_increment,\n`;
+		tables.forEach(table => {
+			if (sqlSettings.dropTable) {
+				content += `DROP TABLE IF EXISTS ${backquote}${table.title}${backquote};\n\n`;
 			}
-			const cols: any[] = [];
-			columns.forEach(({ title, dataType, metadata }) => {
-				let columnTypeInfo = 'MEDIUMTEXT';
-				if (metadata && metadata.sql) {
-					if (metadata.sql.field_MySQL) {
-						columnTypeInfo = metadata.sql.field_MySQL;
-					} else if (metadata.sql.field) {
-						columnTypeInfo = metadata.sql.field;
-					}
+			if (sqlSettings.createTable) {
+				content += `CREATE TABLE ${backquote}${table.title}${backquote} (\n`;
+				if (sqlSettings.addPrimaryKey) {
+					content += `  ${backquote}id${backquote} mediumint(8) unsigned NOT NULL auto_increment,\n`;
 				}
-				cols.push(`  ${backquote}${title}${backquote} ${columnTypeInfo}`);
-			});
+				const cols: any[] = [];
+				table.columns.forEach(({ title, dataType, metadata }) => {
+					let columnTypeInfo = 'MEDIUMTEXT';
+					if (metadata && metadata.sql) {
+						if (metadata.sql.field_MySQL) {
+							columnTypeInfo = metadata.sql.field_MySQL;
+						} else if (metadata.sql.field) {
+							columnTypeInfo = metadata.sql.field;
+						}
+					}
+					cols.push(`  ${backquote}${title}${backquote} ${columnTypeInfo}`);
+				});
 
-			content += cols.join(',\n');
-			if (sqlSettings.addPrimaryKey) {
-				content += `,\n  PRIMARY KEY (${backquote}id${backquote})\n) AUTO_INCREMENT=1;\n\n`;
-			} else {
-				content += `\n);\n\n`;
+				content += cols.join(',\n');
+				if (sqlSettings.addPrimaryKey) {
+					content += `,\n  PRIMARY KEY (${backquote}id${backquote})\n) AUTO_INCREMENT=1;\n\n`;
+				} else {
+					content += `\n);\n\n`;
+				}
 			}
-		}
+		});
+
 	}
 
 	let colNamesStr = '';

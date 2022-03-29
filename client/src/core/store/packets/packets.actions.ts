@@ -26,6 +26,7 @@ export const startGeneration = (): any => (dispatch: Dispatch, getState: any): v
 			stripWhitespace: selectors.shouldStripWhitespace(state),
 			template: selectors.getGenerationTemplate(state),
 			dataTypes: selectors.getRowDataTypes(state),
+			tables: selectors.getTablesWithRows(state),
 			columns: selectors.getColumns(state),
 			exportType: selectors.getExportType(state),
 			exportTypeSettings: selectors.getCurrentExportTypeSettings(state)
