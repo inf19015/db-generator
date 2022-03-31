@@ -8,9 +8,11 @@
   },
   "scripts": {
     "start": "cd client && grunt dev & yarn build & yarn webpackDev",
+    "winstart": "cd client && yarn build & yarn webpackDev",
     "coverage": "yarn jest --coverage",
     "clean": "npx rimraf client/dist",
     "build": "node ./client/build/build.js",
+    "grunt-dev": "cd client && grunt dev",
     "startNodeDevServer": "nodemon ./server/app.js",
     "webpackDev": "webpack serve --config ./client/webpack.config.js --mode=development",
     "webpackProd": "webpack --config ./client/webpack.config.js --mode=production",

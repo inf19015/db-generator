@@ -258,7 +258,6 @@ window.gd.localeLoaded(i18n);
 				command: `npx rollup -c --config-src=${file} --config-target=${target}`
 			};
 		});
-
 		return commands;
 	};
 
