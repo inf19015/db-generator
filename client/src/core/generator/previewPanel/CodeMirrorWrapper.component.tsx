@@ -8,6 +8,7 @@ import { GeneratorLayout } from '~core/generator/Generator.component';
 
 export type CodeMirrorWrapperProps = {
 	previewRows: any;
+	tables: any;
 	columns: any;
 	exportType: ExportTypeFolder;
 	exportTypeSettings: any;

@@ -77,14 +77,10 @@ export type GenerationTemplate = {
 
 export type ColumnData = {
 	title: string;
+	columnId: string;
 	dataType: DataTypeFolder;
 	metadata: DTMetadata;
 };
-
-export type TableData = {
-	title: string;
-	columns: ColumnData[];
-}
 
 export type TourProps = {
 	isOpen: boolean;

@@ -257,7 +257,7 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 		const i18n = getStrings();
 		const template = selectors.getGenerationTemplate(state);
 		const dataTypePreviewData = { ...selectors.getDataTypePreviewData(state) };
-		const tables = selectors.getTablesWithRows(state);
+		const tables = selectors.getSortedTablesArray(state);
 		const columns = selectors.getColumns(state);
 		const unchanged = getUnchangedData(idsToRefresh, columns, dataTypePreviewData);
 
@@ -289,6 +289,7 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 		dataTypeWorker.onmessage = (resp: MessageEvent): void => {
 			const { data } = resp;
 			const { generatedData } = data;
+			console.log("generated data: ", generatedData);
 			columns.forEach(({ id }, index: number) => {
 				if (idsToRefresh.length && idsToRefresh.indexOf(id) === -1) {
 					return;
@@ -296,7 +297,7 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 
 				dataTypePreviewData[id] = generatedData.map((row: any): any => row[index]);
 			});
-
+			console.log("dataTypePreviewData: ", dataTypePreviewData);
 			// great! So we've generated the data we need and manually only changed those lines that have just changed
 			// by the user via the UI. The CodeMirrorWrapper component handles passing off that info to the export type
 			// web worker to generate the final string
