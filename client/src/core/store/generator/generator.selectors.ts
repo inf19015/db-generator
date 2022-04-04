@@ -78,14 +78,17 @@ export const getNumRows = createSelector(
 	(rows) => rows.length
 );
 
+export const getRow = (state: Store, rowId: string): DataRow => state.generator.rows[rowId];
+
 export const getSortedRowsArray = createSelector(
 	getRows,
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
+export const getSortedRowsOfTable = (state: Store, tableId: string): string[] => state.generator.tables[tableId].sortedRows;
 
 export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
-	state.generator.tables[tableId].sortedRows.map((id) => state.generator.rows[id]);
+	getSortedRowsOfTable(state, tableId).map(id => getRow(state, id));
 
 export const getSelectedTable = createSelector(
 	getSelectedTableTab,
