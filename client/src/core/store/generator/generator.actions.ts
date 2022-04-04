@@ -46,6 +46,7 @@ export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const rows = selectors.getRowsOfTableArray(state, id);
+	console.log("removed rows by table: ", rows);
 	rows.forEach((row) => {
 		dispatch(removeRow(row.id));
 	});
@@ -62,20 +63,18 @@ export const removeTable = (id: string): any => async (dispatch: Dispatch, getSt
 export const REMOVE_ROW = 'REMOVE_ROW';
 export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
-	const dependencyRows = selectors.getDependencyRows(state);
+	const dependencyRows = selectors.getSortedDependencyRowsArray(state);
 	dispatch({ type: REMOVE_ROW, payload: { rowId } });
-	for(const depRowId in dependencyRows) {
-		const row = dependencyRows[depRowId];
-		let selected = row.leftSide.filter((id) => rowId !== id);
-		if(selected !== row.leftSide){
-			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: depRowId, selected: selected } });
-		}
-		selected = row.rightSide.filter((id) => rowId !== id);
-		if(selected !== row.rightSide){
-			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: depRowId, selected: selected } });
-		}
-
-	}
+	// dependencyRows.forEach(row => {
+	// 	let selected = row.leftSide.filter(id=> row.id !== id);
+	// 	if(selected !== row.leftSide){
+	// 		dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: row.id, selected: selected } });
+	// 	}
+	// 	selected = row.rightSide.filter(id => row.id !== id);
+	// 	if(selected !== row.rightSide){
+	// 		dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: row.id, selected: selected } });
+	// 	}
+	// });
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
@@ -289,7 +288,6 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 		dataTypeWorker.onmessage = (resp: MessageEvent): void => {
 			const { data } = resp;
 			const { generatedData } = data;
-			console.log("generated data: ", generatedData);
 			columns.forEach(({ id }, index: number) => {
 				if (idsToRefresh.length && idsToRefresh.indexOf(id) === -1) {
 					return;
@@ -297,7 +295,6 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 
 				dataTypePreviewData[id] = generatedData.map((row: any): any => row[index]);
 			});
-			console.log("dataTypePreviewData: ", dataTypePreviewData);
 			// great! So we've generated the data we need and manually only changed those lines that have just changed
 			// by the user via the UI. The CodeMirrorWrapper component handles passing off that info to the export type
 			// web worker to generate the final string

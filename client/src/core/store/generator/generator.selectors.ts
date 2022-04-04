@@ -71,7 +71,7 @@ export const getSortedTablesArray = createSelector(
 
 export const getSortedRows = createSelector(
 	getSortedTablesArray,
-	(tables) => tables.flatMap((t) => t.sortedRows)
+	(tables): Array<string> => tables.flatMap(t => t.sortedRows)
 );
 export const getNumRows = createSelector(
 	getSortedRows,

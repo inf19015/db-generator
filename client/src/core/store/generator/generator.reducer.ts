@@ -385,17 +385,16 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 		case actions.REMOVE_ROW: {
 			const tables = draft.sortedTables.map((id)=>draft.tables[id]);
 			const table = tables.find((t) => t.sortedRows.some((rowId) => rowId === action.payload.rowId));
-			console.log(table);
 			if(table) {
-				const trimmedRowIds = table.sortedRows.filter((id) => id !== action.payload.rowId);
+				table.sortedRows = table.sortedRows.filter((id) => id !== action.payload.rowId);
+				const allRowIds = tables.flatMap(t => t.sortedRows);
+				const remainingRowIds = allRowIds.filter((id) => id !== action.payload.rowId);
 				const updatedRows: DataRows = {};
-				trimmedRowIds.forEach((id) => {
+				remainingRowIds.forEach((id) => {
 					updatedRows[id] = draft.rows[id];
 				});
 				draft.rows = updatedRows;
-				table.sortedRows = trimmedRowIds;
 			}
-
 			break;
 		}
 
