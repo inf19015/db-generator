@@ -44,6 +44,6 @@ export default {
 	},
 	"exportTypes": {
 		"JSON": "ET-JSON.generator-153cbd264dd36fbbcf753dfa1f14ca0b.js",
-		"SQL": "ET-SQL.generator-1439100fde04234720a64da53c6924db.js"
+		"SQL": "ET-SQL.generator-0995030cf3440d61f255493b282262e6.js"
 	}
 };

@@ -411,7 +411,7 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 		tables.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
-				content += `IF EXISTS(SELECT 1 FROM sys.tables WHERE object_id = OBJECT_ID(${quote}${sqlSettings.tableName}${quote}))\n`;
+				content += `IF EXISTS(SELECT 1 FROM sys.tables WHERE object_id = OBJECT_ID(${quote}${table.title}${quote}))\n`;
 				content += "BEGIN;\n";
 				content += `    DROP TABLE [${table.title}];\n`;
 				content += "END;\n";

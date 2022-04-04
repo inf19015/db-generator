@@ -7,7 +7,6 @@ import styles from './SQL.scss';
 
 
 export interface SQLSettings extends ETState {
-	tableName: string;
 	databaseType: 'MySQL' | 'Postgres' | 'SQLite' | 'Oracle' | 'MSSQL';
 	createTable: boolean;
 	dropTable: boolean;
@@ -20,7 +19,6 @@ export interface SQLSettings extends ETState {
 }
 
 export const initialState: SQLSettings = {
-	tableName: 'myTable',
 	databaseType: 'MySQL',
 	createTable: true,
 	dropTable: true,
@@ -291,10 +289,6 @@ export const getDownloadFileInfo = ({ packetId }: ETDownloadPacket): ETDownloadP
 
 
 export const isValid = (settings: SQLSettings): boolean => {
-	if (!settings.tableName) {
-		return false;
-	}
-
 	if (settings.databaseType !== 'Oracle' && !settings.insertBatchSize) {
 		return false;
 	}
