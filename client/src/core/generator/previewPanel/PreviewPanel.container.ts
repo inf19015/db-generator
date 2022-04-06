@@ -8,7 +8,6 @@ import * as actions from '~store/generator/generator.actions';
 const mapStateToProps = (state: any): Partial<PreviewPanelProps> => {
 	const exportType = selectors.getExportType(state);
 	const exportTypeSettings = selectors.getExportTypeSettings(state);
-
 	return {
 		i18n: selectors.getCoreI18n(state),
 		theme: selectors.getTheme(state),

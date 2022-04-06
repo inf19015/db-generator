@@ -289,9 +289,6 @@ export const getDownloadFileInfo = ({ packetId }: ETDownloadPacket): ETDownloadP
 
 
 export const isValid = (settings: SQLSettings): boolean => {
-	if (settings.databaseType !== 'Oracle' && !settings.insertBatchSize) {
-		return false;
-	}
-
-	return true;
+	if(!settings) return false;
+	return !(settings.databaseType !== 'Oracle' && !settings.insertBatchSize);
 };

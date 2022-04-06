@@ -16,9 +16,9 @@ export type RenameTableProps = {
 };
 
 const RenameTableDialog = ({ table, visible, onClose, onExited, onSubmit, i18n }: RenameTableProps): JSX.Element => {
-    
+    if(!table) return <div hidden={true}/>;
 	const titleFieldRef = useRef<any>();
-	const [title, setTitle] = useState(table.title);
+	const [title, setTitle] = useState(table.title || "");
 
 	const onEntering = (): void => setTitle(table.title);
 	const onEntered = (): void => titleFieldRef?.current?.focus();

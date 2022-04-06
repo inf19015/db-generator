@@ -20,27 +20,45 @@ import { getUnique } from '~utils/arrayUtils';
 import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
+import * as converterUtils from '~utils/converterUtils';
+import _ from "lodash";
 
 
 
-export const ADD_ROWS = 'ADD_ROWS';
-export const addRows = (numRows: number, tableId?: string): GDAction => ({
-	type: ADD_ROWS,
+export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	for (let i = 0; i < numRows; i++) {
+		dispatch(addRow(tableId));
+	}
+};
+
+export const ADD_ROW = 'ADD_ROW';
+export const addRow = (tableId: string, rowId = nanoid(), title = ""): GDAction => ({
+	type: ADD_ROW,
 	payload: {
-		numRows,
-		tableId
+		rowId,
+		tableId,
+		title
 	}
 });
-export const ADD_DEP_ROWS = 'ADD_DEP_ROWS';
-export const addDepRows = (numRows: number): GDAction => ({
-	type: ADD_DEP_ROWS,
+export const addDepRows = (numRows: number): any => async (dispatch: Dispatch, getState: any,): Promise<any> => {
+	for (let i = 0; i < numRows; i++) {
+		dispatch(addDepRow());
+	}
+};
+
+export const ADD_DEP_ROW = 'ADD_DEP_ROW';
+export const addDepRow = (rowId = nanoid(), leftSide: string[]=[], rightSide: string[]=[], isMvd=false): GDAction => ({
+	type: ADD_DEP_ROW,
 	payload: {
-		numRows
+		rowId,
+		leftSide,
+		rightSide,
+		isMvd
 	}
 });
 
 export const ADD_TABLE = 'ADD_TABLE';
-export const addTable = (): GDAction => ({ type: ADD_TABLE });
+export const addTable = (tableId = nanoid(), title = "newTable"): GDAction => ({ type: ADD_TABLE, payload: { tableId, title } });
 
 export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -60,21 +78,49 @@ export const removeTable = (id: string): any => async (dispatch: Dispatch, getSt
 	}
 };
 
+export const removeAllTables = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	selectors.getSortedTables(state).forEach(id => dispatch(removeTable(id)));
+};
+
+export const removeAllDependencies = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	selectors.getSortedDependencyRows(state).forEach(id => dispatch(removeDepRow(id)));
+};
+
 export const REMOVE_ROW = 'REMOVE_ROW';
 export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const dependencyRows = selectors.getSortedDependencyRowsArray(state);
 	dispatch({ type: REMOVE_ROW, payload: { rowId } });
-	// dependencyRows.forEach(row => {
-	// 	let selected = row.leftSide.filter(id=> row.id !== id);
-	// 	if(selected !== row.leftSide){
-	// 		dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: row.id, selected: selected } });
-	// 	}
-	// 	selected = row.rightSide.filter(id => row.id !== id);
-	// 	if(selected !== row.rightSide){
-	// 		dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: row.id, selected: selected } });
-	// 	}
-	// });
+	dependencyRows.forEach(row => {
+		let selected = row.leftSide.filter(id=> row.id !== id);
+		if(selected !== row.leftSide){
+			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: row.id, selected: selected } });
+		}
+		selected = row.rightSide.filter(id => row.id !== id);
+		if(selected !== row.rightSide){
+			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: row.id, selected: selected } });
+		}
+	});
+};
+
+// export const CONVERT_TO_3NF = "CONVERT_TO_3NF";
+export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	// const tables = selectors.getSortedTables(state);
+	const [newTables, newDependencies] = converterUtils.to3NF(dependencies, true);
+	dispatch(removeAllTables());
+	dispatch(removeAllDependencies());
+	newTables.forEach((table, i) => {
+		const tableId = nanoid();
+		dispatch(addTable(tableId, "table"+(i+1)));
+		table.forEach(rowId => dispatch(addRow(tableId, rowId, "id"+(i+1))));
+	});
+	newDependencies.forEach(dependency => {
+		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	});
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';

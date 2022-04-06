@@ -319,10 +319,10 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 		}
 
 		case actions.ADD_TABLE: {
-			const tableId = nanoid();
+			const tableId = action.payload.tableId;
 			draft.tables[tableId] = {
 				id: tableId,
-				title: 'Table',
+				title: action.payload.title,
 				sortedRows: [],
 			};
 			draft.sortedTables = [
@@ -332,41 +332,34 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			break;
 		}
 
-		case actions.ADD_ROWS: {
-			const newRowIDs: string[] = [];
+		case actions.ADD_ROW: {
 			const tableId = action.payload.tableId;
-			for (let i = 0; i < action.payload.numRows; i++) {
-				const rowId = nanoid();
-				draft.rows[rowId] = {
-					id: rowId,
-					title: '',
-					titleError: null,
-					dataType: null,
-					data: null
-				};
-				newRowIDs.push(rowId);
-			}
+			const rowId = action.payload.rowId;
+			draft.rows[rowId] = {
+				id: rowId,
+				title: action.payload.title,
+				titleError: null,
+				dataType: null,
+				data: null
+			};
 			draft.tables[tableId].sortedRows = [
 				...draft.tables[tableId].sortedRows,
-				...newRowIDs
+				rowId
 			];
 			break;
 		}
 
-		case actions.ADD_DEP_ROWS: {
-			const newDepRowIDs: string[] = [];
-			for (let i = 0; i < action.payload.numRows; i++) {
-				const rowId = nanoid();
-				draft.dependencyRows[rowId] = {
-					id: rowId,
-					leftSide: [],
-					rightSide: [],
-					isMvd: false
-				};
-				newDepRowIDs.push(rowId);}
+		case actions.ADD_DEP_ROW: {
+			const rowId = action.payload.rowId;
+			draft.dependencyRows[rowId] = {
+				id: rowId,
+				leftSide: action.payload.leftSide,
+				rightSide: action.payload.rightSide,
+				isMvd: action.payload.isMvd
+			};
 			draft.sortedDependencyRows = [
 				...draft.sortedDependencyRows,
-				...newDepRowIDs
+				rowId
 			];
 			break;
 		}

@@ -13,11 +13,13 @@ import { onChangeTab, showSaveDataSetDialog } from '~store/account/account.actio
 import { addToast, setTourComponents } from '~utils/generalUtils';
 import { getGeneratorRoute, updateBodyClass } from '~utils/routeUtils';
 import * as actions from '~store/generator/generator.actions';
+import * as selectors from '~store/generator/generator.selectors';
 import { ADD_TABLE, CLEAR_GRID } from '~store/generator/generator.actions';
 import C from '~core/constants';
 import { SaveDataDialogType } from '~store/account/account.reducer';
 import { localeFileMap } from '../../../../_localeFileMap';
 import { ColSortDir } from '~components/tables/TableHeader.component';
+import _ from "lodash";
 
 export const LOCALE_FILE_LOADED = 'LOCALE_FILE_LOADED';
 export const setLocaleFileLoaded = (locale: GDLocale): GDAction => ({
@@ -239,16 +241,17 @@ export const onOneTimeLoginSuccess = (tokenExpiry: number, password: string, his
 export const LOGOUT = 'LOGOUT';
 export const logout = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const i18n = getStrings();
-
+	const state = getState();
 	// if the user logged in with Google, Facebook etc. we need to also let them know
-	logoutVendor(getAuthMethod(getState()));
+	logoutVendor(getAuthMethod(state));
 
 	Cookies.remove('refreshToken');
 
 	dispatch({ type: LOGOUT });
 	dispatch({ type: CLEAR_GRID });
 	dispatch({ type: ADD_TABLE });
-	dispatch(actions.addRows(C.NUM_DEFAULT_ROWS));
+	const tableId = _.last(selectors.getSortedTables(state)) as string;
+	dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
 
 	addToast({
 		type: 'success',

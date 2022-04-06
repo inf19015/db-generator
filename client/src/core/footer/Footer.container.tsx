@@ -34,7 +34,7 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<FooterProps> => ({
 	onSaveNewDataSet: (): any => dispatch(accountActions.showSaveDataSetDialog(SaveDataDialogType.save)),
 	onSaveAs: (): any => dispatch(accountActions.showSaveDataSetDialog(SaveDataDialogType.saveAs)),
 	onGenerate: (): any => dispatch(actions.showGenerationSettingsPanel()),
-
+	onConvertTo3NF: (): any => dispatch(actions.convertTo3NF()),
 	// @ts-ignore-line
 	showTourDialog: (history: any): any => dispatch(mainActions.showTourIntroDialog(history))
 });
