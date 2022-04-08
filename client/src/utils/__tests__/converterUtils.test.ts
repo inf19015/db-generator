@@ -155,23 +155,45 @@ describe("to3NF", () => {
             "Rechnungszeitpunkt->Vorname,Nachname,Artikel,Menge"
         ].map(l => mockDependency(l));
         const [schemas, deps] = converterUtils.to3NF(dependencies);
-        console.log(schemas);
-        console.log(deps);
+        const expectedSchemasMustHaves = [
+            ["Vorname", "Nachname", "E-Mail", "Adresse"],
+            ["Artikel", "Preis"],
+            ["Rechnungszeitpunkt", "Vorname", "Nachname", "Artikel", "Menge"]
+        ]
+        expect(deps).toEqual(dependencies);
+        expect(schemas).toHaveLength(3);
+        expect(schemas[0]).toHaveLength(4);
+        expectedSchemasMustHaves[0].forEach(expected => expect(schemas[0]).toContainEqual(expected));
+        expect(schemas[1]).toHaveLength(2);
+        expectedSchemasMustHaves[1].forEach(expected => expect(schemas[1]).toContainEqual(expected));
+        expect(schemas[2]).toHaveLength(5);
+        expectedSchemasMustHaves[2].forEach(expected => expect(schemas[2]).toContainEqual(expected));
+
     });
-    it("should do something 2", ()=> {
+
+});
+
+describe("addIds", ()=>{
+    it("should replace candidateKeys with ForeignKeys", ()=> {
         const dependencies = [
             "Vorname,Nachname->E-Mail,Adresse",
             "Artikel->Preis",
             "Rechnungszeitpunkt->Vorname,Nachname,Artikel,Menge"
         ].map(l => mockDependency(l));
-        const [schemas, deps] = converterUtils.to3NF(dependencies, true);
-        console.log(schemas);
-        console.log(deps);
+        let [schemas, deps] = converterUtils.to3NF(dependencies);
+        let [newSchemas, newDeps] = converterUtils.addIds(schemas, deps);
+        const expectedSchemasMustHaves = [
+            ["Vorname", "Nachname", "E-Mail", "Adresse"],
+            ["Artikel", "Preis"],
+            ["Rechnungszeitpunkt", "Menge"]
+        ].map(schema => schema.map(row => ({ id: row, type: "untouched" })));
+        expect(newDeps).toHaveLength(3);
+        expect(newSchemas).toHaveLength(3);
+        expect(newSchemas[0]).toHaveLength(5);
+        expectedSchemasMustHaves[0].forEach(expected => expect(newSchemas[0]).toContainEqual(expected));
+        expect(newSchemas[1]).toHaveLength(3);
+        expectedSchemasMustHaves[1].forEach(expected => expect(newSchemas[1]).toContainEqual(expected));
+        expect(newSchemas[2]).toHaveLength(5);
+        expectedSchemasMustHaves[2].forEach(expected => expect(newSchemas[2]).toContainEqual(expected));
     });
-});
-
-describe("äppes", () => {
-    const p = ["A", "B", "C"].map(it => [it]);
-    const q = ["A", "C", "B"].map(it => [it]);
-   console.log(_.isEqual(p,q))
-});
+})

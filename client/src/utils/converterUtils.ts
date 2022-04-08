@@ -64,7 +64,7 @@ export const getCanonicalCover = (functionalDependencies: Array<DependencyRow>):
 			attributes.push(fd.leftSide[0]);
 		}
 		return ({
-			id: nanoid(),
+			id: fd.id,
 			leftSide: attributes,
 			rightSide: fd.rightSide,
 			isMvd: false,
@@ -76,7 +76,7 @@ export const getCanonicalCover = (functionalDependencies: Array<DependencyRow>):
 		const dependencies = fd.rightSide.filter(dep => {
 			const testDependencies = leftReducedDependencies.filter(td => td !== fd);
 			testDependencies.push(({
-				id: nanoid(),
+				id: fd.id,
 				leftSide: fd.leftSide,
 				rightSide: fd.rightSide.filter(it => it !== dep),
 				isMvd: false
@@ -84,7 +84,7 @@ export const getCanonicalCover = (functionalDependencies: Array<DependencyRow>):
 			return !canReachAttributes(fd.leftSide, [dep], testDependencies);
 		});
 		return ({
-			id: nanoid(),
+			id: fd.id,
 			leftSide: fd.leftSide,
 			rightSide: dependencies,
 			isMvd: false
@@ -92,13 +92,12 @@ export const getCanonicalCover = (functionalDependencies: Array<DependencyRow>):
 	}).filter(dep => dep.rightSide.length >= 1);
 
 	const groupedDependencies = Object.entries(_.groupBy(rightReducedDependencies, (it: DependencyRow) => it.leftSide));
-	// @ts-ignore
 	return groupedDependencies.map(group => {
 		const fds = group[1] as Array<DependencyRow>;
 		const attributes = fds[0].leftSide;
 		const dependencies = distinct(fds.flatMap((fd: DependencyRow) => fd.rightSide));
 		return ({
-			id: nanoid(),
+			id: fds[0].id,
 			leftSide: attributes,
 			rightSide: dependencies,
 			isMvd: false
@@ -115,14 +114,10 @@ export const reduceSchemas = (schemas: string[][]): string[][] => {
 	if (_.isEqual(newSchemas, schemas)) return newSchemas;
 	return reduceSchemas(newSchemas);
 };
-export const to3NF = (oldDependencies: DependencyRow[], addPKs = false): [string[][], DependencyRow[]] => {
-	let dependencies = getCanonicalCover(oldDependencies);
+
+export const to3NF = (oldDependencies: DependencyRow[]): [string[][], DependencyRow[]] => {
+	const dependencies = getCanonicalCover(oldDependencies);
 	let schemas = dependencies.map(dep => [...dep.leftSide, ...dep.rightSide]);
-	if (addPKs) {
-		const withIds = schemas.map(schema => addIds(schema, dependencies));
-		schemas = withIds.map(([schema]) => schema);
-		dependencies = getCanonicalCover(withIds.flatMap(([, deps]) => deps));
-	}
 	const candidateKeys = getKeyCandidates(schemas.flatMap(it => it), dependencies);
 	const candidateKeyContainingSchemas = schemas.filter(schema => candidateKeys.some(key => includesAll(schema, key)));
 	if (candidateKeyContainingSchemas.length === 0) candidateKeyContainingSchemas.push(candidateKeys[0]);
@@ -131,20 +126,40 @@ export const to3NF = (oldDependencies: DependencyRow[], addPKs = false): [string
 	return [schemas, dependencies];
 };
 
-export const addIds = (schema: string[], dependencies: DependencyRow[]): [string[], DependencyRow[]] => {
-	const keys = getKeyCandidates(schema, dependencies);
-	const pk = nanoid();
-	const newSchema = [pk, ...schema];
-	const newDependencies = [
-		({
-			id: nanoid(),
-			leftSide: [pk],
-			rightSide: keys[0],
-			isMvd: false
-		}),
-		...dependencies
-	];
-	return [newSchema, newDependencies];
+export type rowType = {
+	id: string;
+	type: "pk"|"fk"|"untouched";
+}
+export const addIds = (schemas: string[][], dependencies: DependencyRow[]): [rowType[][], DependencyRow[]] => {
+	const newDependencies: DependencyRow[] = [];
+	const newSchemas: rowType[][] = schemas.map(schema => {
+		const newSchema: rowType[] = schema.map(s => ({ id: s, type: "untouched" }));
+		for(const dep of dependencies){
+			if(!includesAll(schema, dep.leftSide))continue;
+			const checkSchema = schema.filter(row => !dep.leftSide.includes(row));
+			if(!canReachAttributes(dep.leftSide, checkSchema, dependencies))continue;
+
+			const rowId = nanoid();
+			newDependencies.push({
+				id: nanoid(),
+				leftSide: [rowId],
+				rightSide: dep.leftSide,
+				isMvd: false
+			});
+			return [({ id: rowId, type: "pk" }), ...newSchema];
+		}
+		return newSchema;
+	}).map((schema: rowType[]) => { //now replace foreigen candidatekeys with the new primary keys
+		const checkSchema = schema.map(row => row.id);
+		for(const dep of newDependencies){
+			if(!includesAll(checkSchema, dep.rightSide))continue;
+			if(includesAll(checkSchema, dep.leftSide))continue;
+			const fks: rowType[] = dep.leftSide.map(fk => ({ id: fk, type: "fk" }));
+			schema = [...schema.filter(row => !dep.rightSide.includes(row.id)), ...fks];
+		}
+		return schema;
+	});
+	return [newSchemas, newDependencies];
 };
 
 

@@ -349,6 +349,15 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 			break;
 		}
 
+		case actions.ADD_ROW_TO_TABLE: {
+			const tableId = action.payload.tableId;
+			draft.tables[tableId].sortedRows = [
+				...draft.tables[tableId].sortedRows,
+				action.payload.rowId
+			];
+			break;
+		}
+
 		case actions.ADD_DEP_ROW: {
 			const rowId = action.payload.rowId;
 			draft.dependencyRows[rowId] = {

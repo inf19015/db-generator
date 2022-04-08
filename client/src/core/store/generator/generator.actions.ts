@@ -22,6 +22,7 @@ import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
 import _ from "lodash";
+import { DataRow } from "~store/generator/generator.reducer";
 
 
 
@@ -57,6 +58,9 @@ export const addDepRow = (rowId = nanoid(), leftSide: string[]=[], rightSide: st
 	}
 });
 
+export const ADD_ROW_TO_TABLE = 'ADD_ROW_TO_TABLE';
+export const addRowToTable = (tableId: string, rowId: string): GDAction => ({ type: ADD_ROW_TO_TABLE, payload: { tableId, rowId } });
+
 export const ADD_TABLE = 'ADD_TABLE';
 export const addTable = (tableId = nanoid(), title = "newTable"): GDAction => ({ type: ADD_TABLE, payload: { tableId, title } });
 
@@ -77,6 +81,8 @@ export const removeTable = (id: string): any => async (dispatch: Dispatch, getSt
 		dispatch({ type: SELECT_TABLE_TAB, payload: { value: tabIndex-1 } });
 	}
 };
+export const removeTableDirty = (id: string): GDAction => ({ type: REMOVE_TABLE, payload: { id } });
+
 
 export const removeAllTables = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
@@ -109,18 +115,58 @@ export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getS
 export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
-	// const tables = selectors.getSortedTables(state);
-	const [newTables, newDependencies] = converterUtils.to3NF(dependencies, true);
-	dispatch(removeAllTables());
+	const tables = selectors.getSortedTables(state);
+	tables.forEach(id => dispatch(removeTableDirty(id)));
+
+	const [newTables, newDependencies] = converterUtils.to3NF(dependencies);
 	dispatch(removeAllDependencies());
+
 	newTables.forEach((table, i) => {
 		const tableId = nanoid();
 		dispatch(addTable(tableId, "table"+(i+1)));
-		table.forEach(rowId => dispatch(addRow(tableId, rowId, "id"+(i+1))));
+		table.forEach(rowId => dispatch(addRowToTable(tableId, rowId)));
 	});
+	dispatch({ type: SELECT_TABLE_TAB, payload: { value: 0 } });
 	newDependencies.forEach(dependency => {
 		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
 	});
+};
+
+export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const tables = selectors.getSortedTablesArray(state);
+	tables.forEach(table => dispatch(removeTableDirty(table.id)));
+
+	const [newTables, newDependencies] = converterUtils.addIds(tables.map(table => table.sortedRows), dependencies);
+	const pkTableNames: {[id: string]: string} = {};
+	newTables.map((rows, i) => {
+		const tableId = nanoid();
+		dispatch(addTable(tableId, "Table"+(i+1)));
+		rows.forEach(row => {
+			switch(row.type) {
+				case "pk":
+					dispatch(addRow(tableId, row.id, "PK"+(i+1)));
+					dispatch(onSelectDataType("GUID", row.id));
+					pkTableNames[row.id]="Table"+(i+1);
+					break;
+				case "untouched":
+					dispatch(addRowToTable(tableId, row.id));
+					break;
+			}
+		});
+		return ({ tableId, rows });
+	}).forEach(({ tableId, rows }) =>
+		rows.filter(row => row.type === "fk").forEach(row => {
+			const fkId = nanoid();
+			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id]));
+			dispatch(onSelectDataType("GUID", fkId));
+		})
+	);
+	newDependencies.forEach(dependency => {
+		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	});
+
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
