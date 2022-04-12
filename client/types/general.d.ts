@@ -3,7 +3,7 @@ import { MainState } from '~store/main/main.reducer';
 import { PacketsState } from '~store/packets/packets.reducer';
 import { AccountState } from '~store/account/account.reducer';
 import { DataTypeFolder } from '../_plugins';
-import { DTMetadata } from '~types/dataTypes';
+import { DTCustomProps, DTMetadata } from '~types/dataTypes';
 
 declare global {
     interface Window {
@@ -79,6 +79,7 @@ export type ColumnData = {
 	title: string;
 	columnId: string;
 	dataType: DataTypeFolder;
+	props: DTCustomProps;
 	metadata: DTMetadata;
 };
 

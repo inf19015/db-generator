@@ -1,0 +1,15 @@
+{
+  "NAME": "ForeignKey",
+  "DESC": "References a Field in another table",
+  "DEFAULT_TITLE": "foreign key",
+  "row": "Row",
+  "nothing": "nothing",
+  "source": "Source:",
+  "random": "random",
+  "fields": "fields",
+  "randomStringsLabel": "Random strings",
+  "fieldsLabel": "Name Fields",
+  "sourceDataField1": "Name field 1",
+  "optional": "Optional",
+  "selectSource": "Select source","sourceTitle": "Source"
+}

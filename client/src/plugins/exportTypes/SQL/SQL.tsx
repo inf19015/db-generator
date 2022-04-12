@@ -207,16 +207,6 @@ export const Settings: React.ReactNode = ({ coreI18n, i18n, onUpdate, id, data }
 							</label>
 						</div>
 						{getBackQuotesOption()}
-						<div>
-							<Switch
-								checked={data.addPrimaryKey}
-								id={`${id}-addPrimaryKey`}
-								value="checked"
-								color="primary"
-								onChange={(): void => onChange('addPrimaryKey', !data.addPrimaryKey)}
-							/>
-							<label htmlFor={`${id}-addPrimaryKey`}>{i18n.addDefaultAutoIncrementPrimaryKey}</label>
-						</div>
 					</div>
 				</div>
 			</div>

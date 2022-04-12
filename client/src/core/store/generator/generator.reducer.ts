@@ -339,8 +339,8 @@ export const reducer = produce((draft: GeneratorState, action: AnyAction) => {
 				id: rowId,
 				title: action.payload.title,
 				titleError: null,
-				dataType: null,
-				data: null
+				dataType: action.payload.dataType,
+				data: action.payload.data
 			};
 			draft.tables[tableId].sortedRows = [
 				...draft.tables[tableId].sortedRows,

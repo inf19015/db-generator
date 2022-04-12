@@ -18,6 +18,7 @@ export default {
 		"CVV": "DT-CVV.generator-f0b5a7844da8780e0c2dedfa83634117.js",
 		"Date": "DT-Date.generator-6bd05debd68e4e4e6a5b023b3fc27c18.js",
 		"Email": "DT-Email.generator-5ccaaebf9a3ce83efc9f4f73c0dce536.js",
+		"ForeignKey": "DT-ForeignKey.generator-e3e9db99a12a295cca2858b165af4df1.js",
 		"GUID": "DT-GUID.generator-7115cf92edfa70b5104a141331ccb412.js",
 		"IBAN": "DT-IBAN.generator-054de34530f59d8f01c6fa7151f62a6b.js",
 		"LatLng": "DT-LatLng.generator-6108ce30a8469fc9fabca995bb84f842.js",
@@ -31,6 +32,7 @@ export default {
 		"Phone": "DT-Phone.generator-60db7d4203701409f8b574f3f14b5de0.js",
 		"PIN": "DT-PIN.generator-f475ede2e76884abce5826a2d4b68b01.js",
 		"PostalZip": "DT-PostalZip.generator-4d87c69d4bb31d5f02f47063cbb9e43a.js",
+		"PrimaryKey": "DT-PrimaryKey.generator-352e78127a5af11c711e43cadb67dd69.js",
 		"Region": "DT-Region.generator-b22e47d22415da609c5b8adae1adc45a.js",
 		"Rut": "DT-Rut.generator-bba98c3cb7bbb5c69d622fb66a22893b.js",
 		"SIRET": "DT-SIRET.generator-1160088366b23a60579bf5f0ffb3f61a.js",
@@ -44,6 +46,6 @@ export default {
 	},
 	"exportTypes": {
 		"JSON": "ET-JSON.generator-153cbd264dd36fbbcf753dfa1f14ca0b.js",
-		"SQL": "ET-SQL.generator-0995030cf3440d61f255493b282262e6.js"
+		"SQL": "ET-SQL.generator-c0ca6c72b0a953af9991f559bf0c8aeb.js"
 	}
 };

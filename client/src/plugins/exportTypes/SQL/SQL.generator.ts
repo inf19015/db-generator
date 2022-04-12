@@ -70,11 +70,8 @@ export const generateMySQL = (data: ETMessageData): string => {
 			}
 			if (sqlSettings.createTable) {
 				content += `CREATE TABLE ${backquote}${table.title}${backquote} (\n`;
-				if (sqlSettings.addPrimaryKey) {
-					content += `  ${backquote}id${backquote} mediumint(8) unsigned NOT NULL auto_increment,\n`;
-				}
 				const cols: any[] = [];
-				tableColumns.forEach(({ title, dataType, metadata }) => {
+				tableColumns.forEach(({ title, dataType, metadata, props }) => {
 					let columnTypeInfo = 'MEDIUMTEXT';
 					if (metadata && metadata.sql) {
 						if (metadata.sql.field_MySQL) {
@@ -83,12 +80,18 @@ export const generateMySQL = (data: ETMessageData): string => {
 							columnTypeInfo = metadata.sql.field;
 						}
 					}
-					cols.push(`  ${backquote}${title}${backquote} ${columnTypeInfo}`);
+					let col = `  ${backquote}${title}${backquote} ${columnTypeInfo}`;
+					if (dataType === "ForeignKey"){
+						const tableName = tables.find(t => t.id === props?.tableId)?.title || "error";
+						const colName = columns.find(t => t.columnId === props?.pkId)?.title || "error";
+						col += `,\n  FOREIGN KEY (${backquote}${title}${backquote}) REFERENCES ${backquote}${tableName}${backquote} (${backquote}${colName}${backquote})`;
+					}
+					cols.push(col);
 				});
 
 				content += cols.join(',\n');
-				if (sqlSettings.addPrimaryKey) {
-					content += `,\n  PRIMARY KEY (${backquote}id${backquote})\n) AUTO_INCREMENT=1;\n\n`;
+				if (tableColumns.filter(c => c.dataType === "PrimaryKey").length > 0) {
+					content += `\n) AUTO_INCREMENT=1;\n\n`;
 				} else {
 					content += `\n);\n\n`;
 				}
@@ -138,7 +141,8 @@ export const generateMySQL = (data: ETMessageData): string => {
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
 				const pairsStr = pairs.join(', ');
-				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}id${backquote} = ${rowIndex+1};\n\n`;
+				const pk = tableColumns.find(c => c.dataType === "PrimaryKey")?.title || "id";
+				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}${pk}${backquote} = ${rowIndex+1};\n\n`;
 			}
 		});
 
@@ -171,12 +175,8 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 			}
 			if (sqlSettings.createTable) {
 				content += `CREATE TABLE "${table.title}" (\n`;
-
-				if (sqlSettings.addPrimaryKey) {
-					content += `  id SERIAL PRIMARY KEY,\n`;
-				}
 				const cols: any[] = [];
-				tableColumns.forEach(({ title, dataType, metadata }) => {
+				tableColumns.forEach(({ title, dataType, metadata, props }) => {
 					let columnTypeInfo = 'MEDIUMTEXT';
 					if (metadata) {
 						if (metadata.sql && metadata.sql.field_Postgres) {
@@ -185,9 +185,14 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 							columnTypeInfo = metadata.sql.field;
 						}
 					}
-					cols.push(`  ${title} ${columnTypeInfo}`);
+					let col = `  ${title} ${columnTypeInfo}`;
+					if (dataType === "ForeignKey"){
+						const tableName = tables.find(t => t.id === props.tableId)?.title || "error";
+						const colName = columns.find(t => t.columnId === props.pkId)?.title || "error";
+						col += `,\n  FOREIGN KEY (${title}) REFERENCES ${tableName} (${colName})`;
+					}
+					cols.push(col);
 				});
-
 				content += cols.join(',\n');
 				content += `\n);\n\n`;
 			}
@@ -218,7 +223,8 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 					pairs.push(`${title} = ${colValue}`);
 				});
 				const pairsStr = pairs.join(', ');
-				content += `UPDATE ${table.title} SET ${pairsStr} WHERE id = ${rowIndex+1};\n\n`;
+				const pk = tableColumns.find(c => c.dataType === "PrimaryKey")?.title || "id";
+				content += `UPDATE ${table.title} SET ${pairsStr} WHERE ${pk} = ${rowIndex+1};\n\n`;
 			}
 		});
 
@@ -248,31 +254,28 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 			}
 			if (sqlSettings.createTable) {
 				content += `CREATE TABLE ${backquote}${table.title}${backquote} (\n`;
-				if (sqlSettings.addPrimaryKey) {
-					content += `  ${backquote}id${backquote} number primary key,\n`;
-				}
 				const cols: any[] = [];
-
-				tableColumns.forEach(({ title, dataType, metadata }) => {
+				tableColumns.forEach(({ title, dataType, metadata, props }) => {
 					let columnTypeInfo = 'MEDIUMTEXT';
-
 					// figure out the content type. Default to MEDIUMTEXT, then use the specific SQLField_MySQL, then the SQLField
 					if (metadata && metadata.sql) {
-						if (metadata.sql.field_SQLite) {
-							columnTypeInfo = metadata.sql.field_SQLite;
+						if (metadata.sql.field_MySQL) {
+							columnTypeInfo = metadata.sql.field_MySQL;
 						} else if (metadata.sql.field) {
 							columnTypeInfo = metadata.sql.field;
 						}
 					}
-					cols.push(`  ${backquote}${title}${backquote} ${columnTypeInfo}`);
+					let col = `  ${backquote}${title}${backquote} ${columnTypeInfo}`;
+					if (dataType === "ForeignKey"){
+						const tableName = tables.find(t => t.id === props.tableId)?.title || "error";
+						const colName = columns.find(t => t.columnId === props.pkId)?.title || "error";
+						col += `,\n  FOREIGN KEY (${backquote}${title}${backquote}) REFERENCES ${backquote}${tableName}${backquote} (${backquote}${colName}${backquote})`;
+					}
+					cols.push(col);
 				});
 
 				content += cols.join(',\n');
-				if (sqlSettings.addPrimaryKey) {
-					content += `,\n  PRIMARY KEY (${backquote}id${backquote})\n) AUTO_INCREMENT=1;\n\n`;
-				} else {
-					content += `\n);\n\n`;
-				}
+				content += `\n);\n\n`;
 			}
 		});
 
@@ -305,7 +308,8 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
 				const pairsStr = pairs.join(', ');
-				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}id${backquote} = ${rowIndex+1};\n\n`;
+				const pk = tableColumns.find(c => c.dataType === "PrimaryKey")?.title || "id";
+				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}${pk}${backquote} = ${rowIndex+1};\n\n`;
 			}
 		});
 
@@ -334,12 +338,9 @@ export const generateOracle = (generationData: ETMessageData): string => {
 			}
 			if (sqlSettings.createTable) {
 				content += `CREATE TABLE ${backquote}${table.title}${backquote} (\n`;
-				if (sqlSettings.addPrimaryKey) {
-					content += `  ${backquote}id${backquote} number primary key,\n`;
-				}
 
 				const cols: any[] = [];
-				tableColumns.forEach(({ title, dataType, metadata }) => {
+				tableColumns.forEach(({ title, dataType, metadata, props }) => {
 					let columnTypeInfo = 'MEDIUMTEXT';
 					if (metadata && metadata.sql) {
 						if (metadata.sql.field_Oracle) {
@@ -348,15 +349,17 @@ export const generateOracle = (generationData: ETMessageData): string => {
 							columnTypeInfo = metadata.sql.field;
 						}
 					}
-					cols.push(`  ${backquote}${title}${backquote} ${columnTypeInfo}`);
+					let col = `  ${backquote}${title}${backquote} ${columnTypeInfo}`;
+					if (dataType === "ForeignKey"){
+						const tableName = tables.find(t => t.id === props.tableId)?.title || "error";
+						const colName = columns.find(t => t.columnId === props.pkId)?.title || "error";
+						col += `,\n  FOREIGN KEY (${backquote}${title}${backquote}) REFERENCES ${backquote}${tableName}${backquote} (${backquote}${colName}${backquote})`;
+					}
+					cols.push(col);
 				});
 
 				content += cols.join(',\n');
-				if (sqlSettings.addPrimaryKey) {
-					content += `,\n  PRIMARY KEY (${backquote}id${backquote})\n) AUTO_INCREMENT=1;\n\n`;
-				} else {
-					content += `\n);\n\n`;
-				}
+				content += `\n);\n\n`;
 			}
 		});
 
@@ -386,7 +389,8 @@ export const generateOracle = (generationData: ETMessageData): string => {
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
 				const pairsStr = pairs.join(', ');
-				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}id${backquote} = ${rowIndex+1};\n`;
+				const pk = tableColumns.find(c => c.dataType === "PrimaryKey")?.title || "id";
+				content += `UPDATE ${backquote}${table.title}${backquote} SET ${pairsStr} WHERE ${backquote}${pk}${backquote} = ${rowIndex+1};\n`;
 			}
 		});
 
@@ -420,12 +424,8 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 
 			if (sqlSettings.createTable) {
 				content += `CREATE TABLE [${table.title}] (\n`;
-				if (sqlSettings.addPrimaryKey) {
-					content += `    [${table.title}ID] INTEGER NOT NULL IDENTITY(1, 1),\n`;
-				}
-
 				const cols: any[] = [];
-				tableColumns.forEach(({ title, dataType, metadata }) => {
+				tableColumns.forEach(({ title, dataType, metadata, props }) => {
 					let columnTypeInfo = 'MEDIUMTEXT';
 					if (metadata && metadata.sql) {
 						if (metadata.sql.field_MSSQL) {
@@ -434,15 +434,16 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 							columnTypeInfo = metadata.sql.field;
 						}
 					}
-					cols.push(`    [${title}] ${columnTypeInfo}`);
+					let col = `    [${title}] ${columnTypeInfo}`;
+					if (dataType === "ForeignKey"){
+						const tableName = tables.find(t => t.id === props.tableId)?.title || "error";
+						const colName = columns.find(t => t.columnId === props.pkId)?.title || "error";
+						col += `,\n    CONSTRAINT FK_${tableName}_${colName} FOREIGN KEY (${title}) REFERENCES ${tableName} (${colName})`;
+					}
+					cols.push(col);
 				});
-
 				content += cols.join(',\n');
-				if (sqlSettings.addPrimaryKey) {
-					content += `,\n    PRIMARY KEY ([${table.title}ID])\n);\nGO\n\n`;
-				} else {
-					content += `\n);\nGO\n\n`;
-				}
+				content += `\n);\nGO\n\n`;
 			}
 		});
 
@@ -479,7 +480,8 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 					pairs.push(`[${title}] = ${colValue}`);
 				});
 				const pairsStr = pairs.join(', ');
-				content += `UPDATE [${table.title}] SET ${pairsStr} WHERE [{$this->tableName}ID] = ${rowIndex+1};\n\n`;
+				const pk = tableColumns.find(c => c.dataType === "PrimaryKey")?.title || "id";
+				content += `UPDATE [${table.title}] SET ${pairsStr} WHERE [${pk}] = ${rowIndex+1};\n\n`;
 
 				// if (($currentRow % 1000) == 0) {
 				// 	$content .= $endLineChar;

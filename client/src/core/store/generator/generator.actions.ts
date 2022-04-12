@@ -33,12 +33,14 @@ export const addRows = (numRows: number, tableId: string): any => async (dispatc
 };
 
 export const ADD_ROW = 'ADD_ROW';
-export const addRow = (tableId: string, rowId = nanoid(), title = ""): GDAction => ({
+export const addRow = (tableId: string, rowId = nanoid(), title = "", data: any = null, dataType: DataTypeFolder | null = null): GDAction => ({
 	type: ADD_ROW,
 	payload: {
 		rowId,
 		tableId,
-		title
+		title,
+		data,
+		dataType
 	}
 });
 export const addDepRows = (numRows: number): any => async (dispatch: Dispatch, getState: any,): Promise<any> => {
@@ -130,6 +132,7 @@ export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any)
 	newDependencies.forEach(dependency => {
 		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
 	});
+	dispatch(refreshPreview());
 };
 
 export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -146,8 +149,7 @@ export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any
 		rows.forEach(row => {
 			switch(row.type) {
 				case "pk":
-					dispatch(addRow(tableId, row.id, "PK"+(i+1)));
-					dispatch(onSelectDataType("GUID", row.id));
+					dispatch(addRow(tableId, row.id, "Table"+(i+1)+"_ID", null, "PrimaryKey"));
 					pkTableNames[row.id]="Table"+(i+1);
 					break;
 				case "untouched":
@@ -159,14 +161,13 @@ export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any
 	}).forEach(({ tableId, rows }) =>
 		rows.filter(row => row.type === "fk").forEach(row => {
 			const fkId = nanoid();
-			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id]));
-			dispatch(onSelectDataType("GUID", fkId));
+			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id], ({ pkId: row.id, tableId: tableId }),"ForeignKey"));
 		})
 	);
 	newDependencies.forEach(dependency => {
 		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
 	});
-
+	dispatch(refreshPreview());
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';

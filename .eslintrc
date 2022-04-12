@@ -73,7 +73,9 @@
         "allow": [
           "field_Oracle",
           "field_MSSQL",
-          "field_Postgres"
+          "field_Postgres",
+          "field_SQLite",
+          "field_MySQL"
         ]
       }
     ]

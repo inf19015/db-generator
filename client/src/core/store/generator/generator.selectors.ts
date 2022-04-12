@@ -129,12 +129,13 @@ export const getColumns = createSelector(
 		return rows.filter((row: DataRow) => row.dataType !== null && row.dataType.trim() !== '')
 			.map(({ dataType, title, data, id }: any) => {
 				const { getMetadata } = getDataType(dataType);
-				const metadata = getMetadata ? getMetadata(data) : null;
+				const metadata = getMetadata ? getMetadata({ data }) : null;
 
 				return {
 					title,
 					dataType,
 					metadata,
+					props: data,
 					columnId: id,
 					id
 				};

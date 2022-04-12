@@ -17,6 +17,7 @@ import Currency from './src/plugins/dataTypes/Currency/config';
 import CVV from './src/plugins/dataTypes/CVV/config';
 import Date from './src/plugins/dataTypes/Date/config';
 import Email from './src/plugins/dataTypes/Email/config';
+import ForeignKey from './src/plugins/dataTypes/ForeignKey/config';
 import GUID from './src/plugins/dataTypes/GUID/config';
 import IBAN from './src/plugins/dataTypes/IBAN/config';
 import LatLng from './src/plugins/dataTypes/LatLng/config';
@@ -30,6 +31,7 @@ import PersonalNumber from './src/plugins/dataTypes/PersonalNumber/config';
 import Phone from './src/plugins/dataTypes/Phone/config';
 import PIN from './src/plugins/dataTypes/PIN/config';
 import PostalZip from './src/plugins/dataTypes/PostalZip/config';
+import PrimaryKey from './src/plugins/dataTypes/PrimaryKey/config';
 import Region from './src/plugins/dataTypes/Region/config';
 import Rut from './src/plugins/dataTypes/Rut/config';
 import SIRET from './src/plugins/dataTypes/SIRET/config';
@@ -56,6 +58,7 @@ export const dataTypes = {
 	CVV,
 	Date,
 	Email,
+	ForeignKey,
 	GUID,
 	IBAN,
 	LatLng,
@@ -69,6 +72,7 @@ export const dataTypes = {
 	Phone,
 	PIN,
 	PostalZip,
+	PrimaryKey,
 	Region,
 	Rut,
 	SIRET,
