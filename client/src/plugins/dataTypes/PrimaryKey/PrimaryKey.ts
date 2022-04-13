@@ -24,7 +24,7 @@ export const getMetadata = (): DTMetadata => {
 			field_MySQL: 'int unsigned NOT NULL auto_increment PRIMARY KEY',
 			field_SQLite: 'INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT',
 			field_Oracle: 'number PRIMARY KEY',
-			field_MSSQL: 'INTEGER NOT NULL IDENTITY(1, 1)',
+			field_MSSQL: 'INTEGER IDENTITY(1, 1) NOT NULL',
 			field_Postgres: 'Serial PRIMARY KEY'
 		}
 	};

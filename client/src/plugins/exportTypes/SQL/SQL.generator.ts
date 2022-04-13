@@ -438,7 +438,9 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 					if (dataType === "ForeignKey"){
 						const tableName = tables.find(t => t.id === props.tableId)?.title || "error";
 						const colName = columns.find(t => t.columnId === props.pkId)?.title || "error";
-						col += `,\n    CONSTRAINT FK_${tableName}_${colName} FOREIGN KEY (${title}) REFERENCES ${tableName} (${colName})`;
+						col += `,\n    CONSTRAINT FK_${tableName}_${colName} FOREIGN KEY ([${title}]) REFERENCES [${tableName}] ([${colName}])`;
+					}else if (dataType === "PrimaryKey") {
+						col += `,\n    CONSTRAINT PK_${table.title}_${title} PRIMARY KEY ([${title}])`;
 					}
 					cols.push(col);
 				});
@@ -506,7 +508,7 @@ export const getNumericFieldColumnIndexes = (columns: ColumnData[]): number[] =>
 
 	columns.forEach((col: ColumnData, colIndex: number) => {
 		const { metadata } = col;
-		const dataType = metadata.general && metadata.general.dataType;
+		const dataType = metadata.general && metadata.general?.dataType;
 
 		if (dataType === 'number') {
 			numericFieldColIndexes.push(colIndex);
