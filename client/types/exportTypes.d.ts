@@ -1,8 +1,9 @@
 import { GeneratorLayout } from '~core/generator/Generator.component';
-import { ColumnData, TableData } from '~types/general';
+import { ColumnData } from '~types/general';
 import { CountryMap } from '~types/countries';
 import { DataTypeMap } from '~types/dataTypes';
 import { ExportTypeFolder } from '../_plugins';
+import {Table} from "~store/generator/generator.reducer";
 
 export type ExportTypeMap = {
 	[exportType in ExportTypeFolder]?: string;
@@ -44,7 +45,7 @@ export type ETSettings = {
 
 export type ETMessageData = {
 	action: 'generate' | 'pause' | 'continue' | 'abort';
-	tables: TableData[];
+	tables: Table[];
 	columns: ColumnData[];
 	rows: any[];
 	isFirstBatch: boolean;

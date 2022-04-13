@@ -46,16 +46,16 @@ export const init = (): void => {
 		store.dispatch(mainActions.setOnloadAuthDetermined());
 	}
 
-	console.log(selectors.getSortedTablesArray(state));
 	if(numTables === 0){
-		console.log("adding first table, because there is none");
 		store.dispatch(actions.addTable());
-		const numRows = selectors.getNumRows(state);
-		if (numRows === 0) {
-			const tableId = selectors.getSortedTables(state)[0];
-			store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
-		}
+		console.log("adding first table, because there is none");
+		// const numRows = selectors.getNumRows(state);
+		// if (numRows === 0) {
+		// 	const tableId = selectors.getSortedTables(state)[0];
+		// 	store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
+		// }
 	}
+
 
 	const preloadDataTypes = selectors.getRowDataTypes(state);
 

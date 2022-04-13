@@ -5,6 +5,7 @@ import CodeMirrorWrapper, { CodeMirrorWrapperProps } from './CodeMirrorWrapper.c
 
 const mapStateToProps = (state: Store): CodeMirrorWrapperProps => ({
 	previewRows: selectors.getPreviewRows(state),
+	tables: selectors.getSortedTablesArray(state),
 	columns: selectors.getColumns(state),
 	showLineNumbers: selectors.shouldShowLineNumbers(state),
 	enableLineWrapping: selectors.shouldEnableLineWrapping(state),

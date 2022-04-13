@@ -19,9 +19,9 @@ import workerHash from './build/rollup-plugin-worker-hash';
 //    npx rollup -c --config-src=src/utils/workerUtils.ts --config-target=dist/debug.js
 //    npx rollup -c --config-src=src/plugins/countries/Australia/bundle.ts --config-target=dist/australia.js
 //    npx rollup -c --config-src=src/plugins/dataTypes/AutoIncrement/AutoIncrement.generator.ts --config-target=dist/workers/DT-AutoIncrement.generator.js
+const devmode = true;
 export default (cmdLineArgs) => {
-	const { 'config-src': src, 'config-target': target } = cmdLineArgs;
-
+	const { 'config-src': src, 'config-target': target} = cmdLineArgs;
 	if (!src || !target) {
 		console.error("\n*** Missing command line args. See file for usage. ***\n");
 		return;
@@ -41,16 +41,18 @@ export default (cmdLineArgs) => {
 		terserCompressProps.top_retain = ['utils', 'onmessage'];
 	}
 
-	return {
+	const config =  {
 		input: src,
 		output: {
 			file: target,
-			format: 'es'
+			format: 'es',
+			sourcemap: !!devmode
 		},
 		treeshake: false,
 		plugins: [
-			removeImports(),
-			commonjs(),
+			commonjs({
+				sourceMap: !!devmode
+			}),
 			nodeResolve(),
 			typescript({
 				tsconfigOverride: {
@@ -69,4 +71,11 @@ export default (cmdLineArgs) => {
 			workerHash()
 		]
 	}
+	if(!devmode){
+		config.plugins = [
+			removeImports(),
+			...config.plugins
+		]
+	}
+	return config;
 };

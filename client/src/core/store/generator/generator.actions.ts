@@ -20,32 +20,57 @@ import { getUnique } from '~utils/arrayUtils';
 import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
+import * as converterUtils from '~utils/converterUtils';
+import _ from "lodash";
+import { DataRow } from "~store/generator/generator.reducer";
 
 
 
-export const ADD_ROWS = 'ADD_ROWS';
-export const addRows = (numRows: number, tableId?: string): GDAction => ({
-	type: ADD_ROWS,
+export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	for (let i = 0; i < numRows; i++) {
+		dispatch(addRow(tableId));
+	}
+};
+
+export const ADD_ROW = 'ADD_ROW';
+export const addRow = (tableId: string, rowId = nanoid(), title = "", data: any = null, dataType: DataTypeFolder | null = null): GDAction => ({
+	type: ADD_ROW,
 	payload: {
-		numRows,
-		tableId
+		rowId,
+		tableId,
+		title,
+		data,
+		dataType
 	}
 });
-export const ADD_DEP_ROWS = 'ADD_DEP_ROWS';
-export const addDepRows = (numRows: number): GDAction => ({
-	type: ADD_DEP_ROWS,
+export const addDepRows = (numRows: number): any => async (dispatch: Dispatch, getState: any,): Promise<any> => {
+	for (let i = 0; i < numRows; i++) {
+		dispatch(addDepRow());
+	}
+};
+
+export const ADD_DEP_ROW = 'ADD_DEP_ROW';
+export const addDepRow = (rowId = nanoid(), leftSide: string[]=[], rightSide: string[]=[], isMvd=false): GDAction => ({
+	type: ADD_DEP_ROW,
 	payload: {
-		numRows
+		rowId,
+		leftSide,
+		rightSide,
+		isMvd
 	}
 });
+
+export const ADD_ROW_TO_TABLE = 'ADD_ROW_TO_TABLE';
+export const addRowToTable = (tableId: string, rowId: string): GDAction => ({ type: ADD_ROW_TO_TABLE, payload: { tableId, rowId } });
 
 export const ADD_TABLE = 'ADD_TABLE';
-export const addTable = (): GDAction => ({ type: ADD_TABLE });
+export const addTable = (tableId = nanoid(), title = "newTable"): GDAction => ({ type: ADD_TABLE, payload: { tableId, title } });
 
 export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const rows = selectors.getRowsOfTableArray(state, id);
+	console.log("removed rows by table: ", rows);
 	rows.forEach((row) => {
 		dispatch(removeRow(row.id));
 	});
@@ -58,24 +83,91 @@ export const removeTable = (id: string): any => async (dispatch: Dispatch, getSt
 		dispatch({ type: SELECT_TABLE_TAB, payload: { value: tabIndex-1 } });
 	}
 };
+export const removeTableDirty = (id: string): GDAction => ({ type: REMOVE_TABLE, payload: { id } });
+
+
+export const removeAllTables = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	selectors.getSortedTables(state).forEach(id => dispatch(removeTable(id)));
+};
+
+export const removeAllDependencies = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	selectors.getSortedDependencyRows(state).forEach(id => dispatch(removeDepRow(id)));
+};
 
 export const REMOVE_ROW = 'REMOVE_ROW';
 export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
-	const dependencyRows = selectors.getDependencyRows(state);
+	const dependencyRows = selectors.getSortedDependencyRowsArray(state);
 	dispatch({ type: REMOVE_ROW, payload: { rowId } });
-	for(const depRowId in dependencyRows) {
-		const row = dependencyRows[depRowId];
-		let selected = row.leftSide.filter((id) => rowId !== id);
+	dependencyRows.forEach(row => {
+		let selected = row.leftSide.filter(id=> row.id !== id);
 		if(selected !== row.leftSide){
-			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: depRowId, selected: selected } });
+			dispatch({ type: SELECT_DEP_LEFT_SIDE, payload: { id: row.id, selected: selected } });
 		}
-		selected = row.rightSide.filter((id) => rowId !== id);
+		selected = row.rightSide.filter(id => row.id !== id);
 		if(selected !== row.rightSide){
-			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: depRowId, selected: selected } });
+			dispatch({ type: SELECT_DEP_RIGHT_SIDE, payload: { id: row.id, selected: selected } });
 		}
+	});
+};
 
-	}
+// export const CONVERT_TO_3NF = "CONVERT_TO_3NF";
+export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const tables = selectors.getSortedTables(state);
+	tables.forEach(id => dispatch(removeTableDirty(id)));
+
+	const [newTables, newDependencies] = converterUtils.to3NF(dependencies);
+	dispatch(removeAllDependencies());
+
+	newTables.forEach((table, i) => {
+		const tableId = nanoid();
+		dispatch(addTable(tableId, "table"+(i+1)));
+		table.forEach(rowId => dispatch(addRowToTable(tableId, rowId)));
+	});
+	dispatch({ type: SELECT_TABLE_TAB, payload: { value: 0 } });
+	newDependencies.forEach(dependency => {
+		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	});
+	dispatch(refreshPreview());
+};
+
+export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const tables = selectors.getSortedTablesArray(state);
+	tables.forEach(table => dispatch(removeTableDirty(table.id)));
+
+	const [newTables, newDependencies] = converterUtils.addIds(tables.map(table => table.sortedRows), dependencies);
+	const pkTableNames: {[id: string]: string} = {};
+	newTables.map((rows, i) => {
+		const tableId = nanoid();
+		dispatch(addTable(tableId, "Table"+(i+1)));
+		rows.forEach(row => {
+			switch(row.type) {
+				case "pk":
+					dispatch(addRow(tableId, row.id, "Table"+(i+1)+"_ID", null, "PrimaryKey"));
+					pkTableNames[row.id]="Table"+(i+1);
+					break;
+				case "untouched":
+					dispatch(addRowToTable(tableId, row.id));
+					break;
+			}
+		});
+		return ({ tableId, rows });
+	}).forEach(({ tableId, rows }) =>
+		rows.filter(row => row.type === "fk").forEach(row => {
+			const fkId = nanoid();
+			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id], ({ pkId: row.id, tableId: tableId }),"ForeignKey"));
+		})
+	);
+	newDependencies.forEach(dependency => {
+		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	});
+	dispatch(refreshPreview());
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
@@ -257,7 +349,7 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 		const i18n = getStrings();
 		const template = selectors.getGenerationTemplate(state);
 		const dataTypePreviewData = { ...selectors.getDataTypePreviewData(state) };
-		const tables = selectors.getTablesWithRows(state);
+		const tables = selectors.getSortedTablesArray(state);
 		const columns = selectors.getColumns(state);
 		const unchanged = getUnchangedData(idsToRefresh, columns, dataTypePreviewData);
 
@@ -296,7 +388,6 @@ export const refreshPreview = (idsToRefresh: string[] = [], onComplete: any = nu
 
 				dataTypePreviewData[id] = generatedData.map((row: any): any => row[index]);
 			});
-
 			// great! So we've generated the data we need and manually only changed those lines that have just changed
 			// by the user via the UI. The CodeMirrorWrapper component handles passing off that info to the export type
 			// web worker to generate the final string

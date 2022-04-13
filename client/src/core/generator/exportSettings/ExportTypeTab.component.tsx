@@ -27,19 +27,19 @@ export const ExportTypeTab = ({
 
 	return (
 		<div className={`${styles.tabContent} tour-exportTypeTabContent`}>
-			<div className={`${styles.row} ${styles.exportFormatRow}`}>
-				<div className={styles.label}>{i18n.format}</div>
-				<div className={`${styles.field} tour-exportTypeDropdown`}>
-					<div style={{ width: 180 }}>
-						<Dropdown
-							isGrouped={true}
-							value={exportType}
-							options={getGroupedExportTypes()}
-							onChange={({ value }: DropdownOption): any => onChangeExportType(value)}
-						/>
-					</div>
-				</div>
-			</div>
+			{/*<div className={`${styles.row} ${styles.exportFormatRow}`}>*/}
+			{/*	<div className={styles.label}>{i18n.format}</div>*/}
+			{/*	<div className={`${styles.field} tour-exportTypeDropdown`}>*/}
+			{/*		<div style={{ width: 180 }}>*/}
+			{/*			<Dropdown*/}
+			{/*				isGrouped={true}*/}
+			{/*				value={exportType}*/}
+			{/*				options={getGroupedExportTypes()}*/}
+			{/*				onChange={({ value }: DropdownOption): any => onChangeExportType(value)}*/}
+			{/*			/>*/}
+			{/*		</div>*/}
+			{/*	</div>*/}
+			{/*</div>*/}
 
 			<div className="tour-exportTypeSettings">
 				{SettingsComponent ? <SettingsComponent

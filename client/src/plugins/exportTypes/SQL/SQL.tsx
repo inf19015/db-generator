@@ -7,7 +7,6 @@ import styles from './SQL.scss';
 
 
 export interface SQLSettings extends ETState {
-	tableName: string;
 	databaseType: 'MySQL' | 'Postgres' | 'SQLite' | 'Oracle' | 'MSSQL';
 	createTable: boolean;
 	dropTable: boolean;
@@ -20,7 +19,6 @@ export interface SQLSettings extends ETState {
 }
 
 export const initialState: SQLSettings = {
-	tableName: 'myTable',
 	databaseType: 'MySQL',
 	createTable: true,
 	dropTable: true,
@@ -209,16 +207,6 @@ export const Settings: React.ReactNode = ({ coreI18n, i18n, onUpdate, id, data }
 							</label>
 						</div>
 						{getBackQuotesOption()}
-						<div>
-							<Switch
-								checked={data.addPrimaryKey}
-								id={`${id}-addPrimaryKey`}
-								value="checked"
-								color="primary"
-								onChange={(): void => onChange('addPrimaryKey', !data.addPrimaryKey)}
-							/>
-							<label htmlFor={`${id}-addPrimaryKey`}>{i18n.addDefaultAutoIncrementPrimaryKey}</label>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -291,13 +279,6 @@ export const getDownloadFileInfo = ({ packetId }: ETDownloadPacket): ETDownloadP
 
 
 export const isValid = (settings: SQLSettings): boolean => {
-	if (!settings.tableName) {
-		return false;
-	}
-
-	if (settings.databaseType !== 'Oracle' && !settings.insertBatchSize) {
-		return false;
-	}
-
-	return true;
+	if(!settings) return false;
+	return !(settings.databaseType !== 'Oracle' && !settings.insertBatchSize);
 };

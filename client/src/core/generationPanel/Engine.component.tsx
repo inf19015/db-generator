@@ -21,7 +21,7 @@ const Engine = ({ packet, workerResources, logDataBatch, fullI18n, countryNames 
 	}
 
 	const { isPaused, config, dataTypeWorkerId, exportTypeWorkerId, numGeneratedRows, speed } = packet;
-	const { numRowsToGenerate, columns, template, exportType, exportTypeSettings, stripWhitespace } = config;
+	const { numRowsToGenerate, tables, columns, template, exportType, exportTypeSettings, stripWhitespace } = config;
 
 	const dataTypeWorker = coreUtils.getDataTypeWorker(dataTypeWorkerId);
 	const exportTypeWorker = coreUtils.getExportTypeWorker(exportTypeWorkerId);
@@ -52,6 +52,7 @@ const Engine = ({ packet, workerResources, logDataBatch, fullI18n, countryNames 
 			exportTypeWorker.postMessage({
 				rows: displayData,
 				columns,
+				tables,
 				exportType,
 				exportTypeSettings,
 				stripWhitespace,

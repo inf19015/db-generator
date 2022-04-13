@@ -3,7 +3,7 @@ import { MainState } from '~store/main/main.reducer';
 import { PacketsState } from '~store/packets/packets.reducer';
 import { AccountState } from '~store/account/account.reducer';
 import { DataTypeFolder } from '../_plugins';
-import { DTMetadata } from '~types/dataTypes';
+import { DTCustomProps, DTMetadata } from '~types/dataTypes';
 
 declare global {
     interface Window {
@@ -28,7 +28,7 @@ export const enum AuthMethod {
 	google = 'google'
 }
 
-export type GDLocale = 'ar' | 'en' | 'fr' | 'de' | 'es' | 'ja' | 'hi' | 'nl' | 'pt' | 'ta' | 'zh';
+export type GDLocale =  'en' ;
 
 export type GDLocaleMap = {
 	[locale in GDLocale]: string;
@@ -77,14 +77,11 @@ export type GenerationTemplate = {
 
 export type ColumnData = {
 	title: string;
+	columnId: string;
 	dataType: DataTypeFolder;
+	props: DTCustomProps;
 	metadata: DTMetadata;
 };
-
-export type TableData = {
-	title: string;
-	columns: ColumnData[];
-}
 
 export type TourProps = {
 	isOpen: boolean;

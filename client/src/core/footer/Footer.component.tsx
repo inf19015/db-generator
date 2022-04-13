@@ -32,11 +32,13 @@ export type FooterProps = {
 	currentDataSetId: number | null;
 	showTourDialog: (history: any) => void;
 	customFooterLinks: JSX.Element[];
+	onConvertTo3NF: () => void;
+	onAddIds: () => void;
 };
 
 const Footer = ({
 	i18n, locale, actionButtonsEnabled, scriptVersion, onSave, onGenerate, currentPage,
-	currentDataSetId, onSaveNewDataSet, onSaveAs, showTourDialog, customFooterLinks
+	currentDataSetId, onSaveNewDataSet, onSaveAs, showTourDialog, customFooterLinks, onConvertTo3NF, onAddIds
 }: FooterProps): JSX.Element => {
 	const saveAsButtonRef = React.useRef(null);
 	const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -149,6 +151,16 @@ const Footer = ({
 						>
 							<GearIcon />
 							{i18n.generate}
+						</Button>
+						<Button
+							onClick={onConvertTo3NF}
+						>
+							3NF
+						</Button>
+						<Button
+							onClick={onAddIds}
+						>
+							Add PKS
 						</Button>
 					</div>
 				</div>

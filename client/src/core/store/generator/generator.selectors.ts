@@ -71,21 +71,24 @@ export const getSortedTablesArray = createSelector(
 
 export const getSortedRows = createSelector(
 	getSortedTablesArray,
-	(tables) => tables.flatMap((t) => t.sortedRows)
+	(tables): Array<string> => tables.flatMap(t => t.sortedRows)
 );
 export const getNumRows = createSelector(
 	getSortedRows,
 	(rows) => rows.length
 );
 
+export const getRow = (state: Store, rowId: string): DataRow => state.generator.rows[rowId];
+
 export const getSortedRowsArray = createSelector(
 	getRows,
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
+export const getSortedRowsOfTable = (state: Store, tableId: string): string[] => state.generator.tables[tableId].sortedRows;
 
 export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
-	state.generator.tables[tableId].sortedRows.map((id) => state.generator.rows[id]);
+	getSortedRowsOfTable(state, tableId).map(id => getRow(state, id));
 
 export const getSelectedTable = createSelector(
 	getSelectedTableTab,
@@ -126,12 +129,14 @@ export const getColumns = createSelector(
 		return rows.filter((row: DataRow) => row.dataType !== null && row.dataType.trim() !== '')
 			.map(({ dataType, title, data, id }: any) => {
 				const { getMetadata } = getDataType(dataType);
-				const metadata = getMetadata ? getMetadata(data) : null;
+				const metadata = getMetadata ? getMetadata({ data }) : null;
 
 				return {
 					title,
 					dataType,
 					metadata,
+					props: data,
+					columnId: id,
 					id
 				};
 			});
@@ -177,13 +182,6 @@ export const getSortedDependencyRowsArray = createSelector(
 	getSortedDependencyRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
-
-export const getTablesWithRows = (state: Store) => {
-	const tables = getSortedTablesArray(state);
-	return tables.map((table): any => ({ title: table.title, columns: getRowsOfTableArray(state, table.id) }));
-};
-
-
 
 type ProcessOrders = {
 	[num: number]: any;
