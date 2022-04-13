@@ -13,7 +13,6 @@ module.exports = (env, argv) => {
 
 	var config = {
 		mode,
-
 		entry: {
 			app: path.resolve(__dirname, 'src/index.tsx')
 		},
@@ -27,6 +26,7 @@ module.exports = (env, argv) => {
 
 		module: {
 			rules: [
+
 				{
 					test: /\.tsx?$/,
 					loader: ['ts-loader', 'eslint-loader']

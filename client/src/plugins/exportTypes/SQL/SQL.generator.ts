@@ -57,13 +57,15 @@ export const generateMySQL = (data: ETMessageData): string => {
 	const sqlSettings: SQLSettings = data.settings;
 	const { isFirstBatch, columns, rows, tables } = data;
 	const backquote = sqlSettings.encloseInBackQuotes ? '`' : '';
-
+	
 	let content = '';
-
+	const tablesToGenerate = tables.filter(table => table.sortedRows.length > 0)
+		.filter(table => table.sortedRows.map(colId => columns.find(col => col.columnId === colId))
+			.find(col => !!col && col.dataType && col.title));
 	const numericFieldIndexes = getNumericFieldColumnIndexes(data.columns);
 
 	if (isFirstBatch) {
-		tables.forEach(table => {
+		tablesToGenerate.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
 				content += `DROP TABLE IF EXISTS ${backquote}${table.title}${backquote};\n\n`;
@@ -99,10 +101,7 @@ export const generateMySQL = (data: ETMessageData): string => {
 		});
 
 	}
-
-
-
-	tables.forEach(table => {
+	tablesToGenerate.forEach(table => {
 		let rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 		const colTitles = tableColumns.map(({ title }) => title);
@@ -164,11 +163,13 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 	const sqlSettings: SQLSettings = generationData.settings;
 	const { isFirstBatch, columns, rows, tables } = generationData;
 	let content = '';
-
+	const tablesToGenerate = tables.filter(table => table.sortedRows.length > 0)
+		.filter(table => table.sortedRows.map(colId => columns.find(col => col.columnId === colId))
+			.find(col => !!col && col.dataType && col.title));
 	const numericFieldIndexes = getNumericFieldColumnIndexes(generationData.columns);
 
 	if (isFirstBatch) {
-		tables.forEach(table => {
+		tablesToGenerate.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
 				content += `DROP TABLE IF EXISTS "${table.title}";\n\n`;
@@ -200,10 +201,10 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 
 	}
 
-	tables.forEach(table => {
+	tablesToGenerate.forEach(table => {
 		let rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
-		const colTitles = tableColumns.map(({title}) => title);
+		const colTitles = tableColumns.map(({ title }) => title);
 		const colNamesStr = colTitles.join(',');
 		rows.forEach((row: any, rowIndex: number) => {
 			if (sqlSettings.statementType === 'insert') {
@@ -241,13 +242,14 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 	const sqlSettings: SQLSettings = generationData.settings;
 	const { isFirstBatch, columns, rows, tables } = generationData;
 	const backquote = sqlSettings.encloseInBackQuotes ? '`' : '';
-	const colTitles = generationData.columns.map(({ title }) => title);
 	let content = '';
-
+	const tablesToGenerate = tables.filter(table => table.sortedRows.length > 0)
+		.filter(table => table.sortedRows.map(colId => columns.find(col => col.columnId === colId))
+			.find(col => !!col && col.dataType && col.title));
 	const numericFieldIndexes = getNumericFieldColumnIndexes(generationData.columns);
 
 	if (isFirstBatch) {
-		tables.forEach(table => {
+		tablesToGenerate.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
 				content += `DROP TABLE IF EXISTS ${backquote}${table.title}${backquote};\n\n`;
@@ -280,10 +282,10 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 		});
 
 	}
-	tables.forEach(table => {
+	tablesToGenerate.forEach(table => {
 		let rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
-		const colTitles = tableColumns.map(({title}) => title);
+		const colTitles = tableColumns.map(({ title }) => title);
 		let colNamesStr = '';
 		if (sqlSettings.encloseInBackQuotes) {
 			colNamesStr = `\`${colTitles.join('`,`')}\``;
@@ -327,11 +329,13 @@ export const generateOracle = (generationData: ETMessageData): string => {
 	const backquote = sqlSettings.encloseInBackQuotes ? '`' : '';
 	const { isFirstBatch, columns, rows, tables } = generationData;
 	let content = '';
-
+	const tablesToGenerate = tables.filter(table => table.sortedRows.length > 0)
+		.filter(table => table.sortedRows.map(colId => columns.find(col => col.columnId === colId))
+			.find(col => !!col && col.dataType && col.title));
 	const numericFieldIndexes = getNumericFieldColumnIndexes(generationData.columns);
 
 	if (isFirstBatch) {
-		tables.forEach(table => {
+		tablesToGenerate.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
 				content += `DROP TABLE ${backquote}${table.title}${backquote};\n\n`;
@@ -364,10 +368,10 @@ export const generateOracle = (generationData: ETMessageData): string => {
 		});
 
 	}
-	tables.forEach(table => {
-		let rowDataStr: string[] = [];
+	tablesToGenerate.forEach(table => {
+		const rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
-		const colTitles = tableColumns.map(({title}) => title);
+		const colTitles = tableColumns.map(({ title }) => title);
 		let colNamesStr = '';
 		if (sqlSettings.encloseInBackQuotes) {
 			colNamesStr = `\`${colTitles.join('`,`')}\``;
@@ -408,11 +412,13 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 	const { isFirstBatch, columns, rows, tables } = generationData;
 	const quote = sqlSettings.quotes === 'single' ? QuoteType.single : QuoteType.double;
 	let content = '';
-
+	const tablesToGenerate = tables.filter(table => table.sortedRows.length > 0)
+		.filter(table => table.sortedRows.map(colId => columns.find(col => col.columnId === colId))
+			.find(col => !!col && col.dataType && col.title));
 	const numericFieldIndexes = getNumericFieldColumnIndexes(generationData.columns);
 
 	if (isFirstBatch) {
-		tables.forEach(table => {
+		tablesToGenerate.forEach(table => {
 			const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 			if (sqlSettings.dropTable) {
 				content += `IF EXISTS(SELECT 1 FROM sys.tables WHERE object_id = OBJECT_ID(${quote}${table.title}${quote}))\n`;
@@ -450,10 +456,10 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 		});
 
 	}
-	tables.forEach(table => {
+	tablesToGenerate.forEach(table => {
 		let rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
-		const colTitles = tableColumns.map(({title}) => title);
+		const colTitles = tableColumns.map(({ title }) => title);
 		const colNamesStr = colTitles.join(',');
 
 		rows.forEach((row: any, rowIndex: number) => {
