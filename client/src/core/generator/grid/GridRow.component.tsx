@@ -13,6 +13,7 @@ import { SmallSpinner } from '~components/loaders/loaders';
 import { SmallScreenSettingsIcon } from './SmallScreenSettingsIcon';
 import { DTOptionsMetadata } from '~types/dataTypes';
 import { CountryNamesMap } from '~types/countries';
+import { on } from 'cluster';
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any): React.CSSProperties => {
 	const styles: React.CSSProperties = {
@@ -49,6 +50,8 @@ export type GridRowProps = {
 	isCountryNamesLoading: boolean;
 	isCountryNamesLoaded: boolean;
 	countryNamesMap: CountryNamesMap | null;
+	onTitleFocus: () => void;
+	onTitleBlur: () => void;
 };
 
 const NoExample = ({ coreI18n, emptyColClass }: any): JSX.Element => <div className={emptyColClass}>{coreI18n.noExamplesAvailable}</div>;
@@ -57,7 +60,7 @@ const NoOptions = ({ coreI18n, emptyColClass }: any): JSX.Element => <div classN
 export const GridRow = ({
 	row, index, Example, Options, onRemove, onChangeTitle, onConfigureDataType, onSelectDataType, dtDropdownOptions,
 	i18n, countryI18n, selectedDataTypeI18n, dtCustomProps, gridPanelDimensions, showHelpDialog, isDataTypeLoaded,
-	isCountryNamesLoading, isCountryNamesLoaded, countryNamesMap
+	isCountryNamesLoading, isCountryNamesLoaded, countryNamesMap, onTitleFocus, onTitleBlur
 }: GridRowProps): JSX.Element => {
 	let example: any = null;
 	let options: any = null;
@@ -152,6 +155,8 @@ export const GridRow = ({
 								error={titleColError}
 								value={row.title}
 								onChange={(e: any): void => onChangeTitle(row.id, e.target.value)}
+								onFocus={onTitleFocus}
+								onBlur={onTitleBlur}
 								throttle={false}
 							/>
 						</div>

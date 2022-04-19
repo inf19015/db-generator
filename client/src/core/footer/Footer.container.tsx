@@ -11,7 +11,8 @@ import * as coreUtils from '../../utils/coreUtils';
 import { isExportTypeValid } from '~utils/exportTypeUtils';
 import { getCustomFooterLinks } from '~utils/extensionUtils';
 import { SaveDataDialogType } from '~store/account/account.reducer';
-import { convertAddPKS } from "../store/generator/generator.actions";
+import { ActionCreators } from 'redux-undo';
+import { batchGroupBy, undoGroup } from "~store/generator/batchGroupBy";
 
 const mapStateToProps = (state: any): Partial<FooterProps> => {
 	const exportType = selectors.getExportType(state);
@@ -35,10 +36,12 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<FooterProps> => ({
 	onSaveNewDataSet: (): any => dispatch(accountActions.showSaveDataSetDialog(SaveDataDialogType.save)),
 	onSaveAs: (): any => dispatch(accountActions.showSaveDataSetDialog(SaveDataDialogType.saveAs)),
 	onGenerate: (): any => dispatch(actions.showGenerationSettingsPanel()),
-	onConvertTo3NF: (): any => dispatch(actions.convertTo3NF()),
-	onAddIds: (): any => dispatch(actions.convertAddPKS()),
+	onConvertTo3NF:  undoGroup((): any => dispatch(actions.convertTo3NF())),
+	onAddIds: undoGroup((): any => dispatch(actions.convertAddPKS())),
 	// @ts-ignore-line
-	showTourDialog: (history: any): any => dispatch(mainActions.showTourIntroDialog(history))
+	showTourDialog: (history: any): any => dispatch(mainActions.showTourIntroDialog(history)),
+	undo: (): any => dispatch(ActionCreators.undo()),
+	redo: (): any => dispatch(ActionCreators.redo())
 });
 
 export default connect(

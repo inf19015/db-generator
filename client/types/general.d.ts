@@ -1,4 +1,4 @@
-import { GeneratorState } from '~store/generator/generator.reducer';
+import { UndoableGeneratorState } from '~store/generator/generator.reducer';
 import { MainState } from '~store/main/main.reducer';
 import { PacketsState } from '~store/packets/packets.reducer';
 import { AccountState } from '~store/account/account.reducer';
@@ -17,7 +17,7 @@ declare global {
 }
 
 export type Store = {
-	generator: GeneratorState;
+	generator: UndoableGeneratorState;
 	main: MainState;
 	packets: PacketsState;
 	account: AccountState;

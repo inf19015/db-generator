@@ -6,9 +6,10 @@ import Popper from '@material-ui/core/Popper';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import SaveIcon from '@material-ui/icons/Save';
 import GearIcon from '@material-ui/icons/Settings';
-import Person from '@material-ui/icons/EmojiPeople';
-import { Tooltip } from '~components/tooltips';
-import { Github } from '~components/icons';
+import UndoIcon from '@material-ui/icons/Undo';
+import RedoIcon from '@material-ui/icons/Redo';
+// import { Tooltip } from '~components/tooltips';
+// import { Github } from '~components/icons';
 import ActivePacketsList from '../generationPanel/ActivePacketsList.container';
 import PanelControls from '../generator/panelControls/PanelControls.container';
 import AboutDialog from '~core/dialogs/about/About.component';
@@ -34,11 +35,13 @@ export type FooterProps = {
 	customFooterLinks: JSX.Element[];
 	onConvertTo3NF: () => void;
 	onAddIds: () => void;
+	undo: () => void;
+	redo: () => void;
 };
 
 const Footer = ({
 	i18n, locale, actionButtonsEnabled, scriptVersion, onSave, onGenerate, currentPage,
-	currentDataSetId, onSaveNewDataSet, onSaveAs, showTourDialog, customFooterLinks, onConvertTo3NF, onAddIds
+	currentDataSetId, onSaveNewDataSet, onSaveAs, showTourDialog, customFooterLinks, onConvertTo3NF, onAddIds, undo, redo
 }: FooterProps): JSX.Element => {
 	const saveAsButtonRef = React.useRef(null);
 	const anchorRef = React.useRef<HTMLDivElement>(null);
@@ -160,8 +163,19 @@ const Footer = ({
 						<Button
 							onClick={onAddIds}
 						>
-							Add PKS
+							Add PKs
 						</Button>
+						<Button
+							onClick={undo}
+						>
+							<UndoIcon />
+						</Button>
+						<Button
+							onClick={redo}
+						>
+							<RedoIcon />
+						</Button>
+
 					</div>
 				</div>
 			</footer>

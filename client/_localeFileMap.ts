@@ -1,5 +1,5 @@
 import { GDLocaleMap } from '~types/general';
 
 export const localeFileMap: GDLocaleMap = {
-	"en": "en-dda9a635.js"
+	"en": "en-8b691a6b.js"
 };

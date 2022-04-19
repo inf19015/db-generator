@@ -16,50 +16,49 @@ import { GridContainerLayout } from "~core/generator/gridContainer/GridContainer
 
 
 
-
-export const getLoadedDataTypes = (state: Store): any => state.generator.loadedDataTypes;
-export const getLoadedExportTypes = (state: Store): any => state.generator.loadedExportTypes;
-export const getExportType = (state: Store): ExportTypeFolder => state.generator.exportType;
-export const getRows = (state: Store): DataRows => state.generator.rows;
-export const getDependencyRows = (state: Store): DependencyRows => state.generator.dependencyRows;
-export const getSortedDependencyRows = (state: Store): string[] => state.generator.sortedDependencyRows;
-export const getTables = (state: Store): Tables => state.generator.tables;
-export const getSortedTables = (state: Store): string[] => state.generator.sortedTables;
-export const getSelectedTableTab = (state: Store): number => state.generator.selectedTableTab;
-export const isGridVisible = (state: Store): boolean => state.generator.showGrid;
-export const isDependencyGridVisible = (state: Store): boolean => state.generator.showDependencyGrid;
-export const isPreviewVisible = (state: Store): boolean => state.generator.showPreview;
-export const getSmallScreenVisiblePanel = (state: Store): GeneratorPanel => state.generator.smallScreenVisiblePanel;
-export const getGeneratorLayout = (state: Store): GeneratorLayout => state.generator.generatorLayout;
-export const getGridContainerLayout = (state: Store): GridContainerLayout => state.generator.gridContainerLayout;
-export const getNumPreviewRows = (state: Store): number => state.generator.numPreviewRows;
-export const shouldShowLineNumbers = (state: Store): boolean => state.generator.showLineNumbers;
-export const shouldEnableLineWrapping = (state: Store): boolean => state.generator.enableLineWrapping;
-export const getTheme = (state: Store): string => state.generator.theme;
-export const getPreviewTextSize = (state: Store): number => state.generator.previewTextSize;
-export const getDataTypePreviewData = (state: Store): any => state.generator.dataTypePreviewData;
-export const shouldShowExportSettings = (state: Store): boolean => state.generator.showExportSettings;
-export const shouldShowDataSetHistory = (state: Store): boolean => state.generator.showDataSetHistory;
-export const getSelectedDataSetHistoryItem = (state: Store): any => state.generator.selectedDataSetHistory;
-export const getExportTypeSettings = (state: Store): any => state.generator.exportTypeSettings;
-export const getExportSettingsTab = (state: Store): any => state.generator.exportSettingsTab;
-export const isGenerationSettingsPanelVisible = (state: Store): boolean => state.generator.showGenerationSettingsPanel;
-export const isHelpDialogVisible = (state: Store): boolean => state.generator.showHelpDialog;
-export const isClearPageDialogVisible = (state: Store): boolean => state.generator.showClearPageDialog;
-export const getHelpDialogSection = (state: Store): DataTypeFolder | null => state.generator.helpDialogSection;
-export const getNumRowsToGenerate = (state: Store): number => state.generator.numRowsToGenerate;
-export const getLastLayoutWidth = (state: Store): number | null => state.generator.lastLayoutWidth;
-export const getLastLayoutHeight = (state: Store): number | null => state.generator.lastLayoutHeight;
-export const getLastGridContainerLayoutWidth = (state: Store): number | null => state.generator.lastGridContainerLayoutWidth;
-export const getLastGridContainerLayoutHeight = (state: Store): number | null => state.generator.lastGridContainerLayoutHeight;
-export const isInitialDependenciesLoaded = (state: Store): boolean => state.generator.initialDependenciesLoaded;
-export const shouldStripWhitespace = (state: Store): boolean => state.generator.stripWhitespace;
-export const getCurrentDataSetId = (state: Store): number | null => state.generator.currentDataSet.dataSetId;
-export const getCurrentDataSet = (state: Store): CurrentDataSet => state.generator.currentDataSet;
-export const hasBulkActionPending = (state: Store): boolean => state.generator.bulkActionPending;
-export const isCountryNamesLoading = (state: Store): boolean => state.generator.isCountryNamesLoading;
-export const isCountryNamesLoaded = (state: Store): boolean => state.generator.isCountryNamesLoaded;
-export const shouldShowChangeTableTitleDialog = (state: Store): boolean => state.generator.showChangeTableTitleDialog;
+export const getLoadedDataTypes = (state: Store): any => state.generator.present.loadedDataTypes;
+export const getLoadedExportTypes = (state: Store): any => state.generator.present.loadedExportTypes;
+export const getExportType = (state: Store): ExportTypeFolder => state.generator.present.exportType;
+export const getRows = (state: Store): DataRows => state.generator.present.rows;
+export const getDependencyRows = (state: Store): DependencyRows => state.generator.present.dependencyRows;
+export const getSortedDependencyRows = (state: Store): string[] => state.generator.present.sortedDependencyRows;
+export const getTables = (state: Store): Tables => state.generator.present.tables;
+export const getSortedTables = (state: Store): string[] => state.generator.present.sortedTables;
+export const getSelectedTableTab = (state: Store): number => state.generator.present.selectedTableTab;
+export const isGridVisible = (state: Store): boolean => state.generator.present.showGrid;
+export const isDependencyGridVisible = (state: Store): boolean => state.generator.present.showDependencyGrid;
+export const isPreviewVisible = (state: Store): boolean => state.generator.present.showPreview;
+export const getSmallScreenVisiblePanel = (state: Store): GeneratorPanel => state.generator.present.smallScreenVisiblePanel;
+export const getGeneratorLayout = (state: Store): GeneratorLayout => state.generator.present.generatorLayout;
+export const getGridContainerLayout = (state: Store): GridContainerLayout => state.generator.present.gridContainerLayout;
+export const getNumPreviewRows = (state: Store): number => state.generator.present.numPreviewRows;
+export const shouldShowLineNumbers = (state: Store): boolean => state.generator.present.showLineNumbers;
+export const shouldEnableLineWrapping = (state: Store): boolean => state.generator.present.enableLineWrapping;
+export const getTheme = (state: Store): string => state.generator.present.theme;
+export const getPreviewTextSize = (state: Store): number => state.generator.present.previewTextSize;
+export const getDataTypePreviewData = (state: Store): any => state.generator.present.dataTypePreviewData;
+export const shouldShowExportSettings = (state: Store): boolean => state.generator.present.showExportSettings;
+export const shouldShowDataSetHistory = (state: Store): boolean => state.generator.present.showDataSetHistory;
+export const getSelectedDataSetHistoryItem = (state: Store): any => state.generator.present.selectedDataSetHistory;
+export const getExportTypeSettings = (state: Store): any => state.generator.present.exportTypeSettings;
+export const getExportSettingsTab = (state: Store): any => state.generator.present.exportSettingsTab;
+export const isGenerationSettingsPanelVisible = (state: Store): boolean => state.generator.present.showGenerationSettingsPanel;
+export const isHelpDialogVisible = (state: Store): boolean => state.generator.present.showHelpDialog;
+export const isClearPageDialogVisible = (state: Store): boolean => state.generator.present.showClearPageDialog;
+export const getHelpDialogSection = (state: Store): DataTypeFolder | null => state.generator.present.helpDialogSection;
+export const getNumRowsToGenerate = (state: Store): number => state.generator.present.numRowsToGenerate;
+export const getLastLayoutWidth = (state: Store): number | null => state.generator.present.lastLayoutWidth;
+export const getLastLayoutHeight = (state: Store): number | null => state.generator.present.lastLayoutHeight;
+export const getLastGridContainerLayoutWidth = (state: Store): number | null => state.generator.present.lastGridContainerLayoutWidth;
+export const getLastGridContainerLayoutHeight = (state: Store): number | null => state.generator.present.lastGridContainerLayoutHeight;
+export const isInitialDependenciesLoaded = (state: Store): boolean => state.generator.present.initialDependenciesLoaded;
+export const shouldStripWhitespace = (state: Store): boolean => state.generator.present.stripWhitespace;
+export const getCurrentDataSetId = (state: Store): number | null => state.generator.present.currentDataSet.dataSetId;
+export const getCurrentDataSet = (state: Store): CurrentDataSet => state.generator.present.currentDataSet;
+export const hasBulkActionPending = (state: Store): boolean => state.generator.present.bulkActionPending;
+export const isCountryNamesLoading = (state: Store): boolean => state.generator.present.isCountryNamesLoading;
+export const isCountryNamesLoaded = (state: Store): boolean => state.generator.present.isCountryNamesLoaded;
+export const shouldShowChangeTableTitleDialog = (state: Store): boolean => state.generator.present.showChangeTableTitleDialog;
 
 
 
@@ -78,14 +77,14 @@ export const getNumRows = createSelector(
 	(rows) => rows.length
 );
 
-export const getRow = (state: Store, rowId: string): DataRow => state.generator.rows[rowId];
+export const getRow = (state: Store, rowId: string): DataRow => state.generator.present.rows[rowId];
 
 export const getSortedRowsArray = createSelector(
 	getRows,
 	getSortedRows,
 	(rows, sorted) => sorted.map((id: string) => rows[id])
 );
-export const getSortedRowsOfTable = (state: Store, tableId: string): string[] => state.generator.tables[tableId].sortedRows;
+export const getSortedRowsOfTable = (state: Store, tableId: string): string[] => state.generator.present.tables[tableId].sortedRows;
 
 export const getRowsOfTableArray = (state: Store, tableId: string): DataRow[] =>
 	getSortedRowsOfTable(state, tableId).map(id => getRow(state, id));

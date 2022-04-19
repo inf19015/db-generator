@@ -4,6 +4,7 @@ import * as actions from '~store/generator/generator.actions';
 import * as selectors from '~store/generator/generator.selectors';
 import DependencyGrid, { DependencyGridProps } from './DependencyGrid.component';
 import { DataTypeFolder } from '../../../../_plugins';
+import { undoGroup } from "~store/generator/batchGroupBy";
 
 const mapStateToProps = (state: any): Partial<DependencyGridProps> => ({
 	i18n: selectors.getCoreI18n(state),
@@ -12,7 +13,7 @@ const mapStateToProps = (state: any): Partial<DependencyGridProps> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<DependencyGridProps> => ({
-	onAddRows: (numRows: number): any => dispatch(actions.addDepRows(numRows)),
+	onAddRows: undoGroup((numRows: number): any => dispatch(actions.addDepRows(numRows))),
 	onSort: (id: string, newIndex: number): any => dispatch(actions.repositionDepRow(id, newIndex)),
 	toggleGrid: (): any => dispatch(actions.toggleDependencyGrid()),
 	changeSmallScreenVisiblePanel: (): any => dispatch(actions.changeSmallScreenVisiblePanel()),

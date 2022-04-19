@@ -9,6 +9,7 @@ import * as actions from '~store/generator/generator.actions';
 import * as selectors from '~store/generator/generator.selectors';
 import { DataTypeFolder } from '../../../../_plugins';
 import { DTOptionsMetadata } from '~types/dataTypes';
+import { undoGroup, batchGroupBy } from "~store/generator/batchGroupBy";
 
 type OwnProps = {
 	row: DataRow;
@@ -44,10 +45,12 @@ const mapStateToProps = (state: Store, ownProps: OwnProps): Partial<GridRowProps
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<GridRowProps> => ({
-	onRemove: (rowId: string): any => dispatch(actions.removeRow(rowId)),
+	onRemove: undoGroup((rowId: string): any => dispatch(actions.removeRow(rowId))),
 	onChangeTitle: (id: string, value: string): any => dispatch(actions.onChangeTitle(id, value)),
-	onConfigureDataType: (id: string, data: any, metadata?: DTOptionsMetadata): any => dispatch(actions.onConfigureDataType(id, data, metadata)),
-	onSelectDataType: (dataType: DataTypeFolder, id: string): any => dispatch(actions.onSelectDataType(dataType, id)),
+	onConfigureDataType: undoGroup((id: string, data: any, metadata?: DTOptionsMetadata): any => dispatch(actions.onConfigureDataType(id, data, metadata))),
+	onSelectDataType: undoGroup((dataType: DataTypeFolder, id: string): any => dispatch(actions.onSelectDataType(dataType, id))),
+	onTitleFocus: () => batchGroupBy.start(),
+	onTitleBlur: () => batchGroupBy.end(),
 });
 
 export default connect(

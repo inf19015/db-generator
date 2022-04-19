@@ -124,15 +124,12 @@ export type SelectedDataSetHistoryItem = {
 };
 
 export type GeneratorState = {
-
-
 	loadedDataTypes: {
 		[str in DataTypeFolder]: boolean;
 	};
 	loadedExportTypes: {
 		[str in ExportTypeFolder]: boolean;
 	};
-
 	// this is set to true on load after all necessary export types, data types for whatever last config they
 	// has have loaded, as well as re-generate a new batch of preview data. It's used to show a spinner in the
 	// Preview panel until it's ready to show data
@@ -179,58 +176,64 @@ export type GeneratorState = {
 	stashedState: StashedGeneratorState | null;
 };
 
+export type UndoableGeneratorState = {
+	past: GeneratorState[];
+	present: GeneratorState;
+	future: GeneratorState[];
+}
+
 export const getInitialState = (): GeneratorState => ({
-	// the extra check for existence on these vars is just to placate the tests (not sure why needed)
-	loadedDataTypes: Object.keys(dataTypes).reduce((acc: any, name: DataTypeFolder) => ({ ...acc, [name]: false }), {}),
-	loadedExportTypes: Object.keys(exportTypes).reduce((acc: any, name: ExportTypeFolder) => ({ ...acc, [name]: false }), {}),
-	initialDependenciesLoaded: false,
-	exportType: env.defaultExportType,
-	rows: {},
-	dependencyRows: {},
-	tables: {},
-	sortedTables: [],
-	selectedTableTab: 0,
-	sortedDependencyRows: [],
-	showGrid: true,
-	showDependencyGrid: true,
-	showPreview: true,
-	smallScreenVisiblePanel: GeneratorPanel.grid,
-	generatorLayout: GeneratorLayout.horizontal,
-	gridContainerLayout: GridContainerLayout.vertical,
-	showExportSettings: false,
-	exportTypeSettings: {},
-	numPreviewRows: 5,
-	showLineNumbers: true,
-	enableLineWrapping: true,
-	theme: 'lucario',
-	previewTextSize: 12,
-	dataTypePreviewData: {},
-	exportSettingsTab: 'exportType', // TODO enum
-	showGenerationSettingsPanel: false,
-	showDataSetHistory: false,
-	bulkActionPending: true, // for brand new page loads we assume there's a bulk action to re-load
-	showHelpDialog: false,
-	showClearPageDialog: false,
-	showChangeTableTitleDialog: false,
-	helpDialogSection: null,
-	numRowsToGenerate: env.defaultNumRows,
-	stripWhitespace: false,
-	lastLayoutWidth: null,
-	lastLayoutHeight: null,
-	lastGridContainerLayoutWidth: null,
-	lastGridContainerLayoutHeight: null,
-	currentDataSet: {
-		dataSetId: null,
-		dataSetName: '',
-		lastSaved: null
-	},
-	selectedDataSetHistory: {
-		historyId: null,
-		isLatest: false
-	},
-	isCountryNamesLoading: false,
-	isCountryNamesLoaded: false,
-	stashedState: null
+		// the extra check for existence on these vars is just to placate the tests (not sure why needed)
+		loadedDataTypes: Object.keys(dataTypes).reduce((acc: any, name: DataTypeFolder) => ({ ...acc, [name]: false }), {}),
+		loadedExportTypes: Object.keys(exportTypes).reduce((acc: any, name: ExportTypeFolder) => ({ ...acc, [name]: false }), {}),
+		initialDependenciesLoaded: false,
+		exportType: env.defaultExportType,
+		rows: {},
+		dependencyRows: {},
+		tables: {},
+		sortedTables: [],
+		selectedTableTab: 0,
+		sortedDependencyRows: [],
+		showGrid: true,
+		showDependencyGrid: true,
+		showPreview: true,
+		smallScreenVisiblePanel: GeneratorPanel.grid,
+		generatorLayout: GeneratorLayout.horizontal,
+		gridContainerLayout: GridContainerLayout.vertical,
+		showExportSettings: false,
+		exportTypeSettings: {},
+		numPreviewRows: 5,
+		showLineNumbers: true,
+		enableLineWrapping: true,
+		theme: 'lucario',
+		previewTextSize: 12,
+		dataTypePreviewData: {},
+		exportSettingsTab: 'exportType', // TODO enum
+		showGenerationSettingsPanel: false,
+		showDataSetHistory: false,
+		bulkActionPending: true, // for brand new page loads we assume there's a bulk action to re-load
+		showHelpDialog: false,
+		showClearPageDialog: false,
+		showChangeTableTitleDialog: false,
+		helpDialogSection: null,
+		numRowsToGenerate: env.defaultNumRows,
+		stripWhitespace: false,
+		lastLayoutWidth: null,
+		lastLayoutHeight: null,
+		lastGridContainerLayoutWidth: null,
+		lastGridContainerLayoutHeight: null,
+		currentDataSet: {
+			dataSetId: null,
+			dataSetName: '',
+			lastSaved: null
+		},
+		selectedDataSetHistory: {
+			historyId: null,
+			isLatest: false
+		},
+		isCountryNamesLoading: false,
+		isCountryNamesLoaded: false,
+		stashedState: null
 });
 
 export const reducer = produce((draft: GeneratorState, action: AnyAction) => {

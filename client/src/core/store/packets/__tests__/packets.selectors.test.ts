@@ -9,7 +9,11 @@ import { Store } from '~types/general';
 describe('getCurrentPacket', () => {
 	it('should return false by default', () => {
 		let state: Store = {
-			generator: getInitialState(),
+			generator: {
+				past: [getInitialState()],
+				present: getInitialState(),
+				future: []
+			},
 			main: initialMainState,
 			packets: initialPacketState,
 			account: initialAccountState
@@ -25,7 +29,11 @@ describe('getCurrentPacket', () => {
 		packets.packets['456'] = getNewPacket({ dataTypeWorkerId: 2 });
 
 		let state: Store = {
-			generator: getInitialState(),
+			generator: {
+				past: [getInitialState()],
+				present: getInitialState(),
+				future: []
+			},
 			main: initialMainState,
 			packets,
 			account: initialAccountState
@@ -47,7 +55,11 @@ describe('getCurrentPacket', () => {
 		});
 
 		let state: Store = {
-			generator: getInitialState(),
+			generator: {
+				past: [getInitialState()],
+				present: getInitialState(),
+				future: []
+			},
 			main: initialMainState,
 			packets,
 			account: initialAccountState

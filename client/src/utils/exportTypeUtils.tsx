@@ -101,7 +101,7 @@ export const getExportTypeInitialState = (exportType: ExportTypeFolder): any => 
 // *** assumes the callee knows what they're doing & that they've checked the component has been loaded
 export const getExportTypeLabel = (exportType: ExportTypeFolder, settings: any): string | null => {
 	const et = loadedExportTypes[exportType] as ETBundle;
-	return et.getExportTypeLabel ? et.getExportTypeLabel(settings) : null;
+	return et?.getExportTypeLabel ? et?.getExportTypeLabel(settings) : null;
 };
 
 export const getExportTypeSettingsComponent = (exportType: ExportTypeFolder): any => {

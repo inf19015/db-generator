@@ -1,14 +1,17 @@
 /* istanbul ignore file */
 import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist';
+import undoable, { includeAction } from 'redux-undo';
 import { Persistor } from 'redux-persist/es/types';
 import { createStore, combineReducers, applyMiddleware, compose } from 'redux';
 import actionsInterceptor from '../actionInterceptor';
 import storage from 'redux-persist/lib/storage';
 import mainReducer from './main/main.reducer';
-import generatorReducer from './generator/generator.reducer';
+import generatorReducer, { GeneratorState, UndoableGeneratorState } from './generator/generator.reducer';
 import packetsReducer from './packets/packets.reducer';
 import accountReducer from './account/account.reducer';
+import * as generatorActions from './generator/generator.actions';
+import { batchGroupBy } from "~store/generator/batchGroupBy";
 
 let persistor: Persistor;
 function initStore(state: any): any {
@@ -31,6 +34,17 @@ function initStore(state: any): any {
 	const generatorPersistConfig = {
 		key: 'generator',
 		storage,
+		// blacklist: [
+		// 	'initialDependenciesLoaded',
+		// 	'loadedDataTypes',
+		// 	'loadedExportTypes',
+		// 	'isGenerating',
+		// 	'numGeneratedRows',
+		// 	'dataTypePreviewData',
+		// 	'bulkActionPending',
+		// 	'isCountryNamesLoading',
+		// 	'isCountryNamesLoaded'
+		// ]
 		blacklist: [
 			'initialDependenciesLoaded',
 			'loadedDataTypes',
@@ -41,7 +55,7 @@ function initStore(state: any): any {
 			'bulkActionPending',
 			'isCountryNamesLoading',
 			'isCountryNamesLoaded'
-		]
+		].map(key => `present.${key}`)
 	};
 
 	const mainPersistConfig = {
@@ -79,8 +93,29 @@ function initStore(state: any): any {
 		]
 	};
 
+	const undoConfig = {
+		groupBy: batchGroupBy.init([]),
+		filter: includeAction([
+			generatorActions.ADD_ROW_TO_TABLE,
+			generatorActions.ADD_ROW,
+			generatorActions.ADD_DEP_ROW,
+			generatorActions.ADD_TABLE,
+			generatorActions.SELECT_DEP_RIGHT_SIDE,
+			generatorActions.SELECT_DEP_LEFT_SIDE,
+			generatorActions.SELECT_DATA_TYPE,
+			generatorActions.SELECT_TABLE_TAB,
+			generatorActions.REPOSITION_ROW,
+			generatorActions.REPOSITION_DEP_ROW,
+			generatorActions.REMOVE_DEP_ROW,
+			generatorActions.REMOVE_ROW,
+			generatorActions.REMOVE_TABLE,
+			generatorActions.CHANGE_TITLE,
+			generatorActions.CHANGE_TABLE_TITLE
+		])
+	};
+
 	const rootReducer = combineReducers({
-		generator: persistReducer(generatorPersistConfig, generatorReducer),
+		generator: persistReducer(generatorPersistConfig, undoable(generatorReducer, undoConfig)),
 		main: persistReducer(mainPersistConfig, mainReducer),
 		packets: persistReducer(packetsPersistConfig, packetsReducer),
 		account: persistReducer(accountPersistConfig, accountReducer)
@@ -100,7 +135,6 @@ function initStore(state: any): any {
 		)
 	);
 	persistor = persistStore(store);
-
 	return store;
 }
 

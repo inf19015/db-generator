@@ -8,6 +8,7 @@ import * as actions from '~store/generator/generator.actions';
 import * as selectors from '~store/generator/generator.selectors';
 import { DataTypeFolder } from '../../../../_plugins';
 import { ActionTypes } from 'react-select';
+import { undoGroup } from "~store/generator/batchGroupBy";
 
 type OwnProps = {
 	row: DependencyRow;
@@ -30,10 +31,10 @@ const mapStateToProps = (state: Store, ownProps: OwnProps): Partial<GridRowProps
 };
 
 const mapDispatchToProps = (dispatch: Dispatch): Partial<GridRowProps> => ({
-	onRemove: (id: string): any => dispatch(actions.removeDepRow(id)),
-	onSelectLeftSide: (selected, dependencyId): any => dispatch(actions.onSelectDepLeftSide(selected, dependencyId)),
-	onSelectRightSide: (selected, dependencyId): any => dispatch(actions.onSelectDepRightsSide(selected, dependencyId)),
-	toggleMvd: (dependencyId: string): any => dispatch(actions.toggleDepMvd(dependencyId))
+	onRemove: undoGroup((id: string): any => dispatch(actions.removeDepRow(id))),
+	onSelectLeftSide: undoGroup((selected, dependencyId): any => dispatch(actions.onSelectDepLeftSide(selected, dependencyId))),
+	onSelectRightSide: undoGroup((selected, dependencyId): any => dispatch(actions.onSelectDepRightsSide(selected, dependencyId))),
+	toggleMvd: undoGroup((dependencyId: string): any => dispatch(actions.toggleDepMvd(dependencyId)))
 });
 
 export default connect(

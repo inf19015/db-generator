@@ -70,7 +70,11 @@ export const renderWithStoreAndRouter = (
 };
 
 export const getTestState = () => ({
-	generator: getInitialState(),
+	generator: {
+		past: [getInitialState()],
+		present: getInitialState(),
+		future: []
+	},
 	main: { ...initialMainState },
 	packets: { ...initialPacketState },
 	account: { ...initialAccountState }

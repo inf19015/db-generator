@@ -5,6 +5,7 @@ import * as selectors from '~store/generator/generator.selectors';
 import Grid, { GridProps } from './Grid.component';
 import { DataTypeFolder } from '../../../../_plugins';
 import { DataRow } from "~store/generator/generator.reducer";
+import { undoGroup } from "~store/generator/batchGroupBy";
 
 const mapStateToProps = (state: any): Partial<GridProps> => ({
 	i18n: selectors.getCoreI18n(state),
@@ -13,7 +14,7 @@ const mapStateToProps = (state: any): Partial<GridProps> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch, ownProps: any): Partial<GridProps> => ({
-	onAddRows: (numRows: number, tableId: string): any => dispatch(actions.addRows(numRows, tableId)),
+	onAddRows: undoGroup((numRows: number, tableId: string): any => dispatch(actions.addRows(numRows, tableId))),
 	onSort: (id: string, newIndex: number, newTableId: string): any => dispatch(actions.repositionRow(id, newIndex, newTableId)),
 	toggleGrid: (): any => dispatch(actions.toggleGrid()),
 	changeSmallScreenVisiblePanel: (): any => dispatch(actions.changeSmallScreenVisiblePanel()),
