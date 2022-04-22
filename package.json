@@ -7,7 +7,7 @@
     "test": "tests"
   },
   "engines": {
-    "node": "14.8.1"
+    "node": "14.8.x"
   },
   "scripts": {
     "start": "cd client && grunt dev & yarn build & yarn webpackDev",
