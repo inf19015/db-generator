@@ -6,9 +6,6 @@
   "directories": {
     "test": "tests"
   },
-  "engines": {
-    "node": "14.8.0"
-  },
   "scripts": {
     "start": "cd client && grunt dev & yarn build & yarn webpackDev",
     "winstart": "cd client && yarn build & yarn webpackDev",
