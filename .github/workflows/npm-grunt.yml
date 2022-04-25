@@ -1,9 +1,7 @@
-name: NodeJS with Grunt
+name: Build Frontend
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -12,7 +10,13 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-
+    - name: Cache Dist
+      id: cache-dist
+      uses: actions/cache@v3
+      with:
+        path: dist
+        key: ${{ runner.os }}-dist
+          
     - name: Use Node.js 
       uses: actions/setup-node@v3
       with:
