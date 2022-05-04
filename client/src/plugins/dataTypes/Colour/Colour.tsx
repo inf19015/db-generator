@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import Slider from '@material-ui/core/Slider';
+import Button from '@mui/material/Button';
+import Slider from '@mui/material/Slider';
 import rc from 'randomcolor';
 import { DTExampleProps, DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import Dropdown, { DropdownOption } from '~components/dropdown/Dropdown';

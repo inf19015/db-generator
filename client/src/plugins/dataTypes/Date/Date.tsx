@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { format, subYears, addYears, fromUnixTime } from 'date-fns';
 import { LocalizedDatePicker, LocalizedDatePickerProvider } from '~components/datePicker/LocalizedDatePicker.component';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import Dropdown from '~components/dropdown/Dropdown';
-import Event from '@material-ui/icons/Event';
-import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
+import EventIcon from '@mui/icons-material/Event';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { DTExampleProps, DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import { ErrorTooltip } from '~components/tooltips';
 import TextField from '~components/TextField';
@@ -128,15 +128,15 @@ export const Options = ({ data, onUpdate, i18n, coreI18n }: DTOptionsProps): JSX
 						<span style={{ marginRight: 3 }}>
 							{format(fromUnixTime(data.fromDate), C.DATE_FORMAT)}
 						</span>
-						<Event />
+						<EventIcon />
 					</Button>
-					<ArrowRightAlt />
+					<ArrowRightAltIcon />
 					<ErrorTooltip title={toDateError} arrow disableHoverListener={!toDateError} disableFocusListener={!toDateError}>
 						<Button onClick={(): void => onBtnClick('toDate')} variant="outlined" disableElevation className={toDateClass}>
 							<span style={{ marginRight: 3 }}>
 								{format(fromUnixTime(data.toDate), C.DATE_FORMAT)}
 							</span>
-							<Event />
+							<EventIcon />
 						</Button>
 					</ErrorTooltip>
 				</div>

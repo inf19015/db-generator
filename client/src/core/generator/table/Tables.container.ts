@@ -15,8 +15,8 @@ const mapDispatchToProps = (dispatch: Dispatch): Partial<TablesProps> => ({
 	onTabChange: (selectedTab: number): GDAction => dispatch(actions.onSelectTableTab(selectedTab)),
 	addTableTab: undoGroup((): GDAction => dispatch(actions.addTable())),
 	reorderRows: (id: string, newIndex: number, newTableId: string): any => dispatch(actions.repositionRow(id, newIndex, newTableId)),
-
-
+	onDelete: undoGroup((id: string): void => dispatch(actions.removeTable(id))),
+	onChangeTitle: (): any => dispatch(actions.openChangeTableTitleDialog())
 });
 
 const tables: any = connect(

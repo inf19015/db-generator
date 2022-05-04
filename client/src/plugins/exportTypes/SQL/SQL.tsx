@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Switch from '@material-ui/core/Switch';
+import Switch from '@mui/material/Switch';
 import Dropdown from '~components/dropdown/Dropdown';
 import TextField from '~components/TextField';
 import { ETDownloadPacket, ETDownloadPacketResponse, ETSettings, ETState } from '~types/exportTypes';

@@ -1,9 +1,9 @@
 const context: Worker = self as any;
 
 let workerResources: any;
-let loadedExportTypeWorkers: any = {};
+const loadedExportTypeWorkers: any = {};
 let exportTypeWorkerMap: any = {};
-let abortedMessageIds: any = {};
+const abortedMessageIds: any = {};
 
 context.onmessage = (e: MessageEvent) => {
 	const {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import Button from '@mui/material/Button';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import { format, fromUnixTime } from 'date-fns';
 import { useMutation, useQuery } from '@apollo/client';
 import { addToast } from '~utils/generalUtils';

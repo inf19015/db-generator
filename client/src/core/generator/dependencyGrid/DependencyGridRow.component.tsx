@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import DragIndicator from '@material-ui/icons/DragIndicator';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import DragIndicator from '@mui/icons-material/DragIndicator';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 import Dropdown, { DropdownOption } from '~components/dropdown/Dropdown';
 import { DependencyRow } from '~store/generator/generator.reducer';
 import { DataTypeFolder } from '../../../../_plugins';
 
 import * as styles from './DependencyGrid.scss';
 import { CountryNamesMap } from '~types/countries';
-import Button from "@material-ui/core/Button";
-import CheckBox from "@material-ui/icons/CheckBox";
-import CheckBoxOutlineBlank from "@material-ui/icons/CheckBoxOutlineBlank";
+import Button from "@mui/material/Button";
+import CheckBox from "@mui/icons-material/CheckBox";
+import CheckBoxOutlineBlank from "@mui/icons-material/CheckBoxOutlineBlank";
 import { ActionTypes } from "react-select";
 
 const getItemStyle = (isDragging: boolean, draggableStyle: any): React.CSSProperties => {

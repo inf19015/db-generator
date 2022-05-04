@@ -36,11 +36,11 @@ export type ExtendedData = {
 	zipFormat: {
 		format: string;
 		replacements?: any;
-	},
+	};
 	phoneFormat?: {
 		areaCodes?: number[] | string[];
 		displayFormats?: string[];
-	}
+	};
 };
 
 export type Region = {

@@ -1,6 +1,6 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import Button, { ButtonProps } from '@material-ui/core/Button';
+import withStyles from '@mui/styles/withStyles';
+import Button, { ButtonProps } from '@mui/material/Button';
 
 export const PrimaryButton = ({ children, ...props }: ButtonProps): JSX.Element => (
 	<Button color="primary" variant="outlined" disableElevation {...props}>
@@ -9,7 +9,7 @@ export const PrimaryButton = ({ children, ...props }: ButtonProps): JSX.Element 
 );
 
 export const NullButton = ({ children, ...props }: ButtonProps): JSX.Element => (
-	<Button color="default" variant="outlined" disableElevation {...props}>
+	<Button variant="outlined" disableElevation {...props}>
 		{children}
 	</Button>
 );

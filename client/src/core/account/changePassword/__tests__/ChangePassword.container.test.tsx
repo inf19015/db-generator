@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import ChangePassword from '../ChangePassword.container';
 import { renderWithStoreAndRouter } from '../../../../../tests/testHelpers';
 

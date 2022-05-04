@@ -171,7 +171,7 @@ describe('getRandomSubset', () => {
 
 describe('generatePlaceholderStr', () => {
 	it('generates string using custom placeholders', () => {
-		var defaultPlaceholders = {
+		const defaultPlaceholders = {
 			A: '1',
 			B: '2',
 			C: '3'

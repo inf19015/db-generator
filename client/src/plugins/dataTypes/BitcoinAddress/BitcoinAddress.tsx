@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import InfoIcon from '@material-ui/icons/Info';
+import Button from '@mui/material/Button';
+import InfoIcon from '@mui/icons-material/Info';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
 import TextField from '~components/TextField';
 import CheckboxPill from '~components/pills/CheckboxPill';

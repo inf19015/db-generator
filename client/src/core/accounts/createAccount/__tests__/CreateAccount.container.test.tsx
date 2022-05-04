@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import CreateAccount from '../CreateAccount.container';
 import { renderWithStoreAndRouter } from '../../../../../tests/testHelpers';
 

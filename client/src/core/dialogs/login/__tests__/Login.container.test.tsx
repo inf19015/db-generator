@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import LoginDialog from '../Login.container';
 import { renderWithStoreAndRouter } from '../../../../../tests/testHelpers';
 

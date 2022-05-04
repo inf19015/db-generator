@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
-import DragIndicator from '@material-ui/icons/DragIndicator';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import DragIndicator from '@mui/icons-material/DragIndicator';
+import InfoIcon from '@mui/icons-material/InfoOutlined';
 import Dropdown from '~components/dropdown/Dropdown';
 import { DataRow } from '~store/generator/generator.reducer';
 import { DataTypeFolder } from '../../../../_plugins';

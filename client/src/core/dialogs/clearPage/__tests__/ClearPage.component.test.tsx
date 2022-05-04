@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import ClearPageDialog from '../ClearPage.component';
 const i18n = require('../../../../i18n/en.json');

@@ -1,7 +1,7 @@
 // @ts-ignore-line
 import { template as uTemplate, templateSettings } from 'underscore';
-import { AlertProps } from '@material-ui/lab';
-import { SnackbarOrigin } from '@material-ui/core';
+import { AlertProps } from '@mui/lab';
+import { SnackbarOrigin } from '@mui/material';
 
 templateSettings.interpolate = /\{\{(.+?)\}\}/g;
 

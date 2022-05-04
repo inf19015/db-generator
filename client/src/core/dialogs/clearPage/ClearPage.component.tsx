@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import WarningIcon from '@material-ui/icons/Warning';
+import Button from '@mui/material/Button';
+import WarningIcon from '@mui/icons-material/Warning';
 import { PrimaryButton } from '~components/Buttons.component';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '~components/dialogs';
 import styles from './ClearPage.scss';

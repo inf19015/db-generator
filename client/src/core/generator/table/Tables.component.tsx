@@ -1,10 +1,12 @@
-import Table from "./Table.container";
 import React, { useCallback } from "react";
 import { Table as TableType } from "../../store/generator/generator.reducer";
-import { Box, Tab, Tabs } from "@material-ui/core";
-import AddBoxIcon from '@material-ui/icons/AddBox';
+import { Box, Tab, Tabs } from "@mui/material";
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import EditIcon from '@mui/icons-material/Edit';
+import CloseIcon from '@mui/icons-material/Close';
 import { DragDropContext, DragUpdate, Droppable, DropResult, ResponderProvided, SensorAPI } from "react-beautiful-dnd";
-import * as styles from "~core/generator/grid/Grid.scss";
+import styles from './Tables.scss';
+import Grid from "~core/generator/grid/Grid.container";
 
 export type TablesProps = {
     selectedTab: number;
@@ -12,6 +14,8 @@ export type TablesProps = {
     addTableTab: () => void;
     tables: TableType[];
 	reorderRows: (id: string, newIndex: number, newTableId: string) => void;
+	onDelete: (id: string) => any;
+	onChangeTitle: () => any;
 }
 
 interface TabPanelProps {
@@ -19,11 +23,19 @@ interface TabPanelProps {
     index: number;
     value: number;
 }
+interface TabDeleteLabelProps {
+	children?: React.ReactNode;
+	index: number;
+	value: number;
+	onDelete: () => void;
+	onEdit: () => void;
+}
 
 const TabPanel = (props: TabPanelProps): JSX.Element => {
 	const { children, value, index, ...other } = props;
 	return (
 		<div
+			// style={{ height: "100%" }}
 			role="tabpanel"
 			hidden={value !== index}
 			id={`simple-tabpanel-${index}`}
@@ -31,6 +43,31 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
 			{...other}
 		>
 			{children}
+		</div>
+	);
+};
+
+
+const TabDeleteLabel = (props: TabDeleteLabelProps): JSX.Element => {
+	const { children, value, index, onDelete, onEdit, ...other } = props;
+	return (
+		<div className={styles.TabLabel} {...other}>
+			<div className={styles.TabLabelContent} >{children}</div>
+			<div className={styles.TabLabelEdit} hidden={value !== index} onClick={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				onEdit();
+			}}>
+				<EditIcon />
+			</div>
+
+			<div className={styles.TabLabelDelete} hidden={value !== index} onClick={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				onDelete();
+			}}>
+				<CloseIcon />
+			</div>
 		</div>
 	);
 };
@@ -44,7 +81,7 @@ const a11yProps = (index: number): any => {
 
 
 
-export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderRows }: TablesProps): JSX.Element => {
+export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderRows, onDelete, onChangeTitle }: TablesProps): JSX.Element => {
 
 	const onSort = (result: DropResult): void => {
 		const { draggableId, destination: destination } = result;
@@ -65,6 +102,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 
 	};
 
+
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Box sx={{ borderBottom: 1, borderColor: 'blue' }}>
@@ -79,7 +117,22 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 											{...provided.droppableProps}
 											ref={provided.innerRef}
 										>
-											<Tab key={"tabof" + table.id} label={table.title} {...a11yProps(i)} />
+											<Tab
+												key={"tabof" + table.id}
+												label={
+													<TabDeleteLabel
+														value={selectedTab}
+														index={i}
+														onDelete={() => onDelete(table.id)}
+														onEdit={() => onChangeTitle()}
+													>
+														<p>{table.title}</p>
+													</TabDeleteLabel>
+												}
+												iconPosition="end"
+												// icon = {}
+												// sx ={{  }}
+												{...a11yProps(i)}/>
 											{provided.placeholder}
 										</div>
 									)}
@@ -92,7 +145,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 
 					{tables.map((table, i) =>
 						<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
-							<Table table={table}/>
+							<Grid tableId={table.id} />
 						</TabPanel>
 					)}
 				</DragDropContext>

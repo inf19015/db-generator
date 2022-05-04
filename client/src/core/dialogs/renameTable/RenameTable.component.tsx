@@ -1,7 +1,7 @@
 import styles from "~core/dialogs/login/Login.scss";
 import { Dialog, DialogActions, DialogContent, DialogTitle } from "~components/dialogs";
 import TextField from "~components/TextField";
-import Button from "@material-ui/core/Button";
+import Button from "@mui/material/Button";
 import React, { useRef, useState } from "react";
 import { Table } from "~store/generator/generator.reducer";
 

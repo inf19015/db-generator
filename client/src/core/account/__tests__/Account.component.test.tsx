@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { renderWithStoreAndRouter } from '../../../../tests/testHelpers';
 import Account from '../Account.component';
 import { SelectedAccountTab } from '~types/account';

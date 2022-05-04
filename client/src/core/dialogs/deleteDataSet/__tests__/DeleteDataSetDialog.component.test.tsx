@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import DeleteDataSetDialog from '../DeleteDataSetDialog.component';
 const i18n = require('../../../../i18n/en.json');

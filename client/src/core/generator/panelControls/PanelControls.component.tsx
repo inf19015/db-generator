@@ -1,11 +1,11 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import ButtonGroup from '@material-ui/core/ButtonGroup';
-import Delete from '@material-ui/icons/Delete';
-import CheckBox from '@material-ui/icons/CheckBox';
-import CheckBoxOutlineBlank from '@material-ui/icons/CheckBoxOutlineBlank';
-import SwapHoriz from '@material-ui/icons/SwapHoriz';
-import SwapVert from '@material-ui/icons/SwapVert';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Delete from '@mui/icons-material/Delete';
+import CheckBox from '@mui/icons-material/CheckBox';
+import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
+import SwapHoriz from '@mui/icons-material/SwapHoriz';
+import SwapVert from '@mui/icons-material/SwapVert';
 import { toSentenceCase } from '~utils/stringUtils';
 import { Tooltip } from '~components/tooltips';
 import { GeneratorLayout } from '../Generator.component';

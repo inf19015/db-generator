@@ -456,7 +456,7 @@ window.gd.localeLoaded(i18n);
 			const file = `./src/i18n/${locale}.json`;
 			const sortedKeys = Object.keys(data).sort();
 
-			let sortedObj = {};
+			const sortedObj = {};
 			sortedKeys.forEach((key) => {
 				sortedObj[key] = data[key];
 			});

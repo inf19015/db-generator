@@ -1,5 +1,5 @@
 import React from 'react';
-import MuiPagination from '@material-ui/lab/Pagination';
+import MuiPagination from '@mui/material/Pagination';
 
 const Pagination = ({ numPages, currentPage, onChange }: any): JSX.Element => (
 	<MuiPagination

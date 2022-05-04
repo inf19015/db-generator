@@ -1,6 +1,6 @@
 import React from 'react';
 import Dropdown from '~components/dropdown/Dropdown';
-import Switch from '@material-ui/core/Switch';
+import Switch from '@mui/material/Switch';
 import { getArrayOfSize } from '~utils/arrayUtils';
 import * as styles from './ExportSettings.scss';
 import C from '../../constants';

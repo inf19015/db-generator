@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
+import Button from '@mui/material/Button';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { DTExampleProps, DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import Dropdown from '~components/dropdown/Dropdown';
 import CreatablePillField from '~components/creatablePillField/CreatablePillField';
@@ -101,7 +101,7 @@ const ListDialog = ({ visible, data, id, onClose, onUpdate, coreI18n, i18n }: an
 						<div className={styles.colLabel}>
 							{i18n.numItemsLabel}
 							<Tooltip title={i18n.numItemsLabelDesc} arrow>
-								<InfoIcon />
+								<InfoOutlinedIcon />
 							</Tooltip>
 						</div>
 						<div className={styles.content}>

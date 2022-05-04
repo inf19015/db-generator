@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { render } from '@testing-library/react';
 import { Help } from '../TextRandom';
 const i18n = require('../i18n/en.json');

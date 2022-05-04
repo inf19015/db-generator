@@ -1,12 +1,12 @@
 import React, { useEffect, useImperativeHandle, useRef } from 'react';
-import MuiAlert, { AlertProps, Color } from '@material-ui/lab/Alert';
-import Snackbar, { SnackbarOrigin } from '@material-ui/core/Snackbar';
+import MuiAlert, { AlertColor, AlertProps } from '@mui/material/Alert';
+import Snackbar, { SnackbarOrigin } from '@mui/material/Snackbar';
 import Portal from '~components/Portal';
 import { initToast, ToastType } from '~utils/generalUtils';
 import './Toast.scss';
 
 const defaultMessage: ToastType = {
-	type: 'success' as Color,
+	type: 'success' as AlertColor,
 	message: '',
 	verticalPosition: 'top' as SnackbarOrigin['vertical'],
 	horizontalPosition: 'center' as SnackbarOrigin['horizontal'],

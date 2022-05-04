@@ -1,0 +1,34 @@
+.TabLabelDelete  {
+  & > svg :hover {
+    color: #d41313;
+  }
+  padding-left: 10px;
+  margin-right: -10px;
+}
+.TabLabelEdit {
+  & > svg :hover {
+    color: #d41313;
+  }
+  padding-left: 10px;
+  //margin-right: -10px;
+  //padding-right: 10px;
+  //margin-left: -10px;
+}
+.TabLabelContent {
+  margin-top: 0;
+  margin-bottom: 0;
+  & > p {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+.TabLabel {
+  display: inline-flex;
+  //justify-content: center;
+}
