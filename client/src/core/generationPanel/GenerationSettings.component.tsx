@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NumberFormat from 'react-number-format';
 import env from '../../../_env';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
 import { getI18nString } from '~utils/langUtils';
 import { getFormattedNum } from '~utils/numberUtils';
@@ -13,7 +13,7 @@ import Engine from './Engine.container';
 import { DataPacket } from '~store/packets/packets.reducer';
 import C from '~core/constants';
 import * as coreUtils from '~utils/coreUtils';
-import CheckIcon from '@material-ui/icons/Check';
+import CheckIcon from '@mui/icons-material/Check';
 
 export type GenerationSettingsProps = {
 	visible: boolean;
@@ -112,7 +112,7 @@ const GenerationSettingsPanel = ({
 		}
 	};
 
-	let cancelButton: any = <Button onClick={closeModal} color="default">{i18n.cancel}</Button>;
+	let cancelButton: any = <Button onClick={closeModal}>{i18n.cancel}</Button>;
 	if (packet && packet.numGeneratedRows === numRowsToGenerate) {
 		cancelButton = null;
 	}

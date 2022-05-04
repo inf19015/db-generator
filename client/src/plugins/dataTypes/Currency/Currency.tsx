@@ -1,6 +1,6 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
+import Button from '@mui/material/Button';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import Dropdown from '~components/dropdown/Dropdown';
 import TextField from '~components/TextField';
@@ -179,7 +179,7 @@ export const Options = ({ i18n, coreI18n, id, data, onUpdate }: DTOptionsProps):
 				step={step}
 				onChange={(e: any): void => onChange('from', parseFloat(e.target.value).toFixed(2))}
 			/>
-			<ArrowRightAlt style={{ marginBottom: -4 }} />
+			<ArrowRightAltIcon style={{ marginBottom: -4 }} />
 			<TextField
 				type="number"
 				value={data.to}

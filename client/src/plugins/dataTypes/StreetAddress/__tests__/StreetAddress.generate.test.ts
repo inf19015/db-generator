@@ -5,7 +5,7 @@ import { DTGenerationData } from '~types/dataTypes';
 const i18n = require('../i18n/en.json');
 
 describe('generate', () => {
-	let data: DTGenerationData = {
+	const data: DTGenerationData = {
 		rowNum: 1,
 		rowState: '',
 		i18n,

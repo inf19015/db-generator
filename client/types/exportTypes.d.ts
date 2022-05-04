@@ -3,7 +3,7 @@ import { ColumnData } from '~types/general';
 import { CountryMap } from '~types/countries';
 import { DataTypeMap } from '~types/dataTypes';
 import { ExportTypeFolder } from '../_plugins';
-import {Table} from "~store/generator/generator.reducer";
+import { Table } from "~store/generator/generator.reducer";
 
 export type ExportTypeMap = {
 	[exportType in ExportTypeFolder]?: string;

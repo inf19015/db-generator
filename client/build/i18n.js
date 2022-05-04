@@ -200,8 +200,8 @@ const validateExportTypeI18n = (baseLocale, targetExportType) => {
 const getMissingStrMessage = (missing, baseLocale, prefix) => {
 	let str = '';
 	if (missing.length) {
-		let missingStr = [];
-		let extraStr = [];
+		const missingStr = [];
+		const extraStr = [];
 		missing.forEach(({ key, locale, isExtra }) => {
 			if (isExtra) {
 				extraStr.push(`- ${key}: ${locale}`);

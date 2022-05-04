@@ -8,7 +8,7 @@ import { Store } from '~types/general';
 
 describe('getCurrentPacket', () => {
 	it('should return false by default', () => {
-		let state: Store = {
+		const state: Store = {
 			generator: {
 				past: [getInitialState()],
 				present: getInitialState(),
@@ -28,7 +28,7 @@ describe('getCurrentPacket', () => {
 		packets.packets['123'] = getNewPacket({ dataTypeWorkerId: 1 });
 		packets.packets['456'] = getNewPacket({ dataTypeWorkerId: 2 });
 
-		let state: Store = {
+		const state: Store = {
 			generator: {
 				past: [getInitialState()],
 				present: getInitialState(),
@@ -54,7 +54,7 @@ describe('getCurrentPacket', () => {
 			numRowsToGenerate: 10
 		});
 
-		let state: Store = {
+		const state: Store = {
 			generator: {
 				past: [getInitialState()],
 				present: getInitialState(),

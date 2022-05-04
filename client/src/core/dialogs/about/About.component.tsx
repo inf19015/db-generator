@@ -35,7 +35,7 @@ const AboutDialog = ({ visible, onClose, scriptVersion, i18n }: AboutProps): JSX
 				</p>
 			</DialogContent>
 			<DialogActions className={styles.actions}>
-				<PrimaryButton onClick={onClose} color="default">
+				<PrimaryButton onClick={onClose} color={undefined}>
 					{i18n.close}
 				</PrimaryButton>
 				<PrimaryButton onClick={(): void => {

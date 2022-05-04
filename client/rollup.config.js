@@ -21,7 +21,7 @@ import workerHash from './build/rollup-plugin-worker-hash';
 //    npx rollup -c --config-src=src/plugins/dataTypes/AutoIncrement/AutoIncrement.generator.ts --config-target=dist/workers/DT-AutoIncrement.generator.js
 const devmode = true;
 export default (cmdLineArgs) => {
-	const { 'config-src': src, 'config-target': target} = cmdLineArgs;
+	const { 'config-src': src, 'config-target': target } = cmdLineArgs;
 	if (!src || !target) {
 		console.error("\n*** Missing command line args. See file for usage. ***\n");
 		return;
@@ -41,7 +41,7 @@ export default (cmdLineArgs) => {
 		terserCompressProps.top_retain = ['utils', 'onmessage'];
 	}
 
-	const config =  {
+	const config = {
 		input: src,
 		output: {
 			file: target,
@@ -70,12 +70,12 @@ export default (cmdLineArgs) => {
 			removeExports(),
 			workerHash()
 		]
-	}
+	};
 	if(!devmode){
 		config.plugins = [
 			removeImports(),
 			...config.plugins
-		]
+		];
 	}
 	return config;
 };

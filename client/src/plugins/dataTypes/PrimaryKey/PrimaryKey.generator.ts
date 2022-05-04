@@ -2,7 +2,7 @@ import { DTGenerationData, DTGenerateResult, DTOnMessage } from '~types/dataType
 
 export const generate = (data: DTGenerationData): DTGenerateResult => {
 	const rowNum = data.rowNum;
-	let value = (rowNum - 1) + 1;
+	const value = (rowNum - 1) + 1;
 	return { display: value };
 };
 

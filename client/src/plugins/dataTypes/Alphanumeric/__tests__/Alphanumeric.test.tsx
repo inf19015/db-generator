@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import sinon from 'sinon';
 import { render, fireEvent } from '@testing-library/react';
 import { initialState, Options, Help, Example } from '../Alphanumeric';

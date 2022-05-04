@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { DTExampleProps, DTHelpProps, DTOptionsProps } from '~types/dataTypes';
 import Dropdown, { DropdownOption } from '~components/dropdown/Dropdown';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';

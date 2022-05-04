@@ -1,6 +1,6 @@
 import React from 'react';
 import { PrimaryButton, NullButton } from '~components/Buttons.component';
-import WarningIcon from '@material-ui/icons/Warning';
+import WarningIcon from '@mui/icons-material/Warning';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '~components/dialogs';
 import styles from './DeleteDataSetDialog.scss';
 

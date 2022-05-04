@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@apollo/client';
 import Measure from 'react-measure';
 import AutoSizer from 'react-input-autosize';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import Divider from '@material-ui/core/Divider';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import Divider from '@mui/material/Divider';
 import { HtmlTooltip } from '~components/tooltips';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
+import IconButton from '@mui/material/IconButton';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import useOnClickOutside from 'use-onclickoutside';
 import { addToast } from '~utils/generalUtils';
 import DeleteDataSetDialog from '~core/dialogs/deleteDataSet/DeleteDataSetDialog.component';
@@ -106,14 +106,16 @@ const GeneratorControls = ({
 					disableFocusListener
 					disableHoverListener
 					disableTouchListener
-					interactive
 					PopperProps={{
 						popperOptions: {
-							modifiers: {
-								offset: {
-									offset: '0px, -6px'
+							modifiers: [
+								{
+									name: 'offset',
+									options: {
+										offset: [0, -6],
+									}
 								}
-							}
+							]
 						}
 					}}
 					title={

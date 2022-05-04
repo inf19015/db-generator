@@ -13,7 +13,7 @@ export const generate = (data: DTGenerationData): DTGenerateResult => {
 	let country: CountryType;
 
 	if (rowState.source === 'countryRow') {
-		const countryRow = existingRowData.find(({id}: any) => id === rowState.targetRowId);
+		const countryRow = existingRowData.find(({ id }: any) => id === rowState.targetRowId);
 		country = countryRow!.data.countryDataType;
 	} else {
 		const list = rowState.source === 'anyRegion' ? countryList : rowState.selectedCountries;

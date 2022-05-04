@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route, withRouter } from 'react-router
 import { ApolloProvider } from '@apollo/client';
 import * as codemirror from 'codemirror';
 import { PersistGate } from 'redux-persist/integration/react';
-import { ThemeProvider } from '@material-ui/core/styles';
+import { ThemeProvider, Theme, StyledEngineProvider } from '@mui/material/styles';
 import { apolloClient } from '~core/apolloClient';
 import store, { persistor } from '~core/store';
 import Page from '~core/page/Page.container';
@@ -21,6 +21,13 @@ import { getRoutes } from '~utils/routeUtils';
 import { getLocaleMap } from '~utils/langUtils';
 import '~store/generator/generator.reducer';
 import './styles/global.scss';
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 
 // if (process.env.NODE_ENV === 'development') {
 // 	const whyDidYouRender = require('@welldone-software/why-did-you-render');
@@ -88,23 +95,25 @@ const App = withRouter(({ history }: any) => {
 const AppWrapper = (): JSX.Element => (
 	<Provider store={store}>
 		<ApolloProvider client={apolloClient}>
-			<ThemeProvider theme={theme}>
-				<PersistGate loading={null} persistor={persistor} onBeforeLift={(): Promise<any> => checkState(store)}>
-					{(bootstrapped): JSX.Element => {
-						// PersistGate handles repopulating the redux store; core.init() re-initializes everything else we
-						// need, including checking auth and loading the appropriate locale file
-						if (bootstrapped) {
-							core.init();
-						}
+			<StyledEngineProvider injectFirst>
+				<ThemeProvider theme={theme}>
+					<PersistGate loading={null} persistor={persistor} onBeforeLift={(): Promise<any> => checkState(store)}>
+						{(bootstrapped): JSX.Element => {
+                            // PersistGate handles repopulating the redux store; core.init() re-initializes everything else we
+                            // need, including checking auth and loading the appropriate locale file
+                            if (bootstrapped) {
+                                core.init();
+                            }
 
-						return (
-							<Router>
-								<App />
-							</Router>
-						);
-					}}
-				</PersistGate>
-			</ThemeProvider>
+                            return (
+	<Router>
+		<App />
+	</Router>
+                            );
+                        }}
+					</PersistGate>
+				</ThemeProvider>
+			</StyledEngineProvider>
 		</ApolloProvider>
 	</Provider>
 );

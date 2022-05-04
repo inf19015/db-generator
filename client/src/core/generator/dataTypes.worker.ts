@@ -1,7 +1,7 @@
 import { DataTypeFolder } from '../../../_plugins';
 
 let workerResources: any;
-let loadedDataTypeWorkers: any = {};
+const loadedDataTypeWorkers: any = {};
 let dataTypeWorkerMap: any = {};
 let countryData: any = {};
 const workerQueue: any = {};
@@ -38,7 +38,7 @@ context.onmessage = (e: any) => {
 	// load the Data Type generator web worker files
 	Object.keys(dataTypeWorkerMap).forEach((dataType) => {
 		if (!loadedDataTypeWorkers[dataType]) {
-			loadedDataTypeWorkers[dataType] = new Worker(dataTypeWorkerMap[dataType])
+			loadedDataTypeWorkers[dataType] = new Worker(dataTypeWorkerMap[dataType]);
 		}
 	});
 
@@ -104,7 +104,7 @@ const generateBatch = ({ template, unchanged, numResults, i18n, firstRow, lastRo
 	// rows are independent! The only necessarily synchronous bit is between process batches. So here we just run
 	// them all in a loop
 	for (let rowNum=firstRow; rowNum<=lastRow; rowNum++) {
-		let currRowData: any[] = [];
+		const currRowData: any[] = [];
 		rowPromises.push(processBatchSequence(template, rowNum, i18n, currRowData, unchanged, countryNames));
 	}
 
@@ -167,7 +167,7 @@ const processBatchSequence = (generationTemplate: any, rowNum: number, i18n: any
 
 const processDataTypeBatch = (cells: any[], rowNum: number, i18n: any, currRowData: any, unchanged: any, countryNames: any): Promise<any>[] => {
 	return cells.map((currCell: any) => {
-		let dataType = currCell.dataType;
+		const dataType = currCell.dataType;
 
 		return new Promise((resolve, reject) => {
 			if (unchanged[currCell.colIndex]) {
@@ -187,7 +187,7 @@ const processDataTypeBatch = (cells: any[], rowNum: number, i18n: any, currRowDa
 				}, resolve, reject);
 			}
 		});
-	})
+	});
 };
 
 

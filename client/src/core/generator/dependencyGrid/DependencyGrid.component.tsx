@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { DragDropContext, Droppable } from 'react-beautiful-dnd';
 import Measure from 'react-measure';
 import { useWindowSize } from 'react-hooks-window-size';
-import CloseIcon from '@material-ui/icons/Close';
-import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import IconButton from '@mui/material/IconButton';
 import * as styles from './DependencyGrid.scss';
 import { Tooltip } from '~components/tooltips';
 import { PrimaryButton } from '~components/Buttons.component';
@@ -62,17 +62,17 @@ const DependencyGrid = ({
 
 	return (
 		<>
-			<div style={{ position: 'fixed', right: 0, padding: 10 }} onClick={onClose}>
-				<Tooltip
-					title={<span dangerouslySetInnerHTML={{ __html: i18n.closePanel }}/>}
-					placement="bottom"
-					arrow
-				>
-					<IconButton size="small" aria-label={i18n.closePanel}>
-						<CloseIcon fontSize="large" />
-					</IconButton>
-				</Tooltip>
-			</div>
+			{/*<div style={{ position: 'fixed', right: 0, padding: 10 }} onClick={onClose}>*/}
+			{/*	<Tooltip*/}
+			{/*		title={<span dangerouslySetInnerHTML={{ __html: i18n.closePanel }}/>}*/}
+			{/*		placement="bottom"*/}
+			{/*		arrow*/}
+			{/*	>*/}
+			{/*		<IconButton size="small" aria-label={i18n.closePanel}>*/}
+			{/*			<CloseIcon fontSize="large" />*/}
+			{/*		</IconButton>*/}
+			{/*	</Tooltip>*/}
+			{/*</div>*/}
 
 			<Measure
 				bounds

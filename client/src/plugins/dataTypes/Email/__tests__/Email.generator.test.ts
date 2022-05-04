@@ -10,7 +10,7 @@ describe('getRandomEmailPrefix', () => {
 
     it('generates an email address with a single word prefix (word before the @)', () => {
         sinon.stub(utils.randomUtils, 'getRandomNum')
-            .onCall(0).returns(1)  // number of prefixed words
+            .onCall(0).returns(1) // number of prefixed words
             .onCall(1).returns(0); // prefix word offset
 
         expect(generation.getRandomEmailPrefix(words)).toEqual('one');
@@ -18,7 +18,7 @@ describe('getRandomEmailPrefix', () => {
 
     it('gets a specific single prefix word', () => {
         sinon.stub(utils.randomUtils, 'getRandomNum')
-            .onCall(0).returns(1)  // number of prefixed words
+            .onCall(0).returns(1) // number of prefixed words
             .onCall(1).returns(4); // prefix word offset
 
         expect(generation.getRandomEmailPrefix(words)).toEqual('five');
@@ -26,7 +26,7 @@ describe('getRandomEmailPrefix', () => {
 
     it('multiple prefix words are separated by dots #1', () => {
         sinon.stub(utils.randomUtils, 'getRandomNum')
-            .onCall(0).returns(2)  // number of prefixed words
+            .onCall(0).returns(2) // number of prefixed words
             .onCall(1).returns(3); // prefix word offset
 
         expect(generation.getRandomEmailPrefix(words)).toEqual('four.five');
@@ -34,7 +34,7 @@ describe('getRandomEmailPrefix', () => {
 
     it('multiple prefix words are separated by dots #3', () => {
         sinon.stub(utils.randomUtils, 'getRandomNum')
-            .onCall(0).returns(3)  // number of prefixed words
+            .onCall(0).returns(3) // number of prefixed words
             .onCall(1).returns(2); // prefix word offset
 
         expect(generation.getRandomEmailPrefix(words)).toEqual('three.four.five');
@@ -42,7 +42,7 @@ describe('getRandomEmailPrefix', () => {
 
     it('punctuation in words (.,;:) are removed', () => {
         sinon.stub(utils.randomUtils, 'getRandomNum')
-            .onCall(0).returns(4)  // number of prefixed words
+            .onCall(0).returns(4) // number of prefixed words
             .onCall(1).returns(0); // prefix word offset
 
         expect(generation.getRandomEmailPrefix(['one.', 'two:', 'th,ree', 'four;'])).toEqual('one.two.three.four');

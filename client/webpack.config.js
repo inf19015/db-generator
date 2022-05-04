@@ -11,7 +11,7 @@ require('dotenv').config();
 module.exports = (env, argv) => {
 	const mode = argv.mode === 'production' ? 'production' : 'development'; // TODO not working with package.json commands
 
-	var config = {
+	const config = {
 		mode,
 		entry: {
 			app: path.resolve(__dirname, 'src/index.tsx')
@@ -104,7 +104,6 @@ module.exports = (env, argv) => {
 			port: process.env.GD_WEB_SERVER_PORT,
 			open: true
 		};
-
 		// just uncomment this & the include above to auto-generate the bundle analyzer treemap. It'll show up when
 		// running `yarn start`
 		// config.plugins.push(new BundleAnalyzerPlugin());

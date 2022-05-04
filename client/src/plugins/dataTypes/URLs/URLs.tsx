@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { DTExampleProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
 import Dropdown from '~components/dropdown/Dropdown';

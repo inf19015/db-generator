@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import LoginDialog from '../Login.component';
 import sharedStyles from '../../../../styles/shared.scss';
@@ -64,8 +64,8 @@ describe('LoginDialog', () => {
 		const inputFields = baseElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
 
 		// weird, but it seems you can't simulate the <enter> click in another way
-		fireEvent.change(inputFields[0], { target: { value: 'tom@something' }});
-		fireEvent.change(inputFields[1], { target: { value: 'password123' }});
+		fireEvent.change(inputFields[0], { target: { value: 'tom@something' } });
+		fireEvent.change(inputFields[1], { target: { value: 'password123' } });
 
 		fireEvent.submit(inputFields[0]);
 
@@ -86,8 +86,8 @@ describe('LoginDialog', () => {
 		const inputFields = baseElement.querySelectorAll('input') as NodeListOf<HTMLInputElement>;
 
 		// weird, but it seems you can't simulate the <enter> click in another way
-		fireEvent.change(inputFields[0], { target: { value: 'tom@something.com' }});
-		fireEvent.change(inputFields[1], { target: { value: 'password123' }});
+		fireEvent.change(inputFields[0], { target: { value: 'tom@something.com' } });
+		fireEvent.change(inputFields[1], { target: { value: 'password123' } });
 
 		fireEvent.submit(inputFields[0]);
 

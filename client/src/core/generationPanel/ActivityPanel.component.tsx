@@ -2,12 +2,12 @@ import React from 'react';
 import { PieChart, Pie, Cell, BarChart, CartesianGrid, XAxis, YAxis, Bar, Label } from 'recharts';
 import CountUp from 'react-countup';
 import Measure from 'react-measure';
-import IconButton from '@material-ui/core/IconButton';
-import Slider from '@material-ui/core/Slider';
-import Button from '@material-ui/core/Button';
-import Pause from '@material-ui/icons/Pause';
-import PlayArrow from '@material-ui/icons/PlayArrow';
-import ExpandMore from "@material-ui/icons/ExpandMore";
+import IconButton from '@mui/material/IconButton';
+import Slider from '@mui/material/Slider';
+import Button from '@mui/material/Button';
+import PauseIcon from '@mui/icons-material/Pause';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Dialog, DialogContent, DialogTitle, DialogActions } from '~components/dialogs';
 import usePrevious from '../../hooks/usePrevious';
 import styles from './ActivityPanel.scss';
@@ -73,10 +73,10 @@ const ActivityPanel = ({
 	let pauseContinueIcon: any;
 	let pauseContinueIconAction: any;
 	if (isPaused) {
-		pauseContinueIcon = <PlayArrow fontSize="large" />;
+		pauseContinueIcon = <PlayArrowIcon fontSize="large" />;
 		pauseContinueIconAction = onContinue;
 	} else {
-		pauseContinueIcon = <Pause fontSize="large" />;
+		pauseContinueIcon = <PauseIcon fontSize="large" />;
 		pauseContinueIconAction = onPause;
 	}
 
@@ -89,26 +89,26 @@ const ActivityPanel = ({
 		if (isComplete) {
 			return (
 				<div>
-					<Button onClick={onAbort} color="default" variant="outlined" style={{ marginRight: 10 }}>
+					<Button onClick={onAbort} variant="outlined" style={{ marginRight: 10 }}>
 						{coreI18n.clear}
 					</Button>
 					<Button onClick={onDownload} color="primary" variant="outlined" style={{ marginRight: 10 }}>
 						{coreI18n.download}
 					</Button>
 				</div>
-			);
+            );
 		}
 
 		return (
 			<div>
-				<Button onClick={onClose} color="default" variant="outlined" style={{ marginRight: 10 }}>
+				<Button onClick={onClose} variant="outlined" style={{ marginRight: 10 }}>
 					{coreI18n.hide}
 				</Button>
 				<Button onClick={abortPacket} color="secondary" variant="outlined" style={{ marginRight: 10 }}>
 					{coreI18n.abort}
 				</Button>
 			</div>
-		);
+        );
 	};
 
 	const getGenerationControls = (): React.ReactNode => {
@@ -156,7 +156,7 @@ const ActivityPanel = ({
 				{({ measureRef }): any => (
 					<Dialog className={styles.activityPanel} onClose={onClose} open={visible}>
 						<div style={{ width: '100%', height: '100%' }} ref={measureRef}>
-							<DialogTitle onClose={onClose} customCloseIcon={ExpandMore}>
+							<DialogTitle onClose={onClose} customCloseIcon={ExpandMoreIcon}>
 								{coreI18n.generatedC}
 								<CountUp
 									start={prevGeneratedRows}

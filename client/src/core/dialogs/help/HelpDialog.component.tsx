@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import Button from '@mui/material/Button';
 import { Dialog, DialogTitle, DialogContent, DialogActions } from '~components/dialogs';
 import { DropdownOption } from '~components/dropdown/Dropdown';
 import { MediumSpinner } from '~components/loaders/loaders';

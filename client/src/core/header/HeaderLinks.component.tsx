@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import MenuItem from '@material-ui/core/MenuItem';
-import IconButton from '@material-ui/core/IconButton';
-import LogoutIcon from '@material-ui/icons/PowerSettingsNew';
+import MenuItem from '@mui/material/MenuItem';
+import IconButton from '@mui/material/IconButton';
+import LogoutIcon from '@mui/icons-material/PowerSettingsNew';
 import { GDCustomHeaderLink, GDHeaderLink, GDLocale } from '~types/general';
 import { getUnlocalizedGeneratorRoute, removeLocale } from '~utils/routeUtils';
 import { Tooltip } from '~components/tooltips';

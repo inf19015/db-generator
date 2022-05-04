@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { format, startOfDay, endOfDay, fromUnixTime, parse } from 'date-fns';
 import Dropdown from '~components/dropdown/Dropdown';
-import ArrowRightAlt from '@material-ui/icons/ArrowRightAlt';
-import TextField from '@material-ui/core/TextField';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import TextField from '@mui/material/TextField';
 import CoreTextField from '~components/TextField';
 import CopyToClipboard from '~components/copyToClipboard/CopyToClipboard';
 import { DTExampleProps, DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
@@ -111,7 +111,7 @@ export const Options = ({ data, onUpdate, i18n, coreI18n }: DTOptionsProps): JSX
 						onChange('fromTime', parseInt(format(date, 't'), 10));
 					}}
 				/>
-				<ArrowRightAlt />
+				<ArrowRightAltIcon />
 				<ErrorTooltip title={toTimeError} arrow disableHoverListener={!toTimeError} disableFocusListener={!toTimeError}>
 					<TextField
 						type="time"

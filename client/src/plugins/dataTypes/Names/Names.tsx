@@ -1,12 +1,12 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import RadioPill, { RadioPillRow } from '~components/pills/RadioPill';
 import { SmallSpinner } from '~components/loaders/loaders';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
 import Dropdown, { DropdownOption } from '~components/dropdown/Dropdown';
 import { Tooltip } from '~components/tooltips';
-import WorldIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import CopyToClipboard from '~components/copyToClipboard/CopyToClipboard';
 import { DTExampleProps, DTHelpProps, DTMetadata, DTOptionsProps } from '~types/dataTypes';
 import CreatablePillField from '~components/creatablePillField/CreatablePillField';
@@ -197,7 +197,7 @@ export const Options = ({
 			<Tooltip title={iconTooltip} placement="bottom" arrow>
 				<span>
 					<IconButton size="small" onClick={(): void => setDialogVisibility(true)} className={iconClasses}>
-						<WorldIcon fontSize="small" />
+						<PublicIcon fontSize="small" />
 					</IconButton>
 				</span>
 			</Tooltip>

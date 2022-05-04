@@ -1,9 +1,9 @@
 import React from 'react';
-// import Backdrop from '@material-ui/core/Backdrop';
+// import Backdrop from '@mui/material/Backdrop';
 import * as sharedStyles from '../../../styles/shared.scss';
 import { SmallSpinner } from '~components/loaders/loaders';
 import * as styles from './DependencyGrid.scss';
-import SettingsIcon from '@material-ui/icons/SettingsOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { HtmlTooltip } from '~components/tooltips';
 import useOnClickOutside from 'use-onclickoutside';
 import C from '../../constants';
@@ -83,11 +83,11 @@ export const SmallScreenSettingsIcon = ({
 	}
 
 	if (example === null && options === null) {
-		return <SettingsIcon className={styles.disabledBtn} />;
+		return <SettingsOutlinedIcon className={styles.disabledBtn} />;
 	}
 
 	if (!open) {
-		return <SettingsIcon onClick={handleTooltipOpen} />;
+		return <SettingsOutlinedIcon onClick={handleTooltipOpen} />;
 	}
 
 	return (
@@ -97,7 +97,6 @@ export const SmallScreenSettingsIcon = ({
 			disableFocusListener
 			disableHoverListener
 			disableTouchListener
-			interactive
 			title={
 				<div ref={popoverRef} className={styles.smallScreenSettingsTooltip}>
 					{example}
@@ -106,7 +105,7 @@ export const SmallScreenSettingsIcon = ({
 			}
 			arrow
 		>
-			<SettingsIcon onClick={handleTooltipOpen} />
+			<SettingsOutlinedIcon onClick={handleTooltipOpen} />
 		</HtmlTooltip>
 	);
 };

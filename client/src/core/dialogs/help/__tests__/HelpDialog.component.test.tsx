@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import sinon from 'sinon';
 import { render, fireEvent } from '@testing-library/react';
 import HelpDialog from '../HelpDialog.component';

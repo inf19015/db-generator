@@ -1,6 +1,6 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
-import InfoIcon from '@material-ui/icons/InfoOutlined';
+import Button from '@mui/material/Button';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import RadioPill, { RadioPillRow } from '~components/pills/RadioPill';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
 import Dropdown from '~components/dropdown/Dropdown';
@@ -90,7 +90,7 @@ const EmailDialog = ({ visible, data, id, onClose, coreI18n, onUpdate, rowOption
 						<label>
 							{i18n.domains}
 							<Tooltip title={i18n.domainsDesc} arrow>
-								<InfoIcon />
+								<InfoOutlinedIcon />
 							</Tooltip>
 						</label>
 						<TextField
@@ -103,7 +103,7 @@ const EmailDialog = ({ visible, data, id, onClose, coreI18n, onUpdate, rowOption
 						<label>
 							{i18n.domainSuffixes}
 							<Tooltip title={i18n.domainSuffixDesc} arrow>
-								<InfoIcon />
+								<InfoOutlinedIcon />
 							</Tooltip>
 						</label>
 						<TextField

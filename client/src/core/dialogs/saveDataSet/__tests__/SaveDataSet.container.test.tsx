@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import SaveDataSet from '../SaveDataSet.container';
 import { renderWithStoreAndRouter } from '../../../../../tests/testHelpers';
 

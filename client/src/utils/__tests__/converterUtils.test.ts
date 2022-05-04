@@ -14,10 +14,10 @@ const mockDataRow = (line: string): DataRow => ({
         });
 
 const mockDependency = (s: string): DependencyRow => {
-    let sides =  s.split("->");
-    let leftSide = sides[0].split(",");
-    let rightSide = sides[sides.length-1].split(",");
-    let isMvd = sides.length === 3;
+    const sides = s.split("->");
+    const leftSide = sides[0].split(",");
+    const rightSide = sides[sides.length-1].split(",");
+    const isMvd = sides.length === 3;
     return ({
         id: nanoid(),
         leftSide,
@@ -42,19 +42,19 @@ describe('canReachAttributes()', () => {
         ].map(l => mockDependency(l));
         const start = ["A"];
         const reach = ["C"];
-        let actual = converterUtils.canReachAttributes(start, reach, dependencies)
+        const actual = converterUtils.canReachAttributes(start, reach, dependencies);
         expect(actual).toBeFalsy();
     });
     it("can reach C from A,B together", () => {
         const start = ["A", "B"];
         const reach = ["C"];
-        let actual = converterUtils.canReachAttributes(start, reach, dependencies)
+        const actual = converterUtils.canReachAttributes(start, reach, dependencies);
         expect(actual).toBeTruthy();
     });
     it("can reach D,A,C from B", () => {
         const start = ["B"];
         const reach = ["C","A", "D"];
-        let actual = converterUtils.canReachAttributes(start, reach, dependencies)
+        const actual = converterUtils.canReachAttributes(start, reach, dependencies);
         expect(actual).toBeTruthy();
     });
 });
@@ -101,7 +101,7 @@ describe("getKeyCandidates", () => {
 });
 
 describe("canonicalCover()", () => {
-    const makeComparable = (fds: Array<DependencyRow>) => fds.map(({leftSide, rightSide}) => ({leftSide, rightSide}));
+    const makeComparable = (fds: Array<DependencyRow>) => fds.map(({ leftSide, rightSide }) => ({ leftSide, rightSide }));
    it("should be A->B, B->D, D->A", () => {
        const rowIds = "A,B,C,D,E".split(",");
        const dependencies = [
@@ -115,7 +115,7 @@ describe("canonicalCover()", () => {
            "B->D",
            "D->A"
        ].map(l => mockDependency(l));
-       const canonicalCover = converterUtils.getCanonicalCover(dependencies)
+       const canonicalCover = converterUtils.getCanonicalCover(dependencies);
        expect(makeComparable(canonicalCover)).toEqual(makeComparable(expected));
    });
     it("should be A->C,B->D,D->A,E->C", () => {
@@ -132,7 +132,7 @@ describe("canonicalCover()", () => {
             "B->D",
             "D->A",
         ].map(l => mockDependency(l));
-        const canonicalCover = converterUtils.getCanonicalCover(dependencies)
+        const canonicalCover = converterUtils.getCanonicalCover(dependencies);
         expect(makeComparable(canonicalCover)).toEqual(makeComparable(expected));
     });
 });
@@ -159,7 +159,7 @@ describe("to3NF", () => {
             ["Vorname", "Nachname", "E-Mail", "Adresse"],
             ["Artikel", "Preis"],
             ["Rechnungszeitpunkt", "Vorname", "Nachname", "Artikel", "Menge"]
-        ]
+        ];
         expect(deps).toEqual(dependencies);
         expect(schemas).toHaveLength(3);
         expect(schemas[0]).toHaveLength(4);
@@ -180,8 +180,8 @@ describe("addIds", ()=>{
             "Artikel->Preis",
             "Rechnungszeitpunkt->Vorname,Nachname,Artikel,Menge"
         ].map(l => mockDependency(l));
-        let [schemas, deps] = converterUtils.to3NF(dependencies);
-        let [newSchemas, newDeps] = converterUtils.addIds(schemas, deps);
+        const [schemas, deps] = converterUtils.to3NF(dependencies);
+        const [newSchemas, newDeps] = converterUtils.addIds(schemas, deps);
         const expectedSchemasMustHaves = [
             ["Vorname", "Nachname", "E-Mail", "Adresse"],
             ["Artikel", "Preis"],
@@ -196,4 +196,4 @@ describe("addIds", ()=>{
         expect(newSchemas[2]).toHaveLength(5);
         expectedSchemasMustHaves[2].forEach(expected => expect(newSchemas[2]).toContainEqual(expected));
     });
-})
+});

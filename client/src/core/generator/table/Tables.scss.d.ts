@@ -1,7 +1,9 @@
 declare namespace TablesScssNamespace {
   export interface ITablesScss {
     TabLabel: string;
+    TabLabelContent: string;
     TabLabelDelete: string;
+    TabLabelEdit: string;
   }
 }
 

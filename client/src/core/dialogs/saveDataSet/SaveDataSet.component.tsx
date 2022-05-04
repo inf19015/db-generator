@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import TextField from '~components/TextField';
 import { PrimaryButton } from '~components/Buttons.component';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '~components/dialogs';
