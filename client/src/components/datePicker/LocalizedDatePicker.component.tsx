@@ -1,6 +1,7 @@
 import React from 'react';
-import DateFnsUtils from '@date-io/date-fns';
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { DatePicker, LocalizationProvider } from '@mui/lab';
+import TextField from '@mui/material/TextField';
 import { getLocale, getStrings } from '~utils/langUtils';
 import { arDZ, de, enUS, es, fr, ja, hi, nl, pt, ta, zhCN } from 'date-fns/locale';
 
@@ -12,6 +13,7 @@ export const LocalizedDatePicker = (props: any): JSX.Element => {
 		<DatePicker
 			{...props}
 			cancelLabel={i18n.cancel}
+			renderInput={(props) => <TextField {...props} />}
 		/>
 	);
 };
@@ -35,8 +37,8 @@ export const LocalizedDatePickerProvider = ({ children }: any): JSX.Element => {
 	};
 
 	return (
-		<MuiPickersUtilsProvider utils={DateFnsUtils} locale={localeMap[locale]}>
+		<LocalizationProvider dateAdapter={AdapterDateFns} locale={localeMap[locale]}>
 			{children}
-		</MuiPickersUtilsProvider>
+		</LocalizationProvider>
 	);
 };
