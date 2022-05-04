@@ -3,8 +3,9 @@ import React, { useCallback } from "react";
 import { Table as TableType } from "../../store/generator/generator.reducer";
 import { Box, Tab, Tabs } from "@material-ui/core";
 import AddBoxIcon from '@material-ui/icons/AddBox';
+import DeleteIcon from '@material-ui/icons/Delete';
 import { DragDropContext, DragUpdate, Droppable, DropResult, ResponderProvided, SensorAPI } from "react-beautiful-dnd";
-import * as styles from "~core/generator/grid/Grid.scss";
+import styles from './Tables.scss';
 
 export type TablesProps = {
     selectedTab: number;
@@ -12,12 +13,19 @@ export type TablesProps = {
     addTableTab: () => void;
     tables: TableType[];
 	reorderRows: (id: string, newIndex: number, newTableId: string) => void;
+	onDelete: (id: string) => any;
 }
 
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
     value: number;
+}
+interface TabDeleteIconProps {
+	children?: React.ReactNode;
+	index: number;
+	value: number;
+	onDelete: () => void;
 }
 
 const TabPanel = (props: TabPanelProps): JSX.Element => {
@@ -34,6 +42,14 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
 		</div>
 	);
 };
+const TabDeleteIcon = (props: TabDeleteIconProps): JSX.Element => {
+	const { children, value, index, onDelete, ...other } = props;
+	return (
+		<div className={styles.TabLabelDelete} {...other} hidden={value !== index} onClick={onDelete}>
+			<DeleteIcon />
+		</div>
+	);
+};
 
 const a11yProps = (index: number): any => {
 	return {
@@ -44,7 +60,7 @@ const a11yProps = (index: number): any => {
 
 
 
-export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderRows }: TablesProps): JSX.Element => {
+export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderRows, onDelete }: TablesProps): JSX.Element => {
 
 	const onSort = (result: DropResult): void => {
 		const { draggableId, destination: destination } = result;
@@ -65,6 +81,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 
 	};
 
+
 	return (
 		<Box sx={{ width: '100%' }}>
 			<Box sx={{ borderBottom: 1, borderColor: 'blue' }}>
@@ -79,7 +96,16 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 											{...provided.droppableProps}
 											ref={provided.innerRef}
 										>
-											<Tab key={"tabof" + table.id} label={table.title} {...a11yProps(i)} />
+											<Tab
+												key={"tabof" + table.id}
+												label={table.title}
+												iconPosition="start"
+												icon = {<TabDeleteIcon
+													value={selectedTab}
+													index={i}
+													onDelete={() => onDelete(table.id)}
+												/>}
+												{...a11yProps(i)}/>
 											{provided.placeholder}
 										</div>
 									)}

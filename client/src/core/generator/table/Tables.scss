@@ -1,0 +1,11 @@
+.TabLabelDelete  {
+  & > svg :hover {
+    color: #d41313;
+  }
+  margin-right: 0;
+}
+
+.TabLabel {
+  display: flex;
+  border: 1px solid;
+}
