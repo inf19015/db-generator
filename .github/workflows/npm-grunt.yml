@@ -16,7 +16,7 @@ jobs:
       uses: actions/cache@v3
       with:
         path: client/dist
-        key: ${{ runner.os }}-dist
+        key: ${{ runner.os }}-dist-v2
           
     - name: Use Node.js 
       uses: actions/setup-node@v3
@@ -44,7 +44,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: client/dist
-          key: ${{ runner.os }}-dist
+          key: ${{ runner.os }}-dist-v2
           
       - name: Build And Deploy
         id: builddeploy
