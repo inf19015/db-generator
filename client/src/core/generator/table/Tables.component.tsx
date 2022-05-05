@@ -1,10 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Table as TableType } from "../../store/generator/generator.reducer";
 import { Box, Tab, Tabs } from "@mui/material";
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import { DragDropContext, DragUpdate, Droppable, DropResult, ResponderProvided, SensorAPI } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import styles from './Tables.scss';
 import Grid from "~core/generator/grid/Grid.container";
 
@@ -78,6 +78,11 @@ const a11yProps = (index: number): any => {
 		'aria-controls': `simple-tabpanel-${index}`,
 	};
 };
+interface DroppableTabProps {
+	droppableId: string;
+	table: TableType;
+	index: number;
+}
 
 
 
@@ -101,43 +106,48 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 		}
 
 	};
-
+	const DroppableTab = (props: DroppableTabProps): JSX.Element => {
+		const { droppableId, table, index } = props;
+		return (
+			<Droppable droppableId={droppableId} >
+				{(provided: any): any => (
+					<div
+						{...provided.droppableProps}
+						ref={provided.innerRef}
+					>
+						<Tab
+							onClick={() => onTabChange(index)}
+							label={
+								<TabDeleteLabel
+									value={selectedTab}
+									index={index}
+									onDelete={() => onDelete(table.id)}
+									onEdit={() => onChangeTitle()}
+								>
+									<p>{table.title}</p>
+								</TabDeleteLabel>
+							}
+							iconPosition="end"
+							{...a11yProps(index)}
+						/>
+						{provided.placeholder}
+					</div>
+				)}
+			</Droppable>
+		);
+	};
 
 	return (
 		<Box sx={{ width: '100%', height: '100%' }}>
 			<DragDropContext onDragEnd={onSort} >
 				<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
 					{tables.map((table, i) =>
-						<div key={"droppable-tab-"+table.id}
-							onClick={() => onTabChange(i)}>
-							<Droppable droppableId={"tab-"+table.id}>
-								{(provided: any): any => (
-									<div
-										{...provided.droppableProps}
-										ref={provided.innerRef}
-										>
-										<Tab
-											key={"tabof" + table.id}
-											label={
-												<TabDeleteLabel
-													value={selectedTab}
-													index={i}
-													onDelete={() => onDelete(table.id)}
-													onEdit={() => onChangeTitle()}
-													>
-													<p>{table.title}</p>
-												</TabDeleteLabel>
-												}
-											iconPosition="end"
-												// icon = {}
-												// sx ={{  }}
-											{...a11yProps(i)}/>
-										{provided.placeholder}
-									</div>
-									)}
-							</Droppable>
-						</div>
-
+						<DroppableTab
+							key={"tabof" + table.id}
+							droppableId={"tab-"+table.id}
+							index={i}
+							table={table}
+						/>
 						)}
 					<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
 				</Tabs>

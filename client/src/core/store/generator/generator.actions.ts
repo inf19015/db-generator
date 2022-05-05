@@ -21,9 +21,6 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
-import _ from "lodash";
-import { DataRow } from "~store/generator/generator.reducer";
-
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -64,7 +61,17 @@ export const ADD_ROW_TO_TABLE = 'ADD_ROW_TO_TABLE';
 export const addRowToTable = (tableId: string, rowId: string): GDAction => ({ type: ADD_ROW_TO_TABLE, payload: { tableId, rowId } });
 
 export const ADD_TABLE = 'ADD_TABLE';
-export const addTable = (tableId = nanoid(), title = "newTable"): GDAction => ({ type: ADD_TABLE, payload: { tableId, title } });
+export const addTable = (tableId = nanoid(), title = ""): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const tables = selectors.getSortedTablesArray(state);
+	if(title === ""){
+		title = "Table";
+		let i = 1;
+		while(tables.some(t => t.title === title+" "+i)) i++;
+		title = title + " " + i;
+	}
+	dispatch({ type: ADD_TABLE, payload: { tableId, title } });
+};
 
 export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {

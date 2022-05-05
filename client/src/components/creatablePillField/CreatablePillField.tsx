@@ -80,7 +80,6 @@ export type CreatablePillFieldProps = {
 const CreatablePillField = ({ onChange, onValidateNewItem, value, error, placeholder, className }: CreatablePillFieldProps): JSX.Element => {
 	const [tempValue, setTempValue] = React.useState('');
 	const options = value.map(createOption);
-
 	const handleInputChange = (newTempValue: string): void => setTempValue(newTempValue);
 
 	const handleKeyDown = (e: any): void => {
@@ -117,29 +116,31 @@ const CreatablePillField = ({ onChange, onValidateNewItem, value, error, placeho
 
 	return (
 		<ErrorTooltip title={error} arrow disableHoverListener={!error} disableFocusListener={!error}>
-			<SortableCreatableSelect
-				className={classes.join(' ')}
-				styles={selectStyles}
-				components={customComponents}
-				inputValue={tempValue}
-				axis="xy"
-				distance={4}
-				getHelperDimensions={({ node }): any => node.getBoundingClientRect()}
-				isClearable
-				isMulti
-				onSortEnd={onSortEnd}
-				menuIsOpen={false}
-				onChange={(options): void => {
-					const newValues = options ? options.map(({ value }: DropdownOption) => value) : [];
-					onChange(newValues);
-				}}
-				onInputChange={handleInputChange}
-				onKeyDown={handleKeyDown}
-				placeholder={placeholder}
-				value={options}
-				menuPlacement="auto"
-				menuPortalTarget={document.body}
-			/>
+			<div>
+				<SortableCreatableSelect
+					className={classes.join(' ')}
+					styles={selectStyles}
+					components={customComponents}
+					inputValue={tempValue}
+					axis="xy"
+					distance={4}
+					getHelperDimensions={({ node }): any => node.getBoundingClientRect()}
+					isClearable
+					isMulti
+					onSortEnd={onSortEnd}
+					menuIsOpen={false}
+					onChange={(options): void => {
+						const newValues = options ? options.map(({ value }: DropdownOption) => value) : [];
+						onChange(newValues);
+					}}
+					onInputChange={handleInputChange}
+					onKeyDown={handleKeyDown}
+					placeholder={placeholder}
+					value={options}
+					menuPlacement="auto"
+					menuPortalTarget={document.body}
+				/>
+			</div>
 		</ErrorTooltip>
 	);
 };
