@@ -2,7 +2,6 @@ import React from 'react';
 import sinon from 'sinon';
 import { render } from '@testing-library/react';
 import { TourCompleteStep } from '../Components.tour';
-import GridPanelTour from '../GridPanel.tour';
 import IntroToGenerator from '../IntroToGenerator.tour';
 import PreviewPanel from '../PreviewPanel.tour';
 import * as langUtils from '~utils/langUtils';
@@ -40,27 +39,6 @@ const tourProps = {
 	accentColor: '#444400',
 	className: 'classname'
 };
-
-describe('GriaPanel tour', () => {
-	afterEach(function () {
-		sinon.restore();
-	});
-
-	it('renders', () => {
-		sinon.stub(langUtils, 'getStrings').returns({
-			core: i18n,
-			dataTypes: {}
-		});
-
-		const { baseElement } = render(
-			<GridPanelTour
-				{...tourProps}
-			/>
-		);
-
-		expect(baseElement.querySelector('svg')).toBeTruthy();
-	});
-});
 
 describe('IntroToGenerator tour', () => {
 	afterEach(function () {

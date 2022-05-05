@@ -165,12 +165,12 @@ const Footer = ({
 							{i18n.generate}
 						</Button>
 						<ButtonGroup variant="contained" style={{ marginRight: "18px" }} className={"tour-convertButtons"}>
-							<Button 
+							<Button className={"tour-convert3nf"}
 								onClick={onConvertTo3NF}
 							>
 								3NF
 							</Button>
-							<Button  
+							<Button className={"tour-convertAddPks"}
 								onClick={onAddIds}
 							>
 								Add PKs
