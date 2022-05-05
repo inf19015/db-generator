@@ -532,9 +532,9 @@ export const clearPage = (addDefaultRows = true): any => (dispatch: Dispatch, ge
 		}
 	});
 
-	const initTableId = nanoid();
-	dispatch({ type: ADD_TABLE, payload: { id: initTableId, title: 'Table' } });
-	if (addDefaultRows) {
+	if(addDefaultRows) {
+		const initTableId = nanoid();
+		dispatch({ type: ADD_TABLE, payload: { id: initTableId, title: 'Table' } });
 		dispatch(addRows(5, initTableId));
 	}
 };

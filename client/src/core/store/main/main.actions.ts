@@ -365,3 +365,44 @@ export const setAccountsFilterString = (filter: string): any => ({ type: SET_ACC
 
 export const SET_ACCOUNT_STATUS_FILTER = 'SET_ACCOUNT_STATUS_FILTER';
 export const setAccountStatusFilter = (status: AccountStatusFilter): any => ({ type: SET_ACCOUNT_STATUS_FILTER, payload: { status } });
+
+export const SHOW_TOUR_INTRO_DIALOG = 'SHOW_TOUR_INTRO_DIALOG';
+export const showTourIntroDialog = (history?: any) => (dispatch: Dispatch, getState: any): any => {
+	const state = getState();
+	const locale = getLocale(state);
+	const generatorRoute = getGeneratorRoute(locale);
+
+	// the tour is specific to the generator page, so always redirect there when showing/hiding it
+	if (history && getCurrentPage(state) !== generatorRoute) {
+		history.push(generatorRoute);
+	}
+
+	dispatch({ type: SHOW_TOUR_INTRO_DIALOG });
+};
+export const HIDE_TOUR_INTRO_DIALOG = 'HIDE_TOUR_INTRO_DIALOG';
+export const hideTourIntroDialog = (): GDAction => ({ type: HIDE_TOUR_INTRO_DIALOG });
+
+
+export const TOUR_BUNDLE_LOADED = 'TOUR_BUNDLE_LOADED';
+export const loadTourBundle = (): any => (dispatch: Dispatch): void => {
+	const i18n = getStrings();
+
+	// TODO check hashing of bundle here
+	import(
+		/* webpackChunkName: "tour" */
+		/* webpackMode: "lazy" */
+		`../../../tours`
+		)
+		.then((resp) => {
+			setTourComponents(resp.default);
+			dispatch({ type: TOUR_BUNDLE_LOADED });
+		})
+		.catch(() => {
+			dispatch(hideTourIntroDialog());
+
+			addToast({
+				type: 'success',
+				message: i18n.core.problemLoadingTour
+			});
+		});
+};

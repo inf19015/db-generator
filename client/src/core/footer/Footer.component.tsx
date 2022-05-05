@@ -8,8 +8,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import GearIcon from '@mui/icons-material/Settings';
 import UndoIcon from '@mui/icons-material/Undo';
 import RedoIcon from '@mui/icons-material/Redo';
-// import { Tooltip } from '~components/tooltips';
-// import { Github } from '~components/icons';
+import EmojiPeopleIcon from '@mui/icons-material/EmojiPeople';
 import ActivePacketsList from '../generationPanel/ActivePacketsList.container';
 import PanelControls from '../generator/panelControls/PanelControls.container';
 import AboutDialog from '~core/dialogs/about/About.component';
@@ -138,6 +137,15 @@ const Footer = ({
 		<>
 			<footer className={styles.footer}>
 				<div>
+					<ul>
+						<li className={styles.showTourLink}>
+							<Button className={styles.tourBtn} onClick={showTourDialog}>
+								<EmojiPeopleIcon />
+								<span>{i18n.takeTour}</span>
+							</Button>
+						</li>
+						{customFooterLinks}
+					</ul>
 					<div className={styles.activePacketsList}>
 						<ActivePacketsList />
 					</div>
@@ -151,31 +159,35 @@ const Footer = ({
 							color="primary"
 							disableElevation
 							disabled={!actionButtonsEnabled}
+							style={{ marginRight: "18px" }}
 						>
 							<GearIcon />
 							{i18n.generate}
 						</Button>
-						<Button
-							onClick={onConvertTo3NF}
-						>
-							3NF
-						</Button>
-						<Button
-							onClick={onAddIds}
-						>
-							Add PKs
-						</Button>
-						<Button
-							onClick={undo}
-						>
-							<UndoIcon />
-						</Button>
-						<Button
-							onClick={redo}
-						>
-							<RedoIcon />
-						</Button>
-
+						<ButtonGroup variant="contained" style={{ marginRight: "18px" }} className={"tour-convertButtons"}>
+							<Button 
+								onClick={onConvertTo3NF}
+							>
+								3NF
+							</Button>
+							<Button  
+								onClick={onAddIds}
+							>
+								Add PKs
+							</Button>
+						</ButtonGroup>
+						<ButtonGroup variant="outlined" className={"tour-undo-redo"}>
+							<Button
+								onClick={undo}
+							>
+								<UndoIcon />
+							</Button>
+							<Button
+								onClick={redo}
+							>
+								<RedoIcon />
+							</Button>
+						</ButtonGroup>
 					</div>
 				</div>
 			</footer>

@@ -137,7 +137,7 @@ button.saveBtnArrow {
 	text-transform: none;
 	transition: color 0.15s ease-in-out;
 	margin-left: -6px;
-
+	color: black;
 	svg {
 		margin-right: 4px;
 	}
@@ -178,4 +178,8 @@ button.saveBtnArrow {
 	.footerControls {
 		padding-right: 0;
 	}
+}
+
+.convertBtn:global(.MuiButtonBase-root){
+	color: black;
 }

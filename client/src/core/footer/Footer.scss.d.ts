@@ -3,6 +3,7 @@ declare namespace FooterScssNamespace {
     aboutIconEl: string;
     activePacketsList: string;
     controls: string;
+    convertBtn: string;
     footer: string;
     footerControls: string;
     generateButton: string;
