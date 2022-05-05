@@ -21,9 +21,6 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
-import _ from "lodash";
-import { DataRow } from "~store/generator/generator.reducer";
-
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {

@@ -1,11 +1,10 @@
-import React, { useCallback } from "react";
+import React from "react";
 import { Table as TableType } from "../../store/generator/generator.reducer";
 import { Box, Tab, Tabs } from "@mui/material";
-import TabUnstyled from '@mui/base/TabUnstyled';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
-import { DragDropContext, DragUpdate, Droppable, DropResult, ResponderProvided, SensorAPI } from "react-beautiful-dnd";
+import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 import styles from './Tables.scss';
 import Grid from "~core/generator/grid/Grid.container";
 
