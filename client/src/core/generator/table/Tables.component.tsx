@@ -141,7 +141,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 		<Box sx={{ width: '100%', height: '100%' }}>
 			<DragDropContext onDragEnd={onSort} >
 				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-					<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
+					<Tabs value={selectedTab} className={"tour-table-tabs"} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
 						{tables.map((table, i) =>
 							<DroppableTab
 								key={"tabof" + table.id}

@@ -92,35 +92,6 @@ const Step6 = (): JSX.Element => {
 	);
 };
 
-const Step7 = (): JSX.Element => {
-	const { core: i18n } = getStrings();
-
-	return (
-		<>
-			<h2>{i18n.exportTypeOptionsTs}</h2>
-			<p>
-				{i18n.exportTypeOptionsTsDesc}
-			</p>
-			<p>
-				{i18n.exportTypeOptionsTsDesc2}
-			</p>
-		</>
-	);
-};
-
-const Step8 = (): JSX.Element => {
-	const { core: i18n } = getStrings();
-
-	return (
-		<>
-			<h2>{i18n.exportTypeOptionsSql}</h2>
-			<p>
-				{i18n.exportTypeOptionsSqlDesc}
-			</p>
-		</>
-	);
-};
-
 const Step9 = (): JSX.Element => {
 	const { core: i18n } = getStrings();
 
@@ -166,6 +137,9 @@ const steps = [
 				}
 				if (!selectors.isPreviewVisible(state)) {
 					store.dispatch(actions.togglePreview());
+				}
+				if (selectors.isDependencyGridVisible(state)) {
+					store.dispatch(actions.toggleDependencyGrid());
 				}
 
 				const ids = rows.map(({ id }) => id);
@@ -218,31 +192,10 @@ const steps = [
 	},
 	{
 		content: Step6,
-		selector: '.tour-exportTypeDropdown>div',
+		selector: '.tour-dbTypeDropdown',
 		style: {
 			...commonStyles,
 			marginLeft: 20
-		},
-		position: 'right' as ReactourStepPosition
-	},
-	{
-		content: Step7,
-		selector: '.tour-exportTypePanel',
-		style: {
-			...commonStyles,
-			marginLeft: 20
-		},
-		position: 'right' as ReactourStepPosition
-	},
-	{
-		content: Step8,
-		selector: '.tour-exportTypePanel',
-		style: {
-			...commonStyles,
-			marginLeft: 20
-		},
-		action: (): void => {
-			store.dispatch(actions.onSelectExportType('SQL'));
 		},
 		position: 'right' as ReactourStepPosition
 	},

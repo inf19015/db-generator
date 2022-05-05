@@ -14,12 +14,25 @@ const Step1 = (): JSX.Element => {
 
 	return (
 		<>
-			<h2>{i18n.theGridPanel}</h2>
+			<h2>{i18n.theTablesPanel}</h2>
 			<p>
-				{i18n.gridPanelTourIntroDesc1}
+				{i18n.tablesPanelTourIntroDesc1}
 			</p>
 			<p>
-				{i18n.gridPanelTourIntroDesc2}
+				{i18n.tablesPanelTourIntroDesc2}
+			</p>
+		</>
+	);
+};
+const Step21 = (): JSX.Element => {
+	const { core: i18n } = getStrings();
+
+	return (
+		<>
+			<h2>{i18n.tables}</h2>
+
+			<p>
+				{i18n.tablesDesc}
 			</p>
 		</>
 	);
@@ -206,6 +219,15 @@ const steps = [
 				document.querySelector('.tour-scrollableGridRows')!.scrollTop = 0;
 			}, 10);
 		}
+	},
+	{
+		content: Step21,
+		selector: '.tour-table-tabs',
+		style: {
+			...commonStyles,
+			marginLeft: 15
+		},
+		position: 'bottom' as ReactourStepPosition
 	},
 	{
 		content: Step2,
