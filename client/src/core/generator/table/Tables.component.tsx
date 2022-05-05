@@ -104,52 +104,50 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 
 
 	return (
-		<Box sx={{ width: '100%' }}>
-			<Box sx={{ borderBottom: 1, borderColor: 'blue' }}>
-				<DragDropContext onDragEnd={onSort} >
-					<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
-						{tables.map((table, i) =>
-							<div key={"droppable-tab-"+table.id}
-								 onClick={() => onTabChange(i)}>
-								<Droppable droppableId={"tab-"+table.id}>
-									{(provided: any): any => (
-										<div
-											{...provided.droppableProps}
-											ref={provided.innerRef}
+		<Box sx={{ width: '100%', height: '100%' }}>
+			<DragDropContext onDragEnd={onSort} >
+				<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
+					{tables.map((table, i) =>
+						<div key={"droppable-tab-"+table.id}
+							onClick={() => onTabChange(i)}>
+							<Droppable droppableId={"tab-"+table.id}>
+								{(provided: any): any => (
+									<div
+										{...provided.droppableProps}
+										ref={provided.innerRef}
 										>
-											<Tab
-												key={"tabof" + table.id}
-												label={
-													<TabDeleteLabel
-														value={selectedTab}
-														index={i}
-														onDelete={() => onDelete(table.id)}
-														onEdit={() => onChangeTitle()}
+										<Tab
+											key={"tabof" + table.id}
+											label={
+												<TabDeleteLabel
+													value={selectedTab}
+													index={i}
+													onDelete={() => onDelete(table.id)}
+													onEdit={() => onChangeTitle()}
 													>
-														<p>{table.title}</p>
-													</TabDeleteLabel>
+													<p>{table.title}</p>
+												</TabDeleteLabel>
 												}
-												iconPosition="end"
+											iconPosition="end"
 												// icon = {}
 												// sx ={{  }}
-												{...a11yProps(i)}/>
-											{provided.placeholder}
-										</div>
+											{...a11yProps(i)}/>
+										{provided.placeholder}
+									</div>
 									)}
-								</Droppable>
-							</div>
+							</Droppable>
+						</div>
 
 						)}
-						<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
-					</Tabs>
+					<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
+				</Tabs>
 
-					{tables.map((table, i) =>
-						<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
-							<Grid tableId={table.id} />
-						</TabPanel>
+				{tables.map((table, i) =>
+					<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
+						<Grid tableId={table.id} />
+					</TabPanel>
 					)}
-				</DragDropContext>
-			</Box>
+			</DragDropContext>
 		</Box>
 	);
 };

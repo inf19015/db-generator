@@ -1,13 +1,14 @@
+$hover-color: #d41313;
 .TabLabelDelete  {
-  & > svg :hover {
-    color: #d41313;
+  & :hover {
+    color: $hover-color;
   }
   padding-left: 10px;
   margin-right: -10px;
 }
 .TabLabelEdit {
-  & > svg :hover {
-    color: #d41313;
+  &:hover {
+    color: $hover-color;
   }
   padding-left: 10px;
   //margin-right: -10px;
