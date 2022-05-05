@@ -140,18 +140,19 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 	return (
 		<Box sx={{ width: '100%', height: '100%' }}>
 			<DragDropContext onDragEnd={onSort} >
-				<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
-					{tables.map((table, i) =>
-						<DroppableTab
-							key={"tabof" + table.id}
-							droppableId={"tab-"+table.id}
-							index={i}
-							table={table}
+				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+					<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
+						{tables.map((table, i) =>
+							<DroppableTab
+								key={"tabof" + table.id}
+								droppableId={"tab-"+table.id}
+								index={i}
+								table={table}
 						/>
 						)}
-					<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
-				</Tabs>
-
+						<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
+					</Tabs>
+				</Box>
 				{tables.map((table, i) =>
 					<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
 						<Grid tableId={table.id} />
