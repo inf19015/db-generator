@@ -101,6 +101,8 @@ const Builder = ({
 			);
 		}
 		if (isGridSectionVisible) {
+			gridSize.width = windowSize.width;
+			gridSize.height = windowSize.height;
 			return <GridContainer parentSize = {gridSize}/>;
 		}
 		return <Preview />;
