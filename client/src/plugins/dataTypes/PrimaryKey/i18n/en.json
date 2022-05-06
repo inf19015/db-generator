@@ -1,11 +1,6 @@
 {
   "NAME": "PrimaryKey",
   "DESC": "Provides a primary key column which will be automatically incremented",
-  "DEFAULT_TITLE": "primary key",
-  "helpIntro": "Generates a column that contains a unique number on each row, incrementing by whatever value you enter. This option can be helpful for inserting the data into a database field with an auto-increment primary key.",
-  "helpPara2": "The optional placeholder string lets you embed the generated increment value within a string, via the <b>{{INCR}}</b> placeholder. For example:",
-  "increment": "Increment:",
-  "placeholderStr": "Placeholder string:",
-  "startAt": "Start at:",
-  "incompleteFields": "Please enter the Start At and Increment fields for all Auto-increment rows:"
+  "DEFAULT_TITLE": "pk",
+  "helpIntro": "Generates a column that contains a unique number on each row, incrementing by 1. This column will be marked with an primary key constraint."
 }

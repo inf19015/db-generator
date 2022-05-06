@@ -20,8 +20,10 @@ const FKDialog = ({ visible, data, id, onClose, coreI18n, onUpdate, rowOptions, 
 					<Dropdown
 						value={data.pkId}
 						onChange={(item: any): any => {
-							onUpdate('pkId', item.value.currentId);
-							onUpdate('tableId', item.value.tableId);
+							onUpdate({
+								pkId: item.value.currentId,
+								tableId: item.value.tableId
+							});
 						}}
 						options={[
 							{ value: '', label: coreI18n.pleaseSelect },
@@ -61,7 +63,6 @@ export const initialState: ForeignKeyState = {
 export const Options = ({ i18n, coreI18n, id, data, onUpdate, selectableRows, allRows }: DTOptionsProps): JSX.Element => {
 	const safeData = data;
 	const [dialogVisible, setDialogVisibility] = React.useState(false);
-
 	const currentTitle = allRows.find((row: any) => row.id === data.pkId)?.title || i18n.nothing;
 	const label = `${i18n.source} ${currentTitle}`;
 
@@ -94,7 +95,7 @@ export const Options = ({ i18n, coreI18n, id, data, onUpdate, selectableRows, al
 				id={id}
 				coreI18n={coreI18n}
 				i18n={i18n}
-				onUpdate={(field: string, value: any): void => onUpdate({ ...safeData, [field]: value })}
+				onUpdate={(value: any): void => onUpdate({ ...safeData, ...value })}
 				rowOptions={rowOptions}
 				onClose={(): void => setDialogVisibility(false)}
 			/>
@@ -102,28 +103,7 @@ export const Options = ({ i18n, coreI18n, id, data, onUpdate, selectableRows, al
 	);
 };
 
-export const Help = ({ i18n }: DTHelpProps): JSX.Element => (
-	<>
-		<p>
-			{i18n.emailHelp1}
-		</p>
-
-		<h3>{i18n.sourceTitle}</h3>
-		<p>
-			{i18n.emailHelp2}
-		</p>
-
-		<h3>{i18n.domains}</h3>
-		<p>
-			{i18n.emailHelp3}
-		</p>
-
-		<h3>{i18n.domainSuffixes}</h3>
-		<p>
-			{i18n.emailHelp4}
-		</p>
-	</>
-);
+export const Help = ({ i18n }: DTHelpProps): JSX.Element => <p>{i18n.helpIntro}</p>;
 
 export const getMetadata = (): DTMetadata => {
 	return ({
