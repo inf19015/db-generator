@@ -21,6 +21,8 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
+import { canReachAttributes, includesAll, rowType } from "~utils/converterUtils";
+import { DependencyRow } from './generator.reducer';
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -145,35 +147,52 @@ export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any)
 export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
-	const tables = selectors.getSortedTablesArray(state);
-	tables.forEach(table => dispatch(removeTableDirty(table.id)));
+	// only take tables without functioning PK
+	const isPrimaryKey = (id: string) => selectors.getRow(state, id).dataType === "PrimaryKey";
+	let tables = selectors.getSortedTablesArray(state);
+	const tablesToCheck = tables.filter(table =>
+			converterUtils.getKeyCandidates(table.sortedRows, dependencies)
+				.filter(keyCandidate => keyCandidate.length === 1 && isPrimaryKey(keyCandidate[0]))
+				.length === 0
+		);
 
-	const [newTables, newDependencies] = converterUtils.addIds(tables.map(table => table.sortedRows), dependencies);
 	const pkTableNames: {[id: string]: string} = {};
-	newTables.map((rows, i) => {
-		const tableId = nanoid();
-		dispatch(addTable(tableId, "Table"+(i+1)));
-		rows.forEach(row => {
-			switch(row.type) {
-				case "pk":
-					dispatch(addRow(tableId, row.id, "Table"+(i+1)+"_ID", null, "PrimaryKey"));
-					pkTableNames[row.id]="Table"+(i+1);
-					break;
-				case "untouched":
-					dispatch(addRowToTable(tableId, row.id));
-					break;
+	const newDepIds: string[] = [];
+	tablesToCheck.forEach(table =>
+		table.sortedRows.forEach(() => {
+			for (const dep of dependencies) {
+				if (!converterUtils.includesAll(table.sortedRows, dep.leftSide)) continue;
+				const checkSchema = table.sortedRows.filter(row => !dep.leftSide.includes(row));
+				if (!converterUtils.canReachAttributes(dep.leftSide, checkSchema, dependencies)) continue;
+				//add a new pk
+				const rowId = nanoid();
+				const depId = nanoid();
+				dispatch(addRow(table.id, rowId, table.title + "_ID"));
+				newDepIds.push(depId);
+				dispatch(addDepRow(depId, [rowId], dep.leftSide, false));
+				pkTableNames[rowId]=table.title;
 			}
-		});
-		return ({ tableId, rows });
-	}).forEach(({ tableId, rows }) =>
-		rows.filter(row => row.type === "fk").forEach(row => {
-			const fkId = nanoid();
-			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id], ({ pkId: row.id, tableId: tableId }),"ForeignKey"));
 		})
 	);
-	newDependencies.forEach(dependency => {
-		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
-	});
+	//check if need add fks
+	tables = selectors.getSortedTablesArray(state);
+	const newDependencies = selectors.getSortedDependencyRowsArray(state).filter(dep => newDepIds.includes(dep.id));
+	tables.forEach((table) =>
+		table.sortedRows.forEach(() => {
+			const checkSchema = table.sortedRows;
+			for(const dep of newDependencies){
+				if(!includesAll(checkSchema, dep.rightSide))continue;
+				if(includesAll(checkSchema, dep.leftSide))continue;
+				dep.leftSide.forEach(pkId => {
+					const fkId = nanoid();
+					dispatch(addRow(table.id, fkId, "FK_"+pkTableNames[pkId]));
+					dispatch(onSelectDataType("ForeignKey", fkId, false));
+					setTimeout(() => dispatch(onConfigureDataType(fkId, { pkId: pkId, tableId: table.id })), 10);
+
+				});
+			}
+		})
+	);
 	dispatch(refreshPreview());
 };
 
