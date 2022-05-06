@@ -129,6 +129,8 @@ export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any)
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
 	const tables = selectors.getSortedTables(state);
+	const rows = selectors.getSortedRowsArray(state);
+	rows.filter(row => !row.dataType && !row.title).forEach(row => dispatch(removeRow(row.id)));
 	tables.forEach(id => dispatch(removeTableDirty(id)));
 
 	const [newTables, newDependencies] = converterUtils.to3NF(dependencies);
