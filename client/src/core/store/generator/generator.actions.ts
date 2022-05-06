@@ -21,8 +21,10 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
-import { canReachAttributes, getKeyCandidates, includesAll, rowType } from "~utils/converterUtils";
+import { canReachAttributes, getCanonicalCover, getKeyCandidates, includesAll, rowType } from "~utils/converterUtils";
 import { sleep } from '~utils/coreUtils';
+import { DependencyRow, Table } from './generator.reducer';
+import _ from "lodash";
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -131,16 +133,50 @@ export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any)
 
 	const [newTables, newDependencies] = converterUtils.to3NF(dependencies);
 	dispatch(removeAllDependencies());
-
+	const addedRowIds: string[] = [];
+	const alteredRowIdsMap: { [oldId: string]: string } = {};
 	newTables.forEach((table, i) => {
 		const tableId = nanoid();
 		dispatch(addTable(tableId, "table"+(i+1)));
-		table.forEach(rowId => dispatch(addRowToTable(tableId, rowId)));
+		table.forEach(rowId => {
+			let newRowId = rowId;
+			if(addedRowIds.includes(rowId)){
+				newRowId = nanoid();
+				const oldRow = selectors.getRow(state, rowId);
+				dispatch(addRow(tableId, newRowId, oldRow.title, oldRow.dataType, oldRow.data));
+				alteredRowIdsMap[rowId] = newRowId;
+			}else {
+				dispatch(addRowToTable(tableId, newRowId));
+			}
+			addedRowIds.push(newRowId);
+		});
 	});
 	dispatch({ type: SELECT_TABLE_TAB, payload: { value: 0 } });
-	newDependencies.forEach(dependency => {
-		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	newDependencies.forEach(dep => {
+		dispatch(addDepRow(dep.id, dep.leftSide, dep.rightSide, dep.isMvd));
 	});
+	const dependencyAddUpdateMap: { [depId: string]: string[] } = {};
+	const dependencyRemoveUpdateMap: { [depId: string]: string[] } = {};
+	newDependencies.forEach(dep => {
+		const alteredLeftSide = dep.leftSide.map(id => alteredRowIdsMap[id]).filter(id => id);
+		if(alteredLeftSide.length === dep.leftSide.length){
+			dispatch(addDepRow(nanoid(), alteredLeftSide, dep.leftSide, dep.isMvd));
+			dep.leftSide.forEach(id => {
+				 const depsToUpdate = newDependencies.filter(nd => nd.rightSide.includes(id));
+				 depsToUpdate.forEach(nd => {
+					 const alteredId = alteredRowIdsMap[id];
+					 const existing = dependencyAddUpdateMap[nd.id] || [];
+					 dependencyAddUpdateMap[nd.id] = [...existing, alteredId];
+					 const existingRemove = dependencyRemoveUpdateMap[nd.id] || [];
+					 dependencyRemoveUpdateMap[nd.id] = [...existingRemove, id];
+				 });
+			});
+		}
+	});
+	const dependenciesToUpdate = newDependencies.map(nd => ({ nd: nd, values: dependencyAddUpdateMap[nd.id], rvalues: dependencyRemoveUpdateMap[nd.id] }))
+		.filter(({ values }) => !!values);
+	dependenciesToUpdate.forEach(({ nd, values, rvalues }) =>
+		dispatch(onSelectDepRightsSide([...nd.rightSide.filter(id => !rvalues.includes(id)), ...values], nd.id)));
 	dispatch(refreshPreview());
 };
 
@@ -183,24 +219,40 @@ export const convertAddFKS = (): any => async (dispatch: Dispatch, getState: any
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
 	const pks = rows.filter(row => row.dataType === "PrimaryKey").map(k => k.id);
 	const pkDependencies = dependencies.filter(dep => dep.leftSide.length === 1 && pks.includes(dep.leftSide[0]));
+	const nonPkDependencies = dependencies.filter(dep => !pkDependencies.includes(dep));
 	const getTableNameForRow = (rowId: string): string => tables.find(table => table.sortedRows.some(id => id === rowId))?.title || "unknown";
 	for(const table of tables) {
 		const checkSchema = table.sortedRows;
 		for (const dep of pkDependencies) {
-			if (!includesAll(checkSchema, dep.rightSide)) continue;
-			if (includesAll(checkSchema, dep.leftSide)) continue;
-			for (const pkId of dep.leftSide) {
+			const pkBridge = nonPkDependencies.find(npk =>
+				_.isEqual(dep.rightSide, npk.rightSide) &&
+				npk.leftSide.every(id => checkSchema.includes(id)) &&
+				npk.leftSide.map(id => selectors.getRow(state, id))
+					.every(r =>
+						npk.rightSide.map(id => selectors.getRow(state, id))
+							.some(sr =>
+							r.dataType === sr.dataType && _.isEqual(r.data, sr.data) && r.title === sr.title)));
+			if(!!pkBridge){
+				const pkId = dep.leftSide[0];
 				const fkId = nanoid();
 				const fkName = "FK_"+ getTableNameForRow(pkId);
-				await dispatch(addRow(table.id, fkId, fkName ));
+				await dispatch(addRow(table.id, fkId, fkName, "ForeignKey", { pkId: pkId, tableId: table.id }));
 				await dispatch(onSelectDataType("ForeignKey", fkId, false));
 				dispatch(onConfigureDataType(fkId, { pkId: pkId, tableId: table.id }));
-				dispatch(addDepRow(nanoid(), [fkId], [pkId]));
+				dispatch(onSelectDepLeftSide([fkId], pkBridge.id));
+				dispatch(onSelectDepRightsSide([pkId], pkBridge.id));
+				const toRemove = pkBridge.leftSide;
+				const replacement = fkId;
+				selectors.getSortedDependencyRowsArray(getState()).forEach(d => {
+					const toRemoveRight = toRemove.filter(r => d.rightSide.includes(r));
+					if (toRemoveRight.length > 0) {
+						dispatch(onSelectDepRightsSide([...d.rightSide.filter(id => !toRemoveRight.includes(id)), replacement], d.id));
+					}
+				});
+				for (const rmId of pkBridge.leftSide) {
+					dispatch(removeRow(rmId));
+				}
 			}
-			for (const rmId of dep.rightSide) {
-				dispatch(removeRow(rmId));
-			}
-			break;
 		}
 	}
 };
