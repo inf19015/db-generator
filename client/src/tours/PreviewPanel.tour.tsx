@@ -119,11 +119,11 @@ const steps = [
 		},
 		position: 'center' as ReactourStepPosition,
 		action: (): void => {
-			setTimeout(() => {
-				store.dispatch(actions.clearPage(false));
+			setTimeout(async () => {
+				await store.dispatch(actions.clearPage(false));
 				const tableId = nanoid();
-				store.dispatch(actions.addTable(tableId, "Tour_Table"));
-				store.dispatch(actions.addRows(5, tableId));
+				await store.dispatch(actions.addTable(tableId, "Tour_Table"));
+				await store.dispatch(actions.addRows(5, tableId));
 
 				const state = store.getState();
 				const rows = selectors.getSortedRowsArray(state);
@@ -148,7 +148,7 @@ const steps = [
 				store.dispatch(actions.onSelectDataType('Region', ids[1]));
 				store.dispatch(actions.onSelectDataType('City', ids[2]));
 				store.dispatch(actions.onSelectDataType('StreetAddress', ids[3]));
-				store.dispatch(actions.onSelectDataType('PostalZip', ids[4]));
+				await store.dispatch(actions.onSelectDataType('PostalZip', ids[4]));
 
 				store.dispatch(actions.refreshPreview(ids));
 

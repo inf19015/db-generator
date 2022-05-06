@@ -139,36 +139,39 @@ const steps = [
 		},
 		position: 'center' as ReactourStepPosition,
 		action: (): void => {
-			store.dispatch(actions.clearPage(false));
-			const tableId = nanoid();
-			store.dispatch(actions.addTable(tableId, "Tour_Table"));
-			store.dispatch(actions.addRows(5, tableId));
+			setTimeout(async () => {
+				await store.dispatch(actions.clearPage(false));
+				const tableId = nanoid();
+				await store.dispatch(actions.addTable(tableId, "Tour_Table"));
+				await store.dispatch(actions.addRows(5, tableId));
 
-			const state = store.getState();
-			const rows = selectors.getSortedRowsArray(state);
-			const ids = rows.map(({ id }) => id);
+				const state = store.getState();
+				const rows = selectors.getSortedRowsArray(state);
+				const ids = rows.map(({ id }) => id);
 
-			store.dispatch(actions.onSelectDataType('Names', ids[0]));
-			store.dispatch(actions.onSelectDataType('Phone', ids[1]));
-			store.dispatch(actions.onSelectDataType('Email', ids[2]));
-			store.dispatch(actions.onSelectDataType('StreetAddress', ids[3]));
-			store.dispatch(actions.onSelectDataType('City', ids[4]));
+				store.dispatch(actions.onSelectDataType('Names', ids[0]));
+				store.dispatch(actions.onSelectDataType('Phone', ids[1]));
+				store.dispatch(actions.onSelectDataType('Email', ids[2]));
+				store.dispatch(actions.onSelectDataType('StreetAddress', ids[3]));
+				await store.dispatch(actions.onSelectDataType('City', ids[4]));
 
-			store.dispatch(actions.refreshPreview(ids));
+				store.dispatch(actions.refreshPreview(ids));
 
-			const layout = selectors.getGeneratorLayout(state);
-			if (layout === 'horizontal') {
-				store.dispatch(actions.toggleLayout());
-			}
-			if (!selectors.isGridVisible(state)) {
-				store.dispatch(actions.toggleGrid());
-			}
-			if (!selectors.isPreviewVisible(state)) {
-				store.dispatch(actions.togglePreview());
-			}
-			if (selectors.isDependencyGridVisible(state)) {
-				store.dispatch(actions.toggleDependencyGrid());
-			}
+				const layout = selectors.getGeneratorLayout(state);
+				if (layout === 'horizontal') {
+					store.dispatch(actions.toggleLayout());
+				}
+				if (!selectors.isGridVisible(state)) {
+					store.dispatch(actions.toggleGrid());
+				}
+				if (!selectors.isPreviewVisible(state)) {
+					store.dispatch(actions.togglePreview());
+				}
+				if (selectors.isDependencyGridVisible(state)) {
+					store.dispatch(actions.toggleDependencyGrid());
+				}
+			},10);
+
 		}
 	},
 	{

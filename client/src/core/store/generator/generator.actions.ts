@@ -21,8 +21,8 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
-import { canReachAttributes, includesAll, rowType } from "~utils/converterUtils";
-import { DependencyRow } from './generator.reducer';
+import { canReachAttributes, getKeyCandidates, includesAll, rowType } from "~utils/converterUtils";
+import { sleep } from '~utils/coreUtils';
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -32,7 +32,7 @@ export const addRows = (numRows: number, tableId: string): any => async (dispatc
 };
 
 export const ADD_ROW = 'ADD_ROW';
-export const addRow = (tableId: string, rowId = nanoid(), title = "", data: any = null, dataType: DataTypeFolder | null = null): GDAction => ({
+export const addRow = (tableId: string, rowId = nanoid(), title = "", dataType: DataTypeFolder | null = null, data: any = undefined): GDAction => ({
 	type: ADD_ROW,
 	payload: {
 		rowId,
@@ -149,51 +149,60 @@ export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
 	// only take tables without functioning PK
 	const isPrimaryKey = (id: string) => selectors.getRow(state, id).dataType === "PrimaryKey";
-	let tables = selectors.getSortedTablesArray(state);
+	const tables = selectors.getSortedTablesArray(state);
 	const tablesToCheck = tables.filter(table =>
-			converterUtils.getKeyCandidates(table.sortedRows, dependencies)
-				.filter(keyCandidate => keyCandidate.length === 1 && isPrimaryKey(keyCandidate[0]))
-				.length === 0
-		);
-
-	const pkTableNames: {[id: string]: string} = {};
-	const newDepIds: string[] = [];
-	tablesToCheck.forEach(table =>
-		table.sortedRows.forEach(() => {
-			for (const dep of dependencies) {
-				if (!converterUtils.includesAll(table.sortedRows, dep.leftSide)) continue;
-				const checkSchema = table.sortedRows.filter(row => !dep.leftSide.includes(row));
-				if (!converterUtils.canReachAttributes(dep.leftSide, checkSchema, dependencies)) continue;
-				//add a new pk
-				const rowId = nanoid();
-				const depId = nanoid();
-				dispatch(addRow(table.id, rowId, table.title + "_ID"));
-				newDepIds.push(depId);
-				dispatch(addDepRow(depId, [rowId], dep.leftSide, false));
-				pkTableNames[rowId]=table.title;
-			}
-		})
+		getKeyCandidates(table.sortedRows, dependencies)
+			.filter(keyCandidate => keyCandidate.length === 1 && isPrimaryKey(keyCandidate[0]))
+			.length === 0
 	);
-	//check if need add fks
-	tables = selectors.getSortedTablesArray(state);
-	const newDependencies = selectors.getSortedDependencyRowsArray(state).filter(dep => newDepIds.includes(dep.id));
-	tables.forEach((table) =>
-		table.sortedRows.forEach(() => {
-			const checkSchema = table.sortedRows;
-			for(const dep of newDependencies){
-				if(!includesAll(checkSchema, dep.rightSide))continue;
-				if(includesAll(checkSchema, dep.leftSide))continue;
-				dep.leftSide.forEach(pkId => {
-					const fkId = nanoid();
-					dispatch(addRow(table.id, fkId, "FK_"+pkTableNames[pkId]));
-					dispatch(onSelectDataType("ForeignKey", fkId, false));
-					setTimeout(() => dispatch(onConfigureDataType(fkId, { pkId: pkId, tableId: table.id })), 10);
 
-				});
-			}
-		})
-	);
+	for(const table of tablesToCheck) {
+		for (const dep of dependencies) {
+			if (!includesAll(table.sortedRows, dep.leftSide)) continue;
+			const checkSchema = table.sortedRows.filter(row => !dep.leftSide.includes(row));
+			if (!canReachAttributes(dep.leftSide, checkSchema, dependencies)) continue;
+			//add a new pk
+			const pkId = nanoid();
+			const depId = nanoid();
+			await dispatch(addRow(table.id, pkId, table.title + "_ID"));
+			await dispatch(onSelectDataType("PrimaryKey", pkId, false));
+			dispatch(repositionRow(pkId, 0, table.id));
+			await dispatch(addDepRow(depId, [pkId], dep.leftSide, false));
+			break;
+		}
+
+	}
+	await dispatch(convertAddFKS());
 	dispatch(refreshPreview());
+};
+
+export const convertAddFKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const tables = selectors.getSortedTablesArray(state);
+	const rows = selectors.getSortedRowsArray(state);
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const pks = rows.filter(row => row.dataType === "PrimaryKey").map(k => k.id);
+	const pkDependencies = dependencies.filter(dep => dep.leftSide.length === 1 && pks.includes(dep.leftSide[0]));
+	const getTableNameForRow = (rowId: string): string => tables.find(table => table.sortedRows.some(id => id === rowId))?.title || "unknown";
+	for(const table of tables) {
+		const checkSchema = table.sortedRows;
+		for (const dep of pkDependencies) {
+			if (!includesAll(checkSchema, dep.rightSide)) continue;
+			if (includesAll(checkSchema, dep.leftSide)) continue;
+			for (const pkId of dep.leftSide) {
+				const fkId = nanoid();
+				const fkName = "FK_"+ getTableNameForRow(pkId);
+				await dispatch(addRow(table.id, fkId, fkName ));
+				await dispatch(onSelectDataType("ForeignKey", fkId, false));
+				dispatch(onConfigureDataType(fkId, { pkId: pkId, tableId: table.id }));
+				dispatch(addDepRow(nanoid(), [fkId], [pkId]));
+			}
+			for (const rmId of dep.rightSide) {
+				dispatch(removeRow(rmId));
+			}
+			break;
+		}
+	}
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
@@ -232,9 +241,9 @@ export const onChangeTitle = (id: string, value: string): any => async (dispatch
 };
 
 export const SELECT_DATA_TYPE = 'SELECT_DATA_TYPE';
-export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh?: boolean): any => (
-	(dispatch: any, getState: any): any => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh })
-);
+export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh?: boolean): any =>
+	(dispatch: any, getState: any): Promise<any> => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh });
+
 
 export const SELECT_DEP_LEFT_SIDE = 'SELECT_DEP_LEFT_SIDE';
 export const onSelectDepLeftSide = (selected: string[], dependencyId: string): GDAction => ({ type: SELECT_DEP_LEFT_SIDE, payload: { id: dependencyId, selected: selected } });
@@ -251,7 +260,7 @@ export type LoadDataTypeBundleOptions = {
 	shouldRefreshPreviewPanel?: boolean;
 };
 
-export const loadDataTypeBundle = (dispatch: Dispatch, getState: any, dataType: DataTypeFolder, opts: LoadDataTypeBundleOptions = {}): void => {
+export const loadDataTypeBundle = async (dispatch: Dispatch, getState: any, dataType: DataTypeFolder, opts: LoadDataTypeBundleOptions = {}): Promise<any> => {
 	const options = {
 		gridRowId: null,
 		shouldRefreshPreviewPanel: true,
@@ -267,32 +276,28 @@ export const loadDataTypeBundle = (dispatch: Dispatch, getState: any, dataType: 
 		defaultTitle = getUniqueString(defaultTitle as string, titles);
 	}
 
-	requestDataTypeBundle(dataType)
-		.then((bundle: DTBundle) => {
-			dispatch(dataTypeLoaded(dataType));
-			if (bundle.actionInterceptors) {
-				registerInterceptors(dataType, bundle.actionInterceptors);
-			}
-
-			// if it's been selected within the grid, select the row and update the preview panel
-			const ids = [];
-			if (options.gridRowId) {
-				ids.push(options.gridRowId);
-				dispatch({
-					type: SELECT_DATA_TYPE,
-					payload: {
-						id: options.gridRowId,
-						value: dataType,
-						data: bundle.initialState,
-						defaultTitle
-					}
-				});
-			}
-
-			if (options.shouldRefreshPreviewPanel) {
-				dispatch(refreshPreview(ids));
+	const bundle = await requestDataTypeBundle(dataType);
+	dispatch(dataTypeLoaded(dataType));
+	if (bundle.actionInterceptors) {
+		registerInterceptors(dataType, bundle.actionInterceptors);
+	}
+	// if it's been selected within the grid, select the row and update the preview panel
+	const ids = [];
+	if (options.gridRowId) {
+		ids.push(options.gridRowId);
+		dispatch({
+			type: SELECT_DATA_TYPE,
+			payload: {
+				id: options.gridRowId,
+				value: dataType,
+				data: bundle.initialState,
+				defaultTitle
 			}
 		});
+	}
+	if (options.shouldRefreshPreviewPanel) {
+		dispatch(refreshPreview(ids));
+	}
 };
 
 export const REQUEST_COUNTRY_NAMES = 'REQUEST_COUNTRY_NAMES';
