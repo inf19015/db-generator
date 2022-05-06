@@ -213,8 +213,8 @@ export const onChangeTitle = (id: string, value: string): any => async (dispatch
 };
 
 export const SELECT_DATA_TYPE = 'SELECT_DATA_TYPE';
-export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string): any => (
-	(dispatch: any, getState: any): any => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId })
+export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh?: boolean): any => (
+	(dispatch: any, getState: any): any => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh })
 );
 
 export const SELECT_DEP_LEFT_SIDE = 'SELECT_DEP_LEFT_SIDE';
@@ -532,9 +532,9 @@ export const clearPage = (addDefaultRows = true): any => (dispatch: Dispatch, ge
 		}
 	});
 
-	const initTableId = nanoid();
-	dispatch({ type: ADD_TABLE, payload: { id: initTableId, title: 'Table' } });
-	if (addDefaultRows) {
+	if(addDefaultRows) {
+		const initTableId = nanoid();
+		dispatch({ type: ADD_TABLE, payload: { id: initTableId, title: 'Table' } });
 		dispatch(addRows(5, initTableId));
 	}
 };

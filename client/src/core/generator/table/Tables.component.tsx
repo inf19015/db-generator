@@ -1,7 +1,7 @@
 import React from "react";
 import { Table as TableType } from "../../store/generator/generator.reducer";
 import { Box, Tab, Tabs } from "@mui/material";
-import AddBoxIcon from '@mui/icons-material/AddBox';
+import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
@@ -141,7 +141,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 		<Box sx={{ width: '100%', height: '100%' }}>
 			<DragDropContext onDragEnd={onSort} >
 				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-					<Tabs value={selectedTab} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
+					<Tabs value={selectedTab} className={"tour-table-tabs"} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
 						{tables.map((table, i) =>
 							<DroppableTab
 								key={"tabof" + table.id}
@@ -150,7 +150,7 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 								table={table}
 						/>
 						)}
-						<Tab icon={<AddBoxIcon/>} sx={{ color: 'black', width: '10px', fontSize: '20px', p: 0 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
+						<Tab icon={<AddIcon />} iconPosition="start" sx={{ color: 'black', minWidth: 24 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
 					</Tabs>
 				</Box>
 				{tables.map((table, i) =>

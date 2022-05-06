@@ -12,6 +12,7 @@ import { initAuthVendors } from '~utils/authUtils';
 import { getCurrentPageLocale } from '~utils/langUtils';
 import { AuthMethod } from '~types/general';
 import '../../_imports';
+import { nanoid } from "nanoid";
 
 export const init = (): void => {
 
@@ -47,13 +48,11 @@ export const init = (): void => {
 	}
 
 	if(numTables === 0){
-		store.dispatch(actions.addTable());
-		console.log("adding first table, because there is none");
-		// const numRows = selectors.getNumRows(state);
-		// if (numRows === 0) {
-		// 	const tableId = selectors.getSortedTables(state)[0];
-		// 	store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
-		// }
+		const tableId = nanoid();
+		store.dispatch(actions.addTable(tableId));
+		store.dispatch(actions.onSelectTableTab(0));
+		store.dispatch(actions.addRows(C.NUM_DEFAULT_ROWS, tableId));
+		store.dispatch(mainActions.showTourIntroDialog());
 	}
 
 

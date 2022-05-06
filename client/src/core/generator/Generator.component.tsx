@@ -15,6 +15,7 @@ import C from '../constants';
 import './Generator.scss';
 import GridContainer from './gridContainer/GridContainer.container';
 import RenameTableDialog from "~core/dialogs/renameTable/RenameTable.container";
+import TourDialog from "~core/dialogs/tourIntro/TourIntro.container";
 
 export const enum GeneratorLayout {
 	horizontal = 'horizontal',
@@ -115,6 +116,7 @@ const Builder = ({
 				<DataSetHistory />
 				<GenerationSettings />
 				<ActivityPanel />
+				<TourDialog />
 				<ClearPageDialog />
 				<HelpDialog />
 				<RenameTableDialog />

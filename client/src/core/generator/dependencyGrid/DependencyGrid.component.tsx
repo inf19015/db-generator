@@ -62,18 +62,6 @@ const DependencyGrid = ({
 
 	return (
 		<>
-			{/*<div style={{ position: 'fixed', right: 0, padding: 10 }} onClick={onClose}>*/}
-			{/*	<Tooltip*/}
-			{/*		title={<span dangerouslySetInnerHTML={{ __html: i18n.closePanel }}/>}*/}
-			{/*		placement="bottom"*/}
-			{/*		arrow*/}
-			{/*	>*/}
-			{/*		<IconButton size="small" aria-label={i18n.closePanel}>*/}
-			{/*			<CloseIcon fontSize="large" />*/}
-			{/*		</IconButton>*/}
-			{/*	</Tooltip>*/}
-			{/*</div>*/}
-
 			<Measure
 				bounds
 				onResize={(contentRect: any): void => setDimensions(contentRect.bounds)}
@@ -82,19 +70,19 @@ const DependencyGrid = ({
 					<div className={`${styles.gridWrapper} ${gridSizeClass}`} ref={measureRef}>
 						<div>
 							<div className={styles.gridHeaderWrapper}>
-								<div className={`${styles.gridRow} ${styles.gridHeader} tour-gridHeader`} style={{ flex: `0 0 auto` }}>
+								<div className={`${styles.gridRow} ${styles.gridHeader} tour-gridDepHeader`} style={{ flex: `0 0 auto` }}>
 									<div className={styles.orderCol}>{rows.length}</div>
 									<div className={styles.leftDepSideCol}>
 										{i18n.attributes}
 									</div>
 									<div className={styles.rightDepSideCol}>{i18n.dependenciesColumn}</div>
-									<div className={styles.depMvdCol}>{i18n.multivaluedDependency}</div>
+									{/*<div className={styles.depMvdCol}>{i18n.multivaluedDependency}</div>*/}
 									<div className={styles.deleteCol} />
 								</div>
 							</div>
 						</div>
-						<div className={`${styles.scrollableGridRows} tour-scrollableGridRows`}>
-							<div className={`${styles.gridRowsWrapper} tour-gridRows`}>
+						<div className={`${styles.scrollableGridRows} tour-scrollableGridDepRows`}>
+							<div className={`${styles.gridRowsWrapper} tour-gridDepRows`}>
 								<DragDropContext onDragEnd={({ draggableId, destination }: any): any => onSort(draggableId, destination.index)}>
 									<Droppable droppableId="droppable">
 										{(provided: any): any => (
@@ -118,7 +106,7 @@ const DependencyGrid = ({
 									</Droppable>
 								</DragDropContext>
 
-								<form onSubmit={(e): any => e.preventDefault()} className={`${styles.addRows} tour-addRows`}>
+								<form onSubmit={(e): any => e.preventDefault()} className={`${styles.addRows} tour-addDepRows`}>
 									<span>{i18n.add}</span>
 									<input type="number"
 										   value={numRows}

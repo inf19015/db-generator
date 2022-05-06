@@ -94,6 +94,7 @@ function initStore(state: any): any {
 	};
 
 	const undoConfig = {
+		limit: 10,
 		groupBy: batchGroupBy.init([]),
 		filter: includeAction([
 			generatorActions.ADD_ROW_TO_TABLE,

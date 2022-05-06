@@ -67,7 +67,7 @@ export const GridRow = ({
 			{(provided: any, snapshot: any): any => {
 
 				return (
-					<div className={`${styles.gridRow} tour-gridRow`} key={row.id}
+					<div className={`${styles.gridRow} tour-gridDepRow`} key={row.id}
 						 ref={provided.innerRef}
 						 {...provided.draggableProps}
 						 style={getItemStyle(
@@ -99,9 +99,9 @@ export const GridRow = ({
 								options={dtDropdownOptions}
 							/>
 						</div>
-						<div className={styles.toggleMvdBtn}>
-							<Button className={mvdButtonClasses} onClick={(): void => toggleMvd(row.id)} startIcon={<ToggleIcon />} />
-						</div>
+						{/*<div className={styles.toggleMvdBtn}>*/}
+						{/*	<Button className={mvdButtonClasses} onClick={(): void => toggleMvd(row.id)} startIcon={<ToggleIcon />} />*/}
+						{/*</div>*/}
 						<div className={styles.deleteCol} onClick={(): void => onRemove(row.id)}>
 							<HighlightOffIcon />
 						</div>

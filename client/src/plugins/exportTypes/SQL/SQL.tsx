@@ -169,8 +169,8 @@ export const Settings: React.ReactNode = ({ coreI18n, i18n, onUpdate, id, data }
 			<div>
 				<div className={styles.row}>
 					<div>
-						<label htmlFor={`${id}-databaseType`}>{i18n.dbType}</label>
-						<div>
+						<label htmlFor={`${id}-databaseType`} >{i18n.dbType} </label>
+						<div className={'tour-dbTypeDropdown'}>
 							<Dropdown
 								id={`${id}-databaseType`}
 								value={data.databaseType}
