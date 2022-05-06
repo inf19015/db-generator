@@ -35,7 +35,7 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
 	const { children, value, index, ...other } = props;
 	return (
 		<div
-			className={styles.TabPanel}
+			className={value === index ? styles.TabPanel: ''}
 			role="tabpanel"
 			hidden={value !== index}
 			id={`simple-tabpanel-${index}`}
