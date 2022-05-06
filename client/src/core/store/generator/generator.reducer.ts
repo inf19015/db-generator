@@ -105,7 +105,7 @@ export type StashedGeneratorState = {
 };
 
 const stashProps = [
-	'exportType', 'rows', 'dependencyRows', 'sortedRows', 'tables', 'sortedTables', 'selectedTableTab', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
+	'exportType', 'rows', 'dependencyRows', 'tables', 'sortedTables', 'selectedTableTab', 'sortedDependencyRows', 'showGrid', 'showDependencyGrid', 'showPreview', 'smallScreenVisiblePanel',
 	'generatorLayout', 'gridContainerLayout', 'showExportSettings', 'exportTypeSettings', 'showGenerationSettingsPanel', 'showHelpDialog',
 	'helpDialogSection', 'showLineNumbers', 'enableLineWrapping', 'theme', 'previewTextSize', 'dataTypePreviewData',
 	'exportSettingsTab', 'numPreviewRows', 'stripWhitespace', 'numPreviewRows', 'stripWhitespace', 'showChangeTableTitleDialog',

@@ -43,14 +43,13 @@ const CodeMirrorWrapper = (props: CodeMirrorWrapperProps): JSX.Element => {
 			codeMirrorInstance.refresh();
 		}
 	}, [generatorLayout]);
-	console.log("codemirrorMode:", codeMirrorMode);
 	return (
 		<CodeMirror
 			value={code}
 			onBeforeChange={(editor, data, value): void => setCode(value)}
 			editorDidMount={(editor): void => setCodeMirrorInstance(editor)}
 			options={{
-				mode: codeMirrorMode || 'text/x-sql',
+				mode: codeMirrorMode,
 				theme,
 				lineNumbers: showLineNumbers,
 				lineWrapping: enableLineWrapping,

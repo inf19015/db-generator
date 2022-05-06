@@ -34,17 +34,6 @@ function initStore(state: any): any {
 	const generatorPersistConfig = {
 		key: 'generator',
 		storage,
-		// blacklist: [
-		// 	'initialDependenciesLoaded',
-		// 	'loadedDataTypes',
-		// 	'loadedExportTypes',
-		// 	'isGenerating',
-		// 	'numGeneratedRows',
-		// 	'dataTypePreviewData',
-		// 	'bulkActionPending',
-		// 	'isCountryNamesLoading',
-		// 	'isCountryNamesLoaded'
-		// ]
 		blacklist: [
 			'initialDependenciesLoaded',
 			'loadedDataTypes',
@@ -55,8 +44,12 @@ function initStore(state: any): any {
 			'bulkActionPending',
 			'isCountryNamesLoading',
 			'isCountryNamesLoaded'
-		].map(key => `present.${key}`)
+		]
+		// blacklist: [
+		// 	'past'
+		// ]
 	};
+
 
 	const mainPersistConfig = {
 		key: 'main',
@@ -94,7 +87,7 @@ function initStore(state: any): any {
 	};
 
 	const undoConfig = {
-		limit: 10,
+		limit: 20,
 		groupBy: batchGroupBy.init([]),
 		filter: includeAction([
 			generatorActions.ADD_ROW_TO_TABLE,
@@ -116,7 +109,7 @@ function initStore(state: any): any {
 	};
 
 	const rootReducer = combineReducers({
-		generator: persistReducer(generatorPersistConfig, undoable(generatorReducer, undoConfig)),
+		generator: undoable(persistReducer(generatorPersistConfig, generatorReducer), undoConfig),
 		main: persistReducer(mainPersistConfig, mainReducer),
 		packets: persistReducer(packetsPersistConfig, packetsReducer),
 		account: persistReducer(accountPersistConfig, accountReducer)

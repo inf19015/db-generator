@@ -35,7 +35,6 @@ export const enum QuoteType {
 }
 
 const getWrappedValue = (value: any, colIndex: number, numericFieldIndexes: number[], quote: QuoteType = QuoteType.double): any => {
-	// value = value || "";
 	let val = '';
 	if (numericFieldIndexes.indexOf(colIndex) !== -1) {
 		val = value;

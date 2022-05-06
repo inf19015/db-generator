@@ -81,7 +81,6 @@ export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const rows = selectors.getRowsOfTableArray(state, id);
-	console.log("removed rows by table: ", rows);
 	rows.forEach((row) => {
 		dispatch(removeRow(row.id));
 	});
