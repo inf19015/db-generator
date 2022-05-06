@@ -13,7 +13,7 @@ jobs:
           submodules: true
           
       - name: Create Empty
-        run: echo "<h1>Empty<h1>" > /client/dist/index.html
+        run: mkdir "/client" && mkdir "/client/dist" && echo "<h1>Empty<h1>" > "/client/dist/index.html"
         
       - name: Build And Deploy
         id: builddeploy
