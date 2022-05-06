@@ -33,3 +33,21 @@ $hover-color: #d41313;
   display: inline-flex;
   //justify-content: center;
 }
+
+.OuterBox {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  overflow: hidden;
+}
+.TabBox {
+  flex: 0 1 auto;
+}
+.TabPanelBox {
+  height: 60%;
+  flex: 1 1 auto;
+}
+.TabPanel {
+  display: unset;
+}
