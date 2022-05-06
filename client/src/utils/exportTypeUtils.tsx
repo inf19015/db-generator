@@ -122,7 +122,7 @@ export const getExportTypeTitleValidationFunction = (exportType: ExportTypeFolde
 
 export const getCodeMirrorMode = (exportType: ExportTypeFolder, exportTypeSettings: any): string => {
 	// @ts-ignore-line
-	return loadedExportTypes[exportType].getCodeMirrorMode(exportTypeSettings);
+	return loadedExportTypes[exportType]?.getCodeMirrorMode(exportTypeSettings);
 };
 
 export const getDownloadFileInfo = (packetId: string, exportType: ExportTypeFolder, exportTypeSettings: any): ETDownloadPacketResponse => {

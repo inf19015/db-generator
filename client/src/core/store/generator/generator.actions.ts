@@ -295,7 +295,7 @@ export const onChangeTitle = (id: string, value: string): any => async (dispatch
 };
 
 export const SELECT_DATA_TYPE = 'SELECT_DATA_TYPE';
-export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh?: boolean): any =>
+export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh = true): any =>
 	(dispatch: any, getState: any): Promise<any> => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh });
 
 
