@@ -122,9 +122,41 @@ export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getS
 		}
 	});
 };
+export const convertNameRows = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const rows = selectors.getSortedRowsArray(state);
+	const tables = selectors.getSortedTablesArray(state);
+	const findTableForRow = (rowId: string) => tables.find(table => table.sortedRows.includes(rowId));
+	const nameRows = rows.filter(row => row.dataType === 'Names' && row.data?.options[0]?.includes('Name') && row.data?.options[0]?.includes('Surname'));
+	for (const row of nameRows) {
+		const title = row.title;
+		const table = findTableForRow(row.id);
+		if(!table)continue;
+		const newRowId = nanoid();
+		const index = rows.map(r => r.id).indexOf(row.id);
 
+		await dispatch(onChangeTitle(row.id, title+"_firstname"));
+		dispatch(onConfigureDataType(row.id, { example: 'Name', options: ['Name'] }));
+
+		await dispatch(addRow(table.id, newRowId, title+"_lastname"));
+		await dispatch(onSelectDataType( 'Names', newRowId, false));
+		dispatch(onConfigureDataType(newRowId, { example: 'Surname', options: ['Surname'] }));
+		dispatch(repositionRow(newRowId, index + 1, table.id));
+
+		for (const dep of dependencies){
+			if(dep.leftSide.includes(row.id)){
+				dispatch(onSelectDepLeftSide([...dep.leftSide, newRowId], dep.id));
+			}
+			if(dep.rightSide.includes(row.id)){
+				dispatch(onSelectDepRightsSide([...dep.rightSide, newRowId], dep.id));
+			}
+		}
+	}
+};
 // export const CONVERT_TO_3NF = "CONVERT_TO_3NF";
 export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	// await dispatch(convertNameRows());
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
 	const tables = selectors.getSortedTables(state);
