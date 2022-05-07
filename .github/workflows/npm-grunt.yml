@@ -23,6 +23,9 @@ jobs:
       with:
         node-version-file: '.nvmrc'
         cache: 'yarn'
+        
+    - name: reset dist
+      run: rm -r client/dist
       
     - name: Install yarn dependencies
       run: yarn install
