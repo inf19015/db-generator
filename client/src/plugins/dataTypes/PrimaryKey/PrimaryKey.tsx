@@ -1,4 +1,5 @@
-import { DTMetadata } from '~types/dataTypes';
+import { DTHelpProps, DTMetadata } from '~types/dataTypes';
+import * as React from "react";
 
 export type PrimaryKeyState = {
 	example: string;
@@ -13,6 +14,8 @@ export const initialState: PrimaryKeyState = {
 	incrementValue: '1',
 	incrementPlaceholder: ''
 };
+
+
 
 export const getMetadata = (): DTMetadata => {
 	return {
@@ -30,3 +33,4 @@ export const getMetadata = (): DTMetadata => {
 	};
 };
 
+export const Help = ({ i18n }: DTHelpProps): JSX.Element => <p>{i18n.helpIntro}</p>;

@@ -1,15 +1,14 @@
 {
   "NAME": "ForeignKey",
   "DESC": "References a Field in another table",
-  "DEFAULT_TITLE": "foreign key",
+  "DEFAULT_TITLE": "fk",
+  "helpIntro": "Fills a Column with the content of the referenced Primary Key. It will be marked with an ForeignKey Constraint.",
   "row": "Row",
   "nothing": "nothing",
   "source": "Source:",
   "random": "random",
   "fields": "fields",
-  "randomStringsLabel": "Random strings",
-  "fieldsLabel": "Name Fields",
-  "sourceDataField1": "Name field 1",
   "optional": "Optional",
-  "selectSource": "Select source","sourceTitle": "Source"
+  "selectSource": "Select source",
+  "sourceTitle": "Source"
 }

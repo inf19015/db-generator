@@ -3,13 +3,13 @@ import { nanoid } from "nanoid";
 // @ts-ignore
 import * as _ from "lodash";
 
-const includesAll = (array: any, elements: any) => {
+export const includesAll = (array: any, elements: any) => {
 	for (const element of elements) {
 		if (!array.includes(element)) return false;
 	}
 	return true;
 };
-const includesNone = (array: any, elements: any) => {
+export const includesNone = (array: any, elements: any) => {
 	for (const element of elements) {
 		if (array.includes(element)) return false;
 	}

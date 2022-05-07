@@ -21,6 +21,10 @@ import { getCountryNamesBundle } from '~utils/coreUtils';
 import { getCountryData } from '~utils/countryUtils';
 import { nanoid } from 'nanoid';
 import * as converterUtils from '~utils/converterUtils';
+import { canReachAttributes, getCanonicalCover, getKeyCandidates, includesAll, rowType } from "~utils/converterUtils";
+import { sleep } from '~utils/coreUtils';
+import { DependencyRow, Table } from './generator.reducer';
+import _ from "lodash";
 
 
 export const addRows = (numRows: number, tableId: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
@@ -30,7 +34,7 @@ export const addRows = (numRows: number, tableId: string): any => async (dispatc
 };
 
 export const ADD_ROW = 'ADD_ROW';
-export const addRow = (tableId: string, rowId = nanoid(), title = "", data: any = null, dataType: DataTypeFolder | null = null): GDAction => ({
+export const addRow = (tableId: string, rowId = nanoid(), title = "", dataType: DataTypeFolder | null = null, data: any = undefined): GDAction => ({
 	type: ADD_ROW,
 	payload: {
 		rowId,
@@ -77,7 +81,6 @@ export const REMOVE_TABLE = 'REMOVE_TABLE';
 export const removeTable = (id: string): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const rows = selectors.getRowsOfTableArray(state, id);
-	console.log("removed rows by table: ", rows);
 	rows.forEach((row) => {
 		dispatch(removeRow(row.id));
 	});
@@ -119,62 +122,172 @@ export const removeRow = (rowId: string): any => async (dispatch: Dispatch, getS
 		}
 	});
 };
+export const convertNameRows = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const rows = selectors.getSortedRowsArray(state);
+	const tables = selectors.getSortedTablesArray(state);
+	const findTableForRow = (rowId: string) => tables.find(table => table.sortedRows.includes(rowId));
+	const nameRows = rows.filter(row => row.dataType === 'Names' && row.data?.options[0]?.includes('Name') && row.data?.options[0]?.includes('Surname'));
+	for (const row of nameRows) {
+		const title = row.title;
+		const table = findTableForRow(row.id);
+		if(!table)continue;
+		const newRowId = nanoid();
+		const index = rows.map(r => r.id).indexOf(row.id);
 
+		await dispatch(onChangeTitle(row.id, title+"_firstname"));
+		dispatch(onConfigureDataType(row.id, { example: 'Name', options: ['Name'] }));
+
+		await dispatch(addRow(table.id, newRowId, title+"_lastname"));
+		await dispatch(onSelectDataType( 'Names', newRowId, false));
+		dispatch(onConfigureDataType(newRowId, { example: 'Surname', options: ['Surname'] }));
+		dispatch(repositionRow(newRowId, index + 1, table.id));
+
+		for (const dep of dependencies){
+			if(dep.leftSide.includes(row.id)){
+				dispatch(onSelectDepLeftSide([...dep.leftSide, newRowId], dep.id));
+			}
+			if(dep.rightSide.includes(row.id)){
+				dispatch(onSelectDepRightsSide([...dep.rightSide, newRowId], dep.id));
+			}
+		}
+	}
+};
 // export const CONVERT_TO_3NF = "CONVERT_TO_3NF";
 export const convertTo3NF = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	// await dispatch(convertNameRows());
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
 	const tables = selectors.getSortedTables(state);
+	const rows = selectors.getSortedRowsArray(state);
+	rows.filter(row => !row.dataType && !row.title).forEach(row => dispatch(removeRow(row.id)));
 	tables.forEach(id => dispatch(removeTableDirty(id)));
 
 	const [newTables, newDependencies] = converterUtils.to3NF(dependencies);
 	dispatch(removeAllDependencies());
-
+	const addedRowIds: string[] = [];
+	const alteredRowIdsMap: { [oldId: string]: string } = {};
 	newTables.forEach((table, i) => {
 		const tableId = nanoid();
 		dispatch(addTable(tableId, "table"+(i+1)));
-		table.forEach(rowId => dispatch(addRowToTable(tableId, rowId)));
+		table.forEach(rowId => {
+			let newRowId = rowId;
+			if(addedRowIds.includes(rowId)){
+				newRowId = nanoid();
+				const oldRow = selectors.getRow(state, rowId);
+				dispatch(addRow(tableId, newRowId, oldRow.title, oldRow.dataType, oldRow.data));
+				alteredRowIdsMap[rowId] = newRowId;
+			}else {
+				dispatch(addRowToTable(tableId, newRowId));
+			}
+			addedRowIds.push(newRowId);
+		});
 	});
 	dispatch({ type: SELECT_TABLE_TAB, payload: { value: 0 } });
-	newDependencies.forEach(dependency => {
-		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
+	newDependencies.forEach(dep => {
+		dispatch(addDepRow(dep.id, dep.leftSide, dep.rightSide, dep.isMvd));
 	});
+	const dependencyAddUpdateMap: { [depId: string]: string[] } = {};
+	const dependencyRemoveUpdateMap: { [depId: string]: string[] } = {};
+	newDependencies.forEach(dep => {
+		const alteredLeftSide = dep.leftSide.map(id => alteredRowIdsMap[id]).filter(id => id);
+		if(alteredLeftSide.length === dep.leftSide.length){
+			dispatch(addDepRow(nanoid(), alteredLeftSide, dep.leftSide, dep.isMvd));
+			dep.leftSide.forEach(id => {
+				 const depsToUpdate = newDependencies.filter(nd => nd.rightSide.includes(id));
+				 depsToUpdate.forEach(nd => {
+					 const alteredId = alteredRowIdsMap[id];
+					 const existing = dependencyAddUpdateMap[nd.id] || [];
+					 dependencyAddUpdateMap[nd.id] = [...existing, alteredId];
+					 const existingRemove = dependencyRemoveUpdateMap[nd.id] || [];
+					 dependencyRemoveUpdateMap[nd.id] = [...existingRemove, id];
+				 });
+			});
+		}
+	});
+	const dependenciesToUpdate = newDependencies.map(nd => ({ nd: nd, values: dependencyAddUpdateMap[nd.id], rvalues: dependencyRemoveUpdateMap[nd.id] }))
+		.filter(({ values }) => !!values);
+	dependenciesToUpdate.forEach(({ nd, values, rvalues }) =>
+		dispatch(onSelectDepRightsSide([...nd.rightSide.filter(id => !rvalues.includes(id)), ...values], nd.id)));
 	dispatch(refreshPreview());
 };
 
 export const convertAddPKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
 	const state = getState();
 	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	// only take tables without functioning PK
+	const isPrimaryKey = (id: string) => selectors.getRow(state, id).dataType === "PrimaryKey";
 	const tables = selectors.getSortedTablesArray(state);
-	tables.forEach(table => dispatch(removeTableDirty(table.id)));
-
-	const [newTables, newDependencies] = converterUtils.addIds(tables.map(table => table.sortedRows), dependencies);
-	const pkTableNames: {[id: string]: string} = {};
-	newTables.map((rows, i) => {
-		const tableId = nanoid();
-		dispatch(addTable(tableId, "Table"+(i+1)));
-		rows.forEach(row => {
-			switch(row.type) {
-				case "pk":
-					dispatch(addRow(tableId, row.id, "Table"+(i+1)+"_ID", null, "PrimaryKey"));
-					pkTableNames[row.id]="Table"+(i+1);
-					break;
-				case "untouched":
-					dispatch(addRowToTable(tableId, row.id));
-					break;
-			}
-		});
-		return ({ tableId, rows });
-	}).forEach(({ tableId, rows }) =>
-		rows.filter(row => row.type === "fk").forEach(row => {
-			const fkId = nanoid();
-			dispatch(addRow(tableId, fkId, "FK_"+pkTableNames[row.id], ({ pkId: row.id, tableId: tableId }),"ForeignKey"));
-		})
+	const tablesToCheck = tables.filter(table =>
+		getKeyCandidates(table.sortedRows, dependencies)
+			.filter(keyCandidate => keyCandidate.length === 1 && isPrimaryKey(keyCandidate[0]))
+			.length === 0
 	);
-	newDependencies.forEach(dependency => {
-		dispatch(addDepRow(dependency.id, dependency.leftSide, dependency.rightSide, dependency.isMvd));
-	});
+
+	for(const table of tablesToCheck) {
+		for (const dep of dependencies) {
+			if (!includesAll(table.sortedRows, dep.leftSide)) continue;
+			const checkSchema = table.sortedRows.filter(row => !dep.leftSide.includes(row));
+			if (!canReachAttributes(dep.leftSide, checkSchema, dependencies)) continue;
+			//add a new pk
+			const pkId = nanoid();
+			const depId = nanoid();
+			await dispatch(addRow(table.id, pkId, table.title + "_ID"));
+			await dispatch(onSelectDataType("PrimaryKey", pkId, false));
+			dispatch(repositionRow(pkId, 0, table.id));
+			await dispatch(addDepRow(depId, [pkId], dep.leftSide, false));
+			break;
+		}
+
+	}
+	await dispatch(convertAddFKS());
 	dispatch(refreshPreview());
+};
+
+export const convertAddFKS = (): any => async (dispatch: Dispatch, getState: any): Promise<any> => {
+	const state = getState();
+	const tables = selectors.getSortedTablesArray(state);
+	const rows = selectors.getSortedRowsArray(state);
+	const dependencies = selectors.getSortedDependencyRowsArray(state);
+	const pks = rows.filter(row => row.dataType === "PrimaryKey").map(k => k.id);
+	const pkDependencies = dependencies.filter(dep => dep.leftSide.length === 1 && pks.includes(dep.leftSide[0]));
+	const nonPkDependencies = dependencies.filter(dep => !pkDependencies.includes(dep));
+	const getTableNameForRow = (rowId: string): string => tables.find(table => table.sortedRows.some(id => id === rowId))?.title || "unknown";
+	for(const table of tables) {
+		const checkSchema = table.sortedRows;
+		for (const dep of pkDependencies) {
+			const pkBridge = nonPkDependencies.find(npk =>
+				_.isEqual(dep.rightSide, npk.rightSide) &&
+				npk.leftSide.every(id => checkSchema.includes(id)) &&
+				npk.leftSide.map(id => selectors.getRow(state, id))
+					.every(r =>
+						npk.rightSide.map(id => selectors.getRow(state, id))
+							.some(sr =>
+							r.dataType === sr.dataType && _.isEqual(r.data, sr.data) && r.title === sr.title)));
+			if(!!pkBridge){
+				const pkId = dep.leftSide[0];
+				const fkId = nanoid();
+				const fkName = "FK_"+ getTableNameForRow(pkId);
+				await dispatch(addRow(table.id, fkId, fkName, "ForeignKey", { pkId: pkId, tableId: table.id }));
+				await dispatch(onSelectDataType("ForeignKey", fkId, false));
+				dispatch(onConfigureDataType(fkId, { pkId: pkId, tableId: table.id }));
+				dispatch(onSelectDepLeftSide([fkId], pkBridge.id));
+				dispatch(onSelectDepRightsSide([pkId], pkBridge.id));
+				const toRemove = pkBridge.leftSide;
+				const replacement = fkId;
+				selectors.getSortedDependencyRowsArray(getState()).forEach(d => {
+					const toRemoveRight = toRemove.filter(r => d.rightSide.includes(r));
+					if (toRemoveRight.length > 0) {
+						dispatch(onSelectDepRightsSide([...d.rightSide.filter(id => !toRemoveRight.includes(id)), replacement], d.id));
+					}
+				});
+				for (const rmId of pkBridge.leftSide) {
+					dispatch(removeRow(rmId));
+				}
+			}
+		}
+	}
 };
 
 export const REMOVE_DEP_ROW = 'REMOVE_DEP_ROW';
@@ -213,9 +326,9 @@ export const onChangeTitle = (id: string, value: string): any => async (dispatch
 };
 
 export const SELECT_DATA_TYPE = 'SELECT_DATA_TYPE';
-export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh?: boolean): any => (
-	(dispatch: any, getState: any): any => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh })
-);
+export const onSelectDataType = (dataType: DataTypeFolder, gridRowId?: string, refresh = true): any =>
+	(dispatch: any, getState: any): Promise<any> => loadDataTypeBundle(dispatch, getState, dataType, { gridRowId, shouldRefreshPreviewPanel: refresh });
+
 
 export const SELECT_DEP_LEFT_SIDE = 'SELECT_DEP_LEFT_SIDE';
 export const onSelectDepLeftSide = (selected: string[], dependencyId: string): GDAction => ({ type: SELECT_DEP_LEFT_SIDE, payload: { id: dependencyId, selected: selected } });
@@ -232,7 +345,7 @@ export type LoadDataTypeBundleOptions = {
 	shouldRefreshPreviewPanel?: boolean;
 };
 
-export const loadDataTypeBundle = (dispatch: Dispatch, getState: any, dataType: DataTypeFolder, opts: LoadDataTypeBundleOptions = {}): void => {
+export const loadDataTypeBundle = async (dispatch: Dispatch, getState: any, dataType: DataTypeFolder, opts: LoadDataTypeBundleOptions = {}): Promise<any> => {
 	const options = {
 		gridRowId: null,
 		shouldRefreshPreviewPanel: true,
@@ -248,32 +361,28 @@ export const loadDataTypeBundle = (dispatch: Dispatch, getState: any, dataType: 
 		defaultTitle = getUniqueString(defaultTitle as string, titles);
 	}
 
-	requestDataTypeBundle(dataType)
-		.then((bundle: DTBundle) => {
-			dispatch(dataTypeLoaded(dataType));
-			if (bundle.actionInterceptors) {
-				registerInterceptors(dataType, bundle.actionInterceptors);
-			}
-
-			// if it's been selected within the grid, select the row and update the preview panel
-			const ids = [];
-			if (options.gridRowId) {
-				ids.push(options.gridRowId);
-				dispatch({
-					type: SELECT_DATA_TYPE,
-					payload: {
-						id: options.gridRowId,
-						value: dataType,
-						data: bundle.initialState,
-						defaultTitle
-					}
-				});
-			}
-
-			if (options.shouldRefreshPreviewPanel) {
-				dispatch(refreshPreview(ids));
+	const bundle = await requestDataTypeBundle(dataType);
+	dispatch(dataTypeLoaded(dataType));
+	if (bundle.actionInterceptors) {
+		registerInterceptors(dataType, bundle.actionInterceptors);
+	}
+	// if it's been selected within the grid, select the row and update the preview panel
+	const ids = [];
+	if (options.gridRowId) {
+		ids.push(options.gridRowId);
+		dispatch({
+			type: SELECT_DATA_TYPE,
+			payload: {
+				id: options.gridRowId,
+				value: dataType,
+				data: bundle.initialState,
+				defaultTitle
 			}
 		});
+	}
+	if (options.shouldRefreshPreviewPanel) {
+		dispatch(refreshPreview(ids));
+	}
 };
 
 export const REQUEST_COUNTRY_NAMES = 'REQUEST_COUNTRY_NAMES';

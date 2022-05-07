@@ -45,7 +45,7 @@ div.gridHeader {
 .scrollableGridRows {
 	width: 100%;
 	flex: 1;
-	overflow: scroll;
+	overflow-y: scroll;
 	position: relative;
 	padding-top: 4px;
 }

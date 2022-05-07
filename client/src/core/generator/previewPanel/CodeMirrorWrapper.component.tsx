@@ -43,7 +43,6 @@ const CodeMirrorWrapper = (props: CodeMirrorWrapperProps): JSX.Element => {
 			codeMirrorInstance.refresh();
 		}
 	}, [generatorLayout]);
-
 	return (
 		<CodeMirror
 			value={code}

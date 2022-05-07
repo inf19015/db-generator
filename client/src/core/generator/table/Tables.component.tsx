@@ -35,7 +35,7 @@ const TabPanel = (props: TabPanelProps): JSX.Element => {
 	const { children, value, index, ...other } = props;
 	return (
 		<div
-			// style={{ height: "100%" }}
+			className={value === index ? styles.TabPanel: ''}
 			role="tabpanel"
 			hidden={value !== index}
 			id={`simple-tabpanel-${index}`}
@@ -138,9 +138,9 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 	};
 
 	return (
-		<Box sx={{ width: '100%', height: '100%' }}>
+		<Box className={styles.OuterBox}>
 			<DragDropContext onDragEnd={onSort} >
-				<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+				<Box sx={{ borderBottom: 1, borderColor: 'divider' }} className={styles.TabBox}>
 					<Tabs value={selectedTab} className={"tour-table-tabs"} onChange={(e, v) => onTabChange(v)} variant="scrollable" scrollButtons="auto" TabIndicatorProps={{ color: 'primary' }}>
 						{tables.map((table, i) =>
 							<DroppableTab
@@ -153,11 +153,13 @@ export const Tables = ({ selectedTab, onTabChange, addTableTab, tables, reorderR
 						<Tab icon={<AddIcon />} iconPosition="start" sx={{ color: 'black', minWidth: 24 }} {...a11yProps(tables.length)} onClick={addTableTab}/>
 					</Tabs>
 				</Box>
-				{tables.map((table, i) =>
-					<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
-						<Grid tableId={table.id} />
-					</TabPanel>
+				<Box className={styles.TabPanelBox}>
+					{tables.map((table, i) =>
+						<TabPanel key={"tabpanel" + table.id} value={selectedTab} index={i} >
+							<Grid tableId={table.id} />
+						</TabPanel>
 					)}
+				</Box>
 			</DragDropContext>
 		</Box>
 	);

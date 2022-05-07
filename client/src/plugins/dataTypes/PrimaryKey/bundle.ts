@@ -1,8 +1,10 @@
 import { DTBundle } from '~types/dataTypes';
-import { getMetadata } from './PrimaryKey';
+import { initialState, getMetadata, Help } from './PrimaryKey';
 
 const bundle: DTBundle = {
-	getMetadata
+	initialState,
+	getMetadata,
+	Help
 };
 
 export default bundle;

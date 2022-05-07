@@ -514,7 +514,7 @@ export const getNumericFieldColumnIndexes = (columns: ColumnData[]): number[] =>
 
 	columns.forEach((col: ColumnData, colIndex: number) => {
 		const { metadata } = col;
-		const dataType = metadata.general && metadata.general?.dataType;
+		const dataType = metadata?.general && metadata.general?.dataType;
 
 		if (dataType === 'number') {
 			numericFieldColIndexes.push(colIndex);

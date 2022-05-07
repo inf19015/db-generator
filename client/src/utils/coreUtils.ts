@@ -84,6 +84,10 @@ export const performTask = (workerName: string, worker: any, postMessagePayload:
 	};
 };
 
+export const sleep = (duration: number) => {
+	return new Promise(resolve => setTimeout(resolve, duration));
+};
+
 export const easeInOutSine = (t: any, b: any, c: any, d: any): number => {
 	return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
 };

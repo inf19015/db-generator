@@ -1,6 +1,7 @@
 import React from 'react';
 import Reactour, { ReactourStepPosition } from 'reactour';
 import { getStrings } from '~utils/langUtils';
+import { sleep } from '~utils/coreUtils';
 import store from '~core/store';
 import * as actions from '~store/generator/generator.actions';
 import * as selectors from '~store/generator/generator.selectors';
@@ -8,6 +9,8 @@ import { TourCompleteStep } from './Components.tour';
 import { TourProps } from '~types/general';
 import { GeneratorLayout } from '~core/generator/Generator.component';
 import { nanoid } from "nanoid";
+import { Dispatch } from "redux";
+import { CHANGE_TITLE } from "~store/generator/generator.actions";
 
 const Step1 = (): JSX.Element => {
 	const { core: i18n } = getStrings();
@@ -198,7 +201,7 @@ const steps = [
 		},
 		position: 'center' as ReactourStepPosition,
 		action: (): void => {
-			setTimeout(() => {
+			setTimeout(async () => {
 				store.dispatch(actions.clearPage(false));
 				const tableId = nanoid();
 				store.dispatch(actions.addTable(tableId, "Tour_Table"));
@@ -224,49 +227,48 @@ const steps = [
 
 				const ids = rows.map(({ id }) => id);
 
-				store.dispatch(actions.onSelectDataType('Names', ids[0], false));
-				store.dispatch(actions.onSelectDataType('Names', ids[1], false));
-				store.dispatch(actions.onSelectDataType('Email', ids[2], false));
-				store.dispatch(actions.onSelectDataType('StreetAddress', ids[3], false));
-				store.dispatch(actions.onSelectDataType('TextFixed', ids[4], false));
-				store.dispatch(actions.onSelectDataType('NumberRange', ids[5], false));
-				store.dispatch(actions.onSelectDataType('NumberRange', ids[6], false));
-				store.dispatch(actions.onSelectDataType('Date', ids[7], false));
+				await store.dispatch(actions.onSelectDataType('Names', ids[0], false));
+				await store.dispatch(actions.onChangeTitle(ids[0], "Firstname"));
+				await store.dispatch(actions.onConfigureDataType(ids[0], { example: "Name", options: ["Name"] }));
 
-				setTimeout(() => {
-					store.dispatch(actions.onChangeTitle(ids[0], "Firstname"));
-					store.dispatch(actions.onConfigureDataType(ids[0], { example: "Name", options: ["Name"] }));
+				await store.dispatch(actions.onSelectDataType('Names', ids[1], false));
+				await store.dispatch(actions.onChangeTitle(ids[1], "Lastname"));
+				await store.dispatch(actions.onConfigureDataType(ids[1], { example: "Surname", options: ["Surname"] }));
 
-					store.dispatch(actions.onChangeTitle(ids[1], "Lastname"));
-					store.dispatch(actions.onConfigureDataType(ids[1], { example: "Surname", options: ["Surname"] }));
+				await store.dispatch(actions.onSelectDataType('Email', ids[2], false));
+				await store.dispatch(actions.onChangeTitle(ids[2], "Email"));
+				await store.dispatch(actions.onConfigureDataType(ids[2], {
+					source: "fields", fieldId1: ids[0], fieldId2: ids[1],
+					domains: "google,gmail,lehre.dhbw-stuttgart,protonmail", domainSuffixes: "com,de"
+				}));
 
-					store.dispatch(actions.onChangeTitle(ids[2], "Email"));
-					store.dispatch(actions.onConfigureDataType(ids[2], { source: "fields", fieldId1: ids[0], fieldId2: ids[1],
-						domains: "google,gmail,lehre.dhbw-stuttgart,protonmail", domainSuffixes: "com,de" }));
+				await store.dispatch(actions.onSelectDataType('StreetAddress', ids[3], false));
+				await store.dispatch(actions.onChangeTitle(ids[3], "Address"));
 
-					store.dispatch(actions.onChangeTitle(ids[3], "Address"));
+				await store.dispatch(actions.onSelectDataType('TextFixed', ids[4], false));
+				await store.dispatch(actions.onChangeTitle(ids[4], "Article"));
+				await store.dispatch(actions.onConfigureDataType(ids[4], { numWords: 1, textSource: "lipsum", customText: "" }));
 
-					store.dispatch(actions.onChangeTitle(ids[4], "Article"));
-					store.dispatch(actions.onConfigureDataType(ids[4], { numWords: 1, textSource: "lipsum", customText: "" }));
+				await store.dispatch(actions.onSelectDataType('NumberRange', ids[5], false));
+				await store.dispatch(actions.onChangeTitle(ids[5], "Price"));
+				await store.dispatch(actions.onConfigureDataType(ids[5], { min: 0, max: 200 }));
 
-					store.dispatch(actions.onChangeTitle(ids[5], "Price"));
-					store.dispatch(actions.onConfigureDataType(ids[5], { min: 0, max: 200 }));
+				await store.dispatch(actions.onSelectDataType('NumberRange', ids[6], false));
+				await store.dispatch(actions.onChangeTitle(ids[6], "Amount"));
+				await store.dispatch(actions.onConfigureDataType(ids[6], { min: 1, max: 10 }));
 
-					store.dispatch(actions.onChangeTitle(ids[6], "Amount"));
-					store.dispatch(actions.onConfigureDataType(ids[6], { min: 1, max: 10 }));
+				await store.dispatch(actions.onSelectDataType('Date', ids[7], false));
+				await store.dispatch(actions.onChangeTitle(ids[7], "PurchaseTimestamp"));
+				await store.dispatch(actions.onConfigureDataType(ids[7], {
+					fromDate: 1620238075, toDate: 1683310075,
+					example: "y-LL-dd HH:mm:ss", format: "y-LL-dd HH:mm:ss"
+				}));
 
-					store.dispatch(actions.onChangeTitle(ids[7], "PurchaseTimestamp"));
-					store.dispatch(actions.onConfigureDataType(ids[7], { fromDate: 1620238075, toDate: 1683310075,
-						example: "y-LL-dd HH:mm:ss", format: "y-LL-dd HH:mm:ss" }));
+				await store.dispatch(actions.addDepRow(nanoid(), [ids[0], ids[1]], [ids[2], ids[3]]));
+				await store.dispatch(actions.addDepRow(nanoid(), [ids[4]], [ids[5]]));
+				await store.dispatch(actions.addDepRow(nanoid(), [ids[7]], [ids[0], ids[1], ids[4], ids[6]]));
 
-					store.dispatch(actions.addDepRow(nanoid(), [ids[0], ids[1]], [ids[2], ids[3]]));
-					store.dispatch(actions.addDepRow(nanoid(), [ids[4]], [ids[5]]));
-					store.dispatch(actions.addDepRow(nanoid(), [ids[7]], [ids[0], ids[1], ids[4], ids[6]]));
-
-					store.dispatch(actions.refreshPreview(ids));
-				}, 10);
-
-				document.querySelector('.tour-scrollableGridRows')!.scrollTop = 0;
+				store.dispatch(actions.refreshPreview(ids));
 			}, 10);
 		}
 	},
@@ -346,10 +348,10 @@ const steps = [
 		// show add PK
 		content: Step10,
 		action: (): void => {
-			setTimeout(() => {
-				store.dispatch(actions.convertAddPKS());
-				setTimeout(() => store.dispatch(actions.onSelectTableTab(2)), 10);
-			}, 100);
+			setTimeout(async () => {
+				await store.dispatch(actions.convertAddPKS());
+				store.dispatch(actions.onSelectTableTab(2));
+			}, 10);
 		},
 		selector: '.tour-convertAddPks',
 		style: {
