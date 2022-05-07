@@ -97,7 +97,7 @@ function initStore(state: any): any {
 			generatorActions.SELECT_DEP_RIGHT_SIDE,
 			generatorActions.SELECT_DEP_LEFT_SIDE,
 			generatorActions.SELECT_DATA_TYPE,
-			generatorActions.SELECT_TABLE_TAB,
+			// generatorActions.SELECT_TABLE_TAB,
 			generatorActions.REPOSITION_ROW,
 			generatorActions.REPOSITION_DEP_ROW,
 			generatorActions.REMOVE_DEP_ROW,
