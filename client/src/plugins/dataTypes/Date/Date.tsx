@@ -24,8 +24,8 @@ export type DateState = {
 export const initialState: DateState = {
 	fromDate: parseInt(format(subYears(new Date(), 1), 't'), 10),
 	toDate: parseInt(format(addYears(new Date(), 1), 't'), 10),
-	example: 'MMM d, y',
-	format: 'MMM d, y'
+	example: 'y-LL-dd HH:mm:ss',
+	format: 'y-LL-dd HH:mm:ss'
 };
 
 export const rowStateReducer = ({ fromDate, toDate, format }: DateState): Partial<DateState> => ({

@@ -10,7 +10,6 @@ import { apolloClient } from '~core/apolloClient';
 import store, { persistor } from '~core/store';
 import Page from '~core/page/Page.container';
 import * as core from '~core/index';
-// import ErrorBoundary from '~core/ErrorBoundary.component';
 import theme from '~core/theme';
 import SaveDataSetDialog from '~core/dialogs/saveDataSet/SaveDataSet.container';
 import Toast from '~components/toast/Toast.component';
@@ -21,17 +20,9 @@ import { getRoutes } from '~utils/routeUtils';
 import { getLocaleMap } from '~utils/langUtils';
 import '~store/generator/generator.reducer';
 import './styles/global.scss';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from "~components/dialogs";
-import styles from "~core/dialogs/about/About.scss";
-import { Tooltip } from "~components/tooltips";
-import Link from "~components/Link.component";
-import { PrimaryButton } from "~components/Buttons.component";
 import { Cockroach, Github } from "~components/icons";
-import ErrorDialog from "~core/dialogs/error/Error.component";
 import { ErrorBoundary } from "react-error-boundary";
-import Header from "~core/header/Header.container";
 import Button from "@mui/material/Button";
-import Footer from "~core/footer/Footer.container";
 
 
 declare module '@mui/styles/defaultTheme' {
