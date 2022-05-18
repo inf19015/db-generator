@@ -37,40 +37,42 @@ export const getMetadata = (): DTMetadata => ({
 		dataType: 'date',
 	},
 	sql: {
-		field: 'varchar(255)',
-		field_Oracle: 'varchar2(255)',
-		field_MSSQL: 'VARCHAR(255) NULL'
+		field: 'DATE',
+		field_Oracle: 'DATE',
+		field_SQLite: 'text',
+		field_Postgres: 'date',
+		field_MSSQL: 'date'
 	}
 });
 
 export const getOptions = (): any[] => {
-	const now = new Date();
+	// const now = new Date();
 
 	const options: any = [];
-	const formats = [
-		'MMM d, y', // Jan 1, 2020
-		'MMMM do, y', // January 1st, 2020
-		'EEE, MMM dd', // Wed, Jan 01
-		'EEE, MMM do, y', // Wed, Jan 1st, 2012
-		'LL.dd.yy', // 03.25.20
-		'LL-dd-yy', // 03-25-06
-		'LL/dd/yy', // 03/25/06,
-		'LL/dd/y', // 03/25/2012
-		'dd.LL.yy', // 25.03.2020
-		'dd-LL-yy', // 25-03-06
-		'dd/LL/y' // 25/03/2012
-	];
-	formats.forEach((currFormat) => {
-		options.push({
-			label: format(new Date(now.getFullYear(), now.getMonth(), now.getDate()), currFormat),
-			value: currFormat
-		});
-	});
+	// const formats = [
+	// 	'MMM d, y', // Jan 1, 2020
+	// 	'MMMM do, y', // January 1st, 2020
+	// 	'EEE, MMM dd', // Wed, Jan 01
+	// 	'EEE, MMM do, y', // Wed, Jan 1st, 2012
+	// 	'LL.dd.yy', // 03.25.20
+	// 	'LL-dd-yy', // 03-25-06
+	// 	'LL/dd/yy', // 03/25/06,
+	// 	'LL/dd/y', // 03/25/2012
+	// 	'dd.LL.yy', // 25.03.2020
+	// 	'dd-LL-yy', // 25-03-06
+	// 	'dd/LL/y' // 25/03/2012
+	// ];
+	// formats.forEach((currFormat) => {
+	// 	options.push({
+	// 		label: format(new Date(now.getFullYear(), now.getMonth(), now.getDate()), currFormat),
+	// 		value: currFormat
+	// 	});
+	// });
 
 	return options.concat([
 		{ label: 'MySQL datetime', value: 'y-LL-dd HH:mm:ss' },
-		{ label: 'Unix timestamp (secs)', value: 't' },
-		{ label: 'Unix timestamp (millisecs)', value: 'T' }
+		// { label: 'Unix timestamp (secs)', value: 't' },
+		// { label: 'Unix timestamp (millisecs)', value: 'T' }
 	]);
 };
 

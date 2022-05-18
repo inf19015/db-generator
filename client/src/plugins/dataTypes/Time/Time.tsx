@@ -40,8 +40,11 @@ export const getMetadata = (): DTMetadata => ({
 	},
 	sql: {
 		field: 'varchar(255)',
-		field_Oracle: 'varchar2(255)',
-		field_MSSQL: 'VARCHAR(255) NULL'
+		field_Postgres: 'timestamp',
+		field_SQLite: 'text',
+		field_MySQL: 'TIMESTAMP',
+		field_Oracle: 'TIMESTAMP',
+		field_MSSQL: 'time'
 	}
 });
 
@@ -94,7 +97,6 @@ export const Options = ({ data, onUpdate, i18n, coreI18n }: DTOptionsProps): JSX
 	if (data.fromTime > data.toTime) {
 		toTimeError = i18n.endDateEarlierThanStartDate;
 	}
-
 	return (
 		<div>
 			<div className={styles.dateRow}>
