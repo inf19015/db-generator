@@ -10,7 +10,6 @@ import { apolloClient } from '~core/apolloClient';
 import store, { persistor } from '~core/store';
 import Page from '~core/page/Page.container';
 import * as core from '~core/index';
-import ErrorBoundary from '~core/ErrorBoundary.component';
 import theme from '~core/theme';
 import SaveDataSetDialog from '~core/dialogs/saveDataSet/SaveDataSet.container';
 import Toast from '~components/toast/Toast.component';
@@ -21,6 +20,9 @@ import { getRoutes } from '~utils/routeUtils';
 import { getLocaleMap } from '~utils/langUtils';
 import '~store/generator/generator.reducer';
 import './styles/global.scss';
+import { Cockroach, Github } from "~components/icons";
+import { ErrorBoundary } from "react-error-boundary";
+import Button from "@mui/material/Button";
 
 
 declare module '@mui/styles/defaultTheme' {
@@ -74,6 +76,33 @@ const LocalizationWrapper = (args: any): JSX.Element => {
 	);
 };
 
+const ErrorFallback = ({ error, resetErrorBoundary }: any): JSX.Element => (
+	<>
+		<div style={{ maxWidth: 600, padding: 20, margin: 'auto' }}>
+			<h2>Something went terribly, terribly wrong.</h2>
+
+			<div style={{ display: 'flex', alignItems: 'center', marginTop: -20 }}>
+				<div style={{ width: 200 }}>
+					<Cockroach size={200} />
+				</div>
+				<div>
+					<p style={{ fontSize: 13, color: '#999999', marginBottom: 20 }}>
+						Sorry! Some sort of error occurred. This project is still in alpha so you may see this
+						page a little more than you'd like.
+					</p>
+
+					<Button
+						color="primary"
+						variant="outlined"
+						onClick={() => persistor.purge().then(() => window.location.href=window.location.href)
+							}>Reset the Application</Button>
+
+					<div style={{ marginTop: 40 }}>{error.message}</div>
+				</div>
+			</div>
+		</div>
+	</>
+);
 
 const App = withRouter(({ history }: any) => {
 	useEffect(() => {
@@ -81,7 +110,7 @@ const App = withRouter(({ history }: any) => {
 	}, []);
 
 	return (
-		<ErrorBoundary>
+		<ErrorBoundary fallbackRender={ErrorFallback} >
 			<Page>
 				<Route path="/:lang?">{LocalizationWrapper}</Route>
 				<Toast />
@@ -90,6 +119,8 @@ const App = withRouter(({ history }: any) => {
 		</ErrorBoundary>
 	);
 });
+
+
 
 
 const AppWrapper = (): JSX.Element => (
@@ -106,9 +137,9 @@ const AppWrapper = (): JSX.Element => (
                             }
 
                             return (
-	<Router>
-		<App />
-	</Router>
+	                            <Router>
+		                            <App />
+	                            </Router>
                             );
                         }}
 					</PersistGate>

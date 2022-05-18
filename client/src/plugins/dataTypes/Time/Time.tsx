@@ -40,8 +40,11 @@ export const getMetadata = (): DTMetadata => ({
 	},
 	sql: {
 		field: 'varchar(255)',
-		field_Oracle: 'varchar2(255)',
-		field_MSSQL: 'VARCHAR(255) NULL'
+		field_Postgres: 'timestamp',
+		field_SQLite: 'text',
+		field_MySQL: 'TIMESTAMP',
+		field_Oracle: 'TIMESTAMP',
+		field_MSSQL: 'time'
 	}
 });
 
@@ -94,7 +97,6 @@ export const Options = ({ data, onUpdate, i18n, coreI18n }: DTOptionsProps): JSX
 	if (data.fromTime > data.toTime) {
 		toTimeError = i18n.endDateEarlierThanStartDate;
 	}
-
 	return (
 		<div>
 			<div className={styles.dateRow}>
@@ -113,19 +115,21 @@ export const Options = ({ data, onUpdate, i18n, coreI18n }: DTOptionsProps): JSX
 				/>
 				<ArrowRightAltIcon />
 				<ErrorTooltip title={toTimeError} arrow disableHoverListener={!toTimeError} disableFocusListener={!toTimeError}>
-					<TextField
-						type="time"
-						defaultValue={format(fromUnixTime(data.toTime), 'H:mm')}
-						className={styles.field}
-						InputLabelProps={{
-							shrink: true
-						}}
-						inputProps={{ step: 60 }}
-						onChange={(e: any): void => {
-							const date = parse(e.target.value, 'HH:mm', new Date());
-							onChange('toTime', parseInt(format(date, 't'), 10));
-						}}
-					/>
+					<div>
+						<TextField
+							type="time"
+							defaultValue={format(fromUnixTime(data.toTime), 'H:mm')}
+							className={styles.field}
+							InputLabelProps={{
+								shrink: true
+							}}
+							inputProps={{ step: 60 }}
+							onChange={(e: any): void => {
+								const date = parse(e.target.value, 'HH:mm', new Date());
+								onChange('toTime', parseInt(format(date, 't'), 10));
+							}}
+						/>
+					</div>
 				</ErrorTooltip>
 			</div>
 			<div>
