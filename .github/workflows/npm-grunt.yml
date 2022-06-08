@@ -47,7 +47,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: client/dist
-          key: ${{ runner.os }}-dist-v7
+          key: ${{ runner.os }}-dist
           
       - name: Build And Deploy
         id: builddeploy
