@@ -1,6 +1,7 @@
 import { ETOnMessage, ETMessageData } from '~types/exportTypes';
 import { SQLSettings } from './SQL';
 import { ColumnData } from '~types/general';
+import { Table } from "~store/generator/generator.reducer";
 
 const context: Worker = self as any;
 
@@ -104,6 +105,10 @@ export const generateMySQL = (data: ETMessageData): string => {
 	tablesToGenerate.forEach(table => {
 		let rowDataStr: string[] = [];
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
+		const tableColIndexMappings: {
+			[index: number]: number;
+		} = {};
+		tableColumns.forEach((column, colIndex)=> tableColIndexMappings[colIndex] = columns.indexOf(column));
 		const colTitles = tableColumns.map(({ title }) => title);
 
 		let colNamesStr = '';
@@ -116,6 +121,7 @@ export const generateMySQL = (data: ETMessageData): string => {
 			if (sqlSettings.statementType === 'insert') {
 				const displayVals: any = [];
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes));
 				});
 				rowDataStr.push(displayVals.join(','));
@@ -125,7 +131,9 @@ export const generateMySQL = (data: ETMessageData): string => {
 				}
 			} else if (sqlSettings.statementType === 'insertIgnore') {
 				const displayVals: any = [];
+
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes));
 				});
 				rowDataStr.push(displayVals.join(','));
@@ -136,6 +144,7 @@ export const generateMySQL = (data: ETMessageData): string => {
 			} else {
 				const pairs: string[] = [];
 				colTitles.forEach((title: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					const colValue = getWrappedValue(row[colIndex], colIndex, numericFieldIndexes);
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
@@ -206,10 +215,15 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 		const colTitles = tableColumns.map(({ title }) => title);
 		const colNamesStr = colTitles.join(',');
+		const tableColIndexMappings: {
+			[index: number]: number;
+		} = {};
+		tableColumns.forEach((column, colIndex)=> tableColIndexMappings[colIndex] = columns.indexOf(column));
 		rows.forEach((row: any, rowIndex: number) => {
 			if (sqlSettings.statementType === 'insert') {
 				const displayVals: any = [];
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes, QuoteType.single));
 				});
 				rowDataStr.push(displayVals.join(','));
@@ -220,6 +234,7 @@ export const generatePostgres = (generationData: ETMessageData): string => {
 			} else {
 				const pairs: string[] = [];
 				colTitles.forEach((title: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					const colValue = getWrappedValue(row[colIndex], colIndex, numericFieldIndexes);
 					pairs.push(`${title} = ${colValue}`);
 				});
@@ -287,6 +302,10 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 		const colTitles = tableColumns.map(({ title }) => title);
 		let colNamesStr = '';
+		const tableColIndexMappings: {
+			[index: number]: number;
+		} = {};
+		tableColumns.forEach((column, colIndex)=> tableColIndexMappings[colIndex] = columns.indexOf(column));
 		if (sqlSettings.encloseInBackQuotes) {
 			colNamesStr = `\`${colTitles.join('`,`')}\``;
 		} else {
@@ -296,6 +315,7 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 			if (sqlSettings.statementType === 'insert') {
 				const displayVals: any = [];
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes));
 				});
 				rowDataStr.push(displayVals.join(','));
@@ -306,6 +326,7 @@ export const generateSQLite = (generationData: ETMessageData): string => {
 			} else {
 				const pairs: string[] = [];
 				colTitles.forEach((title: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					const colValue = getWrappedValue(row[colIndex], colIndex, numericFieldIndexes);
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
@@ -373,6 +394,10 @@ export const generateOracle = (generationData: ETMessageData): string => {
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 		const colTitles = tableColumns.map(({ title }) => title);
 		let colNamesStr = '';
+		const tableColIndexMappings: {
+			[index: number]: number;
+		} = {};
+		tableColumns.forEach((column, colIndex)=> tableColIndexMappings[colIndex] = columns.indexOf(column));
 		if (sqlSettings.encloseInBackQuotes) {
 			colNamesStr = `\`${colTitles.join('`,`')}\``;
 		} else {
@@ -382,6 +407,7 @@ export const generateOracle = (generationData: ETMessageData): string => {
 			if (sqlSettings.statementType === 'insert') {
 				const displayVals: any = [];
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes));
 				});
 				const rowDataStr = displayVals.join(',');
@@ -389,6 +415,7 @@ export const generateOracle = (generationData: ETMessageData): string => {
 			} else {
 				const pairs: string[] = [];
 				colTitles.forEach((title: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					const colValue = getWrappedValue(row[colIndex], colIndex, numericFieldIndexes);
 					pairs.push(`${backquote}${title}${backquote} = ${colValue}`);
 				});
@@ -461,11 +488,16 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 		const tableColumns = columns.filter(column => table.sortedRows.includes(column.columnId));
 		const colTitles = tableColumns.map(({ title }) => title);
 		const colNamesStr = colTitles.join(',');
+		const tableColIndexMappings: {
+			[index: number]: number;
+		} = {};
+		tableColumns.forEach((column, colIndex)=> tableColIndexMappings[colIndex] = columns.indexOf(column));
 
 		rows.forEach((row: any, rowIndex: number) => {
 			if (sqlSettings.statementType === 'insert') {
 				const displayVals: any = [];
 				colTitles.forEach((columnTitle: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					displayVals.push(getWrappedValue(row[colIndex], colIndex, numericFieldIndexes, quote));
 				});
 				rowDataStr.push(displayVals.join(','));
@@ -484,6 +516,7 @@ export const generateMSSQL = (generationData: ETMessageData): string => {
 			} else {
 				const pairs: string[] = [];
 				colTitles.forEach((title: string, colIndex: number) => {
+					colIndex = tableColIndexMappings[colIndex];
 					const colValue = getWrappedValue(row[colIndex], colIndex, numericFieldIndexes);
 					pairs.push(`[${title}] = ${colValue}`);
 				});
